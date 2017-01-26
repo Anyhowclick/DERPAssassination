@@ -483,8 +483,11 @@ Messages = {
     'joinToUser':
         "You have successfully joined the game!",
 
-    'killgame':
+    'killGame':
         "Game has been killed!",
+
+    'killGameAgents':
+        "Sorry, there was a problem with the bot. The game has been terminated by a group admin.",
 
     'lonely':
         "Can't play this game by yourself! (well it could in the future, but anyway...) "\

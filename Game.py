@@ -323,7 +323,20 @@ class Game(object):
         
         #Finally delete in DB
         del DB[self.chatID]
-    
+
+    #In case of error, kill the game
+    async def kill_game(self):
+        #Close any open queries 
+        agents = self.get_all()
+        for agent in list(agents.values()):
+            try:
+                await agent.editor.editMessageReplyMarkup(reply_markup=None)
+            except telepot.exception.TelegramError:
+                continue
+            await self.bot.sendMessage(agent.userID,Messages['killGameAgents'],reply_markup=None)  
+        #Let people know their identities
+        await self.end_game()
+        return
     
     
 #Accessor methods

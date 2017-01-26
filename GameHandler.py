@@ -7,7 +7,7 @@ from telepot.namedtuple import *
 from Game import Game
 from Messages import Messages
 from Database import DB
-
+from Admin import check_admin, get_maintenance
 '''
 gameHandler will handle all game-related commands, such
 as /newgame, /join, as well as everything that involves running
@@ -66,17 +66,32 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             elif command == '/join':
                 await self._joinGame(chatID,userID,msg)
 
-            elif command == '/killgame':
-                await self.game.end_game()
-                self.game = None
-                self.chatID = None
-                self.players = {}
+#########################
+######  /killgame  ######
+#########################
+                
+            elif command == '/killgame': #First need to check if user is admin
+                if not await check_admin(self.bot,chatID,userID): #Function returns true if admin, false otherwise
+                    return
+                if self.countdownEvent: #Cancel countdown if any
+                    self.scheduler.cancel(self.countdownEvent)
+                if self.players:
+                    for player in self.players:
+                        DB.pop(player,None)
+                        self.players = {}
+                elif self.game: #Instance of game running
+                    await self.game.kill_game()
+                    self.game = None
                 await self.bot.sendMessage(chatID,Messages['killGame'])
+                self.chatID = None
                 return
 
     async def _initGame(self,chatID,userID,msg):
         self.chatID = chatID
         username = msg['from']['first_name']
+        if get_maintenance():
+            await self.bot.sendMessage(chatID,Messages['maintenance']['shutdown'],parse_mode='HTML')
+            return
     #Check for an ongoing game
         if self.game:
             await self.bot.sendMessage(chatID,Messages['existingGame'])
@@ -130,8 +145,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                 playerCount += 1
                 await self.bot.sendMessage(chatID,Messages['joinGame']['notMax']%(msg['from']['first_name'],playerCount,MINPLAYERS,MAXPLAYERS),parse_mode='HTML')
                 # Generate countdown event
-                #self.countdownEvent = self.scheduler.event_later(10, ('_countdown_game_start', {'seconds': 10})) #FOR TESTING
-                self.countdownEvent = self.scheduler.event_later(30, ('_countdown_game_start', {'seconds': 30})) #FOR IMPLEMENTATION
+                self.countdownEvent = self.scheduler.event_later(10, ('_countdown_game_start', {'seconds': 10})) #FOR TESTING
+                #self.countdownEvent = self.scheduler.event_later(30, ('_countdown_game_start', {'seconds': 30})) #FOR IMPLEMENTATION
             return
 
         #############
@@ -193,8 +208,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         if survivors == 2:
             timer = 10
         elif survivors <= 6:
-            #timer = 5 #FOR TESTING
-            timer = 40 #FOR IMPLEMENTATION
+            timer = 5 #FOR TESTING
+            #timer = 40 #FOR IMPLEMENTATION
         else:
             timer = 70
         await self.bot.sendMessage(self.chatID,Messages['countdownToPhase2']%(timer+20),parse_mode='HTML')
@@ -220,8 +235,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             return
         #Otherwise, set timer according to no. of survivors
         if survivors <= 3:
-            #timer = 10 #FOR TESTING
-            timer = 45 #FOR IMPLEMENTATION
+            timer = 10 #FOR TESTING
+            #timer = 45 #FOR IMPLEMENTATION
         elif survivors <= 5:
             timer = 90
         elif survivors <= 11:

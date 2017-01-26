@@ -7,20 +7,20 @@ from CallbackHandler import CallbackHandler
 from GameHandler import gameHandler
 
 '''
-chatManager handles all '/' non-game related commands,
-to be routed to CommandHandler.
+chatManager handles all '/' non-game related commands
+(also ensures /newgame and /join are used in appopriate chats).
 
 CallbackHandler handles all callback queries, including
 game-related ones (user choices)
 
 gameHandler manages /start (to get user + private chat IDs),
-/newgame, /join and /killgame, as well as the running of game in general.
+/newgame and /join, as well as the running of game in general.
 
 This is the main file that initialises the bot, and the script to run
 to start the bot.
 
 '''
-TOKEN = 'YOUR TOKEN HERE'
+TOKEN = '279291266:AAEQe3QXaPT36O51P0C4Z0KPT6ZQ_zWjwqM'
 
 DERPAssBot = telepot.aio.DelegatorBot(TOKEN, [
     pave_event_space()(per_chat_id(), create_open, chatManager, timeout=30),

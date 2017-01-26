@@ -4,7 +4,7 @@ from telepot.aio.delegate import *
 from telepot.aio.routing import *
 from telepot.namedtuple import *
 from Messages import Messages
-from Admin import start_spam, check_spam, shutdown
+from Admin import start_spam, check_spam, on_maintenance
 from Database import DB
 
 # Function to group elements together by iterating through sequence
@@ -54,7 +54,6 @@ class CommandHandler(object):
     async def on_dlyw81(self, msg, name):
         if int(msg['from']['id']) == 28173774:
             await self.bot.sender.sendMessage(Messages['spam']['start'])
-            self.bot.close()
             start_spam()
         self.bot.close()
         return
@@ -70,8 +69,7 @@ class CommandHandler(object):
     async def on_fixstuff81(self, msg, name):
         if int(msg['from']['id']) == 28173774:
             await self.bot.sender.sendMessage(Messages['maintenance']['OK'])
-            self.bot.close()
-            await shutdown()
+            on_maintenance()
         self.bot.close()
         return
 
