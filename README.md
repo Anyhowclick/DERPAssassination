@@ -1,2 +1,2 @@
 # DERPAssassination
-Code for DERP:Assassination telegram bot
+Python code for the game DERP:Assassination on Telegram. 
