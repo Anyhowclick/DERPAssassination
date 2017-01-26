@@ -4,4 +4,18 @@
 This game was first conceptualised in October 2016. It has been a solo project up till this point (Jan 2017), so the code that I've written may not the best methods used. There's definitely room for improvement in terms of data structures and parsing / processing messages sent, so there'll be changes over time.
 Nevertheless, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
 
+- Admin.py
+- Agent.py
+- AgentClasses.py
+- CallbackHandler.py
+- ChatManager.py
+- CommandHandler.py
+- Database.py
+- Game.py
+- GameHandler.py
+- Heroes.py
+- Main.py
+- Messages.py
+- README.md
+- Shield.py
 ### (To be continued)
