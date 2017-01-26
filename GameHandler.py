@@ -66,6 +66,13 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             elif command == '/join':
                 await self._joinGame(chatID,userID,msg)
 
+            elif command == '/killgame':
+                await self.game.end_game()
+                self.game = None
+                self.chatID = None
+                self.players = {}
+                await self.bot.sendMessage(chatID,Messages['killGame'])
+                return
 
     async def _initGame(self,chatID,userID,msg):
         self.chatID = chatID
@@ -125,7 +132,6 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                 # Generate countdown event
                 #self.countdownEvent = self.scheduler.event_later(10, ('_countdown_game_start', {'seconds': 10})) #FOR TESTING
                 self.countdownEvent = self.scheduler.event_later(30, ('_countdown_game_start', {'seconds': 30})) #FOR IMPLEMENTATION
-
             return
 
         #############
@@ -187,8 +193,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         if survivors == 2:
             timer = 10
         elif survivors <= 6:
-            timer = 5 #FOR TESTING
-            #timer = 40 #FOR IMPLEMENTATION
+            #timer = 5 #FOR TESTING
+            timer = 40 #FOR IMPLEMENTATION
         else:
             timer = 70
         await self.bot.sendMessage(self.chatID,Messages['countdownToPhase2']%(timer+20),parse_mode='HTML')
@@ -214,8 +220,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             return
         #Otherwise, set timer according to no. of survivors
         if survivors <= 3:
-            timer = 10 #FOR TESTING
-            #timer = 45 #FOR IMPLEMENTATION
+            #timer = 10 #FOR TESTING
+            timer = 45 #FOR IMPLEMENTATION
         elif survivors <= 5:
             timer = 90
         elif survivors <= 11:

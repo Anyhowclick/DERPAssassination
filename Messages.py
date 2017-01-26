@@ -14,7 +14,7 @@ Messages = {
 
     'acknowledgement':
         "Got it.",
-    
+
     'agentDescription':
         {   #Offense class
             "Dracule":"<b>Name:</b> Dracule\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
@@ -24,7 +24,7 @@ Messages = {
             "Grim":"<b>Name:</b> Grim\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Attacks up to 3 agents, dealing 30 damage per target. \n"\
             "<b>Ability cooldown:</b> 2 turns",
-         
+
             "Novah":"<b>Name:</b> Novah\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Sacrifices some hp to deal extra damage. \n"\
             "<b>Ability cooldown:</b> 2 turns",
@@ -36,7 +36,7 @@ Messages = {
             "Sonhae":"<b>Name:</b> Sonhae\n<b>Health:</b> 85\n<b>Damage:</b> 30\n"\
             "<b>Ability:</b> Throws C4 explosives at an opponent to deal 40 damage.\n"\
             "<b>Ability cooldown:</b> 3 turns",
-            
+
             "Taiji":"<b>Name:</b> Taiji\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Deflects all attacks back to attackers, except for some abilities.\n"\
             "<b>Ability cooldown:</b> 3 turns",
@@ -54,13 +54,13 @@ Messages = {
             "<b>Ability:</b> Bites the bullet for an agent! All damage meant for the agent will be directed"\
             "to Harambe instead. Furthermore, he recovers 25% of all damage taken this turn. \n"\
             "<b>Ability cooldown:</b> 3 turns",
-         
+
             "Impilo":"<b>Name:</b> Impilo\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Recovers 20 hp or 25% of remaining health, whever is higher."\
             "In addition, he has increased damage reduction.\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
-            
+
             #Healer class
             "Elias":"<b>Name:</b> Elias\n<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
@@ -69,7 +69,7 @@ Messages = {
             "or heal agents, not both in the same turn.\n"\
             "<b>Ability:</b> Reveal which team an agent is from!\n"\
             "<b>Ability cooldown:</b> 2 turns",
-            
+
             "Grace":"<b>Name:</b> Grace\n<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -84,8 +84,8 @@ Messages = {
             "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
             "or heal agents, not both in the same turn.\n"\
             "<b>Ability:</b> Makes an agent's ability available for use for him/her next turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",            
-            
+            "<b>Ability cooldown:</b> 3 turns",
+
             "Ralpha":"<b>Name:</b> Ralpha\n<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -93,7 +93,7 @@ Messages = {
             "or heal agents, not both in the same turn.\n"\
             "<b>Ability:</b> Restores an agent to full health (including yourself, but less effective).\n"\
             "<b>Ability cooldown:</b> 4 turns",
-         
+
             "Sanar":"<b>Name:</b> Sanar\n<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -121,12 +121,12 @@ Messages = {
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Lulls an agent to sleep, rendering that agent useless for 1 turn. \n"\
             "<b>Ability cooldown:</b> 2 turns",
-            
+
             "Munie":"<b>Name:</b> Munie\n<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Causes an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
             "<b>Ability cooldown:</b> 3 turns",
-         
+
             "Puppenspieler":"<b>Name:</b> Puppenspieler\n<b>Health:</b> 90\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Controls an agent for 1 turn. That agent's ability may be used as well (if available).\n"\
@@ -158,7 +158,7 @@ Messages = {
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Attack up to 3 agents, dealing 30 damage per target. \n"\
             "<b>Ability cooldown:</b> 2 turns",
-         
+
             "Novah": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
@@ -176,7 +176,7 @@ Messages = {
             "<b>Damage:</b> 30\n"\
             "<b>Ability:</b> Throw C4 explosives at an opponent to deal 40 damage.\n"\
             "<b>Ability cooldown:</b> 3 turns",
-            
+
             "Taiji": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
@@ -202,14 +202,14 @@ Messages = {
             "<b>Ability:</b> Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
             "to you instead. Furthermore, you will recover 25%% of all damage taken this turn. \n"\
             "<b>Ability cooldown:</b> 3 turns",
-         
+
             "Impilo": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn. \n"\
             "<b>Ability cooldown:</b> 4 turns",
 
-            
+
             #Healer class
             "Elias": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
@@ -220,7 +220,7 @@ Messages = {
             "not both in the same turn.\n"\
             "<b>Ability:</b> Reveal which team an agent is from!\n"\
             "<b>Ability cooldown:</b> 2 turns",
-            
+
             "Grace": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
@@ -240,7 +240,7 @@ Messages = {
             "not both in the same turn.\n"\
             "<b>Ability:</b> Cause an agent's ability to be available for use for him/her next turn. \n"\
             "<b>Ability cooldown:</b> 3 turns",
-            
+
             "Ralpha": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
@@ -250,7 +250,7 @@ Messages = {
             "not both in the same turn.\n"\
             "<b>Ability:</b> Restore an agent to full health (works on yourself too, but less effective).\n"\
             "<b>Ability cooldown:</b> 4 turns",
-         
+
             "Sanar": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
@@ -284,13 +284,13 @@ Messages = {
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Lull an agent to sleep, rendering that agent useless for 1 turn. \n"\
             "<b>Ability cooldown:</b> 2 turns",
-            
+
             "Munie": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Cause an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
             "<b>Ability cooldown:</b> 3 turns",
-         
+
             "Puppenspieler": "You are %s! Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
@@ -311,7 +311,7 @@ Messages = {
             "he/she will be unable to heal others.\n"\
             "<b>Ability cooldown:</b> Depends on target chosen. 3 turns for non-healers, 4 for healers.",
         },
-             
+
 
     'agentNames':
         ["Anna","Aspida","Dracule","Elias","Grim",
@@ -319,7 +319,7 @@ Messages = {
          "Novah","Prim","Ralpha","Saitami",
          "Sanar","Sonhae","Taiji","Wanda",
          ],
-    
+
     'allotSuccess':
         "Roles and teams have been allocated! Who's who:\n",
 
@@ -383,7 +383,7 @@ Messages = {
                     'Prim': "%s caused %s's ability to be ready for use next turn!\n",
                     'PrimSelf': "%s tried to use her ability on herself, but failed!\n",
                     'Ralpha': "%s restored %s back to full health! \U0001F48A\n ",
-                    'RalphaSelf': "%s heals himself back to 80% of his base health! \U0001F48A\n ",
+                    'RalphaSelf': "%s heals himself back to 80%% of his base health! \U0001F48A\n ",
                     'revealFail': "Sorry, %s is invulnerable! ¯\_(ツ)_/¯",
                     'Saitami': "%s got hit by %s's divinity bullet, and so is barely alive with 1 hp!\n",
                     'Sonhae': "%s threw C4 explosives at %s!\n",
@@ -393,12 +393,12 @@ Messages = {
                     'WandaHealer': "%s prevented %s from being healed \U0001F48A and from healing others \U00002695 this turn!\n",
                 },
             'ultInvuln': "%s tried to use his/her ability on %s, but %s is invulnerable!\n",
-         
+
         },
 
     'countdownNoRemind':
         "<b>%d</b> seconds left to join the game!",
-    
+
     'countdownRemind':
         "<b>%d</b> seconds left to join the game! Make sure "\
         "that you have a private chat open with me (tap/click this: @DERPAssassinBot) before "\
@@ -409,7 +409,7 @@ Messages = {
 
     'countdownToPhase1':
         "Everyone now has <b>%d</b> seconds to discover who their allies are and formulate strategies!",
-    
+
     'countdownToPhase2':
         "Surviving agents are given <b>%d</b> seconds to carry our their actions!",
 
@@ -439,13 +439,13 @@ Messages = {
     'failTalk':
         "%s failed to start / join a game! Would you kindly start a private chat with me first? "\
         "Tap/click this: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat</b>",
-    
+
     'findOutChar':
         "Which character would you like to know more about?",
 
     'future':
         "Refer to @DerpAssUpdates for server downtimes and upcoming features!",
-    
+
         #"At the moment, I'm sticking with having VIPs on 1 team only, but I will not rule out the possibility "\
         #"of having both sides having VIPs, and the objectives of both teams would then be the same.\n"\
         #"More characters will be added in over time, meaning more players can join the game! I prevent "\
@@ -465,7 +465,7 @@ Messages = {
          },
     'invalidCommand':
         "Sorry, I can't interpret the command you gave.",
-            
+
     'invalidText':
         "Sorry, I don't understand what you said.",
 
@@ -479,10 +479,13 @@ Messages = {
              "<b>%s</b> has joined the game. There are currently <b>%d</b> players. "\
              "<b>%d</b> players minimum, <b>%d</b> maximum",
          },
-    
+
     'joinToUser':
         "You have successfully joined the game!",
-    
+
+    'killgame':
+        "Game has been killed!",
+
     'lonely':
         "Can't play this game by yourself! (well it could in the future, but anyway...) "\
         "Find some friends to play with!",
@@ -493,8 +496,6 @@ Messages = {
                      "the latest information!",
          },
 
-    'max': "Sorry, maximum player limit reached! Wait for the next round!",
-    
     'newGame':
         "A new game has been started by %s! Use /join@DERPAssassinBot to join the game, and ensure "\
         "that you have started a private chat with me (click/tap: @DERPAssassinBot), then press /start in the private chat, "\
@@ -509,7 +510,7 @@ Messages = {
 
     'none':
         "I'm done choosing!",
-    
+
     'notPrivateChat':
         "This command is only enabled in private chats.",
 
@@ -530,7 +531,7 @@ Messages = {
               'Aspida': "Who would you like provide a shield to this turn?",
               'Elias': "Whose identity would you like to know?",
               'Grim': "to PEW! \U0001F52B",
-              'Hamia': "Choose someone to increase their damage reduction. \U0001F590\U0001F3FE",	
+              'Hamia': "Choose someone to increase their damage reduction. \U0001F590\U0001F3FE",
               'Harambe': "Who would you like to \U0001F6E1 protect?",
               'Munie': "Choose someone to be invulnerable.",
               'Prim': "Pick someone to enable his ability to be available next turn.",
@@ -651,7 +652,7 @@ Messages = {
             'deadStart': "\n<b>\U00002620 Assassinated \U00002620</b>\n",
             'VIP': "%s (\U0001F31F VIP)\n",
         },
-    
+
     'teamDERP':
         "You are a DERP \U0001F530 agent! Identify and kill all VIPs!",
 
@@ -660,7 +661,7 @@ Messages = {
 
     'timeUp':
         "Time is up!",
-    
+
     'update':
         "To be updated!",
 
@@ -674,4 +675,4 @@ Messages = {
     'yes':
         "Yes",
     }
-            
+

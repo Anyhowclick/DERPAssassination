@@ -5,6 +5,7 @@ from telepot.aio.routing import *
 from telepot.namedtuple import *
 from Messages import Messages
 from Admin import start_spam, check_spam, shutdown
+from Database import DB
 
 # Function to group elements together by iterating through sequence
 def chunker(seq, size):
@@ -57,7 +58,7 @@ class CommandHandler(object):
             start_spam()
         self.bot.close()
         return
-    
+
 # Funding the development of this game!
     async def on_donate(self, msg, name):
         if await check_spam(self.bot,msg):
@@ -73,6 +74,7 @@ class CommandHandler(object):
             await shutdown()
         self.bot.close()
         return
+
 # Planned updates!
     async def on_future(self, msg, name):
         if await check_spam(self.bot,msg):
@@ -81,16 +83,16 @@ class CommandHandler(object):
         self.bot.close()
         return
 
-# Let GameHandler take the command, will ignore            
+# Let GameHandler take the command, will ignore
     async def on_join(self, msg, name):
         if await check_spam(self.bot,msg):
             return
         elif msg['chat']['type'] == 'private':
-            await self.bot.sender.sendMessage(Messages['privateChat'])  
+            await self.bot.sender.sendMessage(Messages['privateChat'])
         elif self.verify(msg, name):
             self.bot.close()
 
-# Will send message if used in private chat, else let GameHandler take command             
+# Will send message if used in private chat, else let GameHandler take command
     async def on_newgame(self, msg, name):
         if await check_spam(self.bot,msg):
             return
@@ -106,14 +108,14 @@ class CommandHandler(object):
         await self.bot.sender.sendMessage(Messages['rate'],parse_mode='HTML')
         self.bot.close()
         return
-    
+
 # Rules of the game
     async def on_rules(self, msg, name):
         if await check_spam(self.bot,msg):
             return
         await self.bot.sender.sendMessage(Messages['rules'],parse_mode='HTML')
         self.bot.close()
-        return  
+        return
 
 # Default text user sees upon starting PM
     async def on_start(self, msg, name):
@@ -121,7 +123,7 @@ class CommandHandler(object):
             return
         elif self.verify(msg, name):
             await self.bot.sender.sendMessage(Messages['start'])
-        
+
 # Story behind the game
     async def on_story(self, msg, name):
         if await check_spam(self.bot,msg):
@@ -140,7 +142,7 @@ class CommandHandler(object):
             return
         await self.bot.sender.sendMessage(Messages['support'])
         self.bot.close()
-        return  
+        return
 
 ####################
 ##SPECIAL HANDLERS##
