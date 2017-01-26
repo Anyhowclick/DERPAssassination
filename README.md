@@ -5,9 +5,13 @@ This game was first conceptualised in October 2016. It has been a solo project u
 Nevertheless, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
 
 - Admin.py
+  - Basic spam detection, and contains the function to check whether someone is an admin of a group
 - Agent.py
+  - Contains common attributes shared by every agent character, such as health, damage, attack methods, reset_for_next_round() etc.
 - AgentClasses.py
+  - A subclass of agent, to differentiate between the 4 classes: Offense, Tank, Healer and Support
 - CallbackHandler.py
+  - Handles all callback queries (/agents command)
 - ChatManager.py
 - CommandHandler.py
 - Database.py
