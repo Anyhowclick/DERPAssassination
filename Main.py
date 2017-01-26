@@ -7,14 +7,14 @@ from CallbackHandler import CallbackHandler
 from GameHandler import gameHandler
 
 '''
-chatManager handles all '/' non-game related commands
-(also ensures /newgame and /join are used in appopriate chats).
+chatManager handles all '/' non-game related commands,
+to be routed to CommandHandler.
 
 CallbackHandler handles all callback queries, including
-game-related ones (user c5hoices)
+game-related ones (user choices)
 
 gameHandler manages /start (to get user + private chat IDs),
-/newgame and /join, as well as the running of game in general.
+/newgame, /join and /killgame, as well as the running of game in general.
 
 This is the main file that initialises the bot, and the script to run
 to start the bot.
