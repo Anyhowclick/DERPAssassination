@@ -4,6 +4,7 @@
 What's new:
 - sendMessage and editMessageText now have a wrapper function called send_message and edit_message respectively, found under Messages.py for exception handling.
 - Timer has been set to at least 90s for discussion time.
+- Added source code link in /support and main group link in /start commands
 - Minor text fixes.
 
 ## Python code for the game DERP:Assassination on Telegram.
