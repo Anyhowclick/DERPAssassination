@@ -1,6 +1,6 @@
 #Each hero might have extra attributes for ulti
 from AgentClasses import *
-from Messages import Messages
+from Messages import Messages, send_message
 from Database import DB
 from Shield import Shield
 
@@ -393,7 +393,7 @@ class Elias(Healer):
                 msg = Messages['combat']['ult']['EliasSelfPrivate']%(msg)
             else:
                 msg = Messages['combat']['ult']['EliasPrivate']%(target.get_idty(),msg)
-        await game.bot.sendMessage(self.userID,msg,parse_mode='HTML')
+        await send_message(game.bot,self.userID,msg,parse_mode='HTML')
         return
 
     ################

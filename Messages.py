@@ -1,3 +1,5 @@
+import telepot
+
 Messages = {
     'about':
         "<b>About the game</b>\n"\
@@ -147,63 +149,63 @@ Messages = {
 
     'agentDescriptionFirstPerson':
         {   #Offense class
-            "Dracule": "You are %s! Your stats and ability are listed below: \n"\
+            "Dracule": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Recover a portion of your health when attacking. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Grim": "You are %s! Your stats and ability are listed below: \n"\
+            "Grim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Attack up to 3 agents, dealing 30 damage per target. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Novah": "You are %s! Your stats and ability are listed below: \n"\
+            "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Sacrifice some of your health to deal extra damage. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Saitami": "You are %s! Your stats and ability are listed below: \n"\
+            "Saitami": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Leave your target with 1hp remaining.\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
-            "Sonhae": "You are %s! Your stats and ability are listed below: \n"\
+            "Sonhae": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 85\n"\
             "<b>Damage:</b> 30\n"\
             "<b>Ability:</b> Throw C4 explosives at an opponent to deal 40 damage.\n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Taiji": "You are %s! Your stats and ability are listed below: \n"\
+            "Taiji": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Deflect all damage targeted at you back to attackers for 1 turn (excludes some abilities).\n"\
             "<b>Ability cooldown:</b> 3 turns",
 
             #Tank class
-            "Aspida": "You are %s! Your stats and ability are listed below: \n"\
+            "Aspida": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Provide a shield (lasting 1 turn) to 1 agent. \n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Hamia": "You are %s! Your stats and ability are listed below: \n"\
+            "Hamia": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Increase damage reduction of 1 agent. \n"\
             "<b>Ability cooldown:</b> 1 turn",
 
-            "Harambe": "You are %s! Your stats and ability are listed below: \n"\
+            "Harambe": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 150\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
             "to you instead. Furthermore, you will recover 25%% of all damage taken this turn. \n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Impilo": "You are %s! Your stats and ability are listed below: \n"\
+            "Impilo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn. \n"\
@@ -211,7 +213,7 @@ Messages = {
 
 
             #Healer class
-            "Elias": "You are %s! Your stats and ability are listed below: \n"\
+            "Elias": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -221,7 +223,7 @@ Messages = {
             "<b>Ability:</b> Reveal which team an agent is from!\n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Grace": "You are %s! Your stats and ability are listed below: \n"\
+            "Grace": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -231,7 +233,7 @@ Messages = {
             "<b>Ability:</b> Resurrect a dead agent with half of their base health. \n"\
             "<b>Ability cooldown:</b> 5 turns",
 
-            "Prim": "You are %s! Your stats and ability are listed below: \n"\
+            "Prim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -241,7 +243,7 @@ Messages = {
             "<b>Ability:</b> Cause an agent's ability to be available for use for him/her next turn. \n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Ralpha": "You are %s! Your stats and ability are listed below: \n"\
+            "Ralpha": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -251,7 +253,7 @@ Messages = {
             "<b>Ability:</b> Restore an agent to full health (works on yourself too, but less effective).\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
-            "Sanar": "You are %s! Your stats and ability are listed below: \n"\
+            "Sanar": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -261,7 +263,7 @@ Messages = {
             "<b>Ability:</b> Heal up to 3 agents, 20 hp for each agent (50%% effectiveness on healing yourself still applies). \n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Yunos": "You are %s! Your stats and ability are listed below: \n"\
+            "Yunos": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 90\n"\
             "<b>Damage:</b> 17\n"\
             "<b>Heal Amount:</b> 10\n"\
@@ -272,39 +274,39 @@ Messages = {
             "<b>Ability cooldown:</b> 3 turns",
 
             #Support class
-            "Anna": "You are %s! Your stats and ability are listed below: \n"\
+            "Anna": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Power up an agent (Target agent will have increased damage, heal amount (if applicable), "\
             "and abilities powered up (if possible), for 1 turn. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Jigglet": "You are %s! Your stats and ability are listed below: \n"\
+            "Jigglet": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Lull an agent to sleep, rendering that agent useless for 1 turn. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Munie": "You are %s! Your stats and ability are listed below: \n"\
+            "Munie": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Cause an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Puppenspieler": "You are %s! Your stats and ability are listed below: \n"\
+            "Puppenspieler": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Control an agent for 1 turn. That agent's ability may be used as well (if available).\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
-            "Simo": "You are %s! Your stats and ability are listed below: \n"\
+            "Simo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Fire a shield-piercing bullet, breaking the shield of an agent (and so deals extra damage). "\
             "If the agent is not shielded, then the bullet does slightly lower damage.\n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Wanda": "You are %s! Your stats and ability are listed below: \n"\
+            "Wanda": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
@@ -413,6 +415,9 @@ Messages = {
     'countdownToPhase2':
         "Surviving agents are given <b>%d</b> seconds to carry our their actions!",
 
+    'delay':
+        "\nGame will start in 5s! Agents, prepare for battle!\n",
+    
     'donate':
         "Thank you for supporting the development of this game. You may "\
         "donate through paypal via this link: paypal.me/Anyhowclick \n"\
@@ -672,10 +677,23 @@ Messages = {
         "%s (<b>%s</b>) is one of the VIPs (or the only one)!",
 
     'VIPself':
-        "You are one of the \U0001F31F VIPs (or the only one), and thus, a PYRO \U0001F525 agent! "\
+        "You are one of the \U0001F31F <b>VIPs</b> (or the only one), and thus, a <b>PYRO \U0001F525 agent!</b> "\
         "Find other PYRO agents and get them to protect you!",
 
     'yes':
         "Yes",
     }
 
+
+async def send_message(bot,ID,message,parse_mode=None,reply_markup=None):
+    try:
+        await bot.sendMessage(ID,message,parse_mode=parse_mode,reply_markup=reply_markup)
+    except telepot.exception.BotWasBlockedError:
+        return
+    except telepot.exception.TelegramError:
+        return
+    return
+
+async def edit_message(editor,message,reply_markup=None,parse_mode=None):
+    await editor.editMessageText(message,reply_markup=reply_markup,parse_mode='HTML')
+    return

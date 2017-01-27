@@ -1,7 +1,7 @@
 import telepot
 from telepot.namedtuple import *
 from Agent import Agent
-from Messages import Messages
+from Messages import Messages, send_message
 from Database import DB
 
 #############################

@@ -3,7 +3,7 @@ import telepot
 from telepot.aio.delegate import *
 from telepot.aio.routing import *
 from telepot.namedtuple import *
-from Messages import Messages
+from Messages import Messages, send_message
 from Admin import start_spam, check_spam, on_maintenance
 from Database import DB
 
@@ -24,19 +24,21 @@ class CommandHandler(object):
 
 # Gives information about me! =)
     async def on_about(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
         elif self.verify(msg, name):
-            await self.bot.sender.sendMessage(Messages['about'],parse_mode='HTML')
+            await send_message(self.bot.bot,userID,Messages['about'],parse_mode='HTML')
             self.bot.close()
             return
 
 # Gives information about the agents. Command is only to be used in private chat
     async def on_agents(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
         elif msg['chat']['type']!='private':
-            await self.bot.sender.sendMessage(Messages['notPrivateChat'])
+            await send_message(self.bot.bot,userID,Messages['notPrivateChat'])
             return
         elif self.verify(msg, name):
             keyboard = []
@@ -46,7 +48,7 @@ class CommandHandler(object):
                     result.append(InlineKeyboardButton(text=element,callback_data=element))
                 keyboard.append(result)
             markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
-            await self.bot.sender.sendMessage(Messages['findOutChar'],
+            await send_message(self.bot.bot,userID,Messages['findOutChar'],
                                           reply_markup = markup)
             self.bot.close()
 
@@ -75,70 +77,78 @@ class CommandHandler(object):
 
 # Planned updates!
     async def on_future(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
-        await self.bot.sender.sendMessage(Messages['future'])
+        await send_message(self.bot.bot,userID,Messages['future'])
         self.bot.close()
         return
 
 # Let GameHandler take the command, will ignore
     async def on_join(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
         elif msg['chat']['type'] == 'private':
-            await self.bot.sender.sendMessage(Messages['privateChat'])
+            await send_message(self.bot.bot,userID,Messages['privateChat'])
         elif self.verify(msg, name):
             self.bot.close()
 
 # Will send message if used in private chat, else let GameHandler take command
     async def on_newgame(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
         elif msg['chat']['type'] == 'private':
-            await self.bot.sender.sendMessage(Messages['lonely'])
+            await send_message(self.bot.bot,userID,Messages['lonely'])
         elif self.verify(msg, name):
             self.bot.close()
 
 # Rate the game!
     async def on_rate(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
-        await self.bot.sender.sendMessage(Messages['rate'],parse_mode='HTML')
+        await send_message(self.bot.bot,userID,Messages['rate'],parse_mode='HTML')
         self.bot.close()
         return
 
 # Rules of the game
     async def on_rules(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
-        await self.bot.sender.sendMessage(Messages['rules'],parse_mode='HTML')
+        await send_message(self.bot.bot,userID,Messages['rules'],parse_mode='HTML')
         self.bot.close()
         return
 
 # Default text user sees upon starting PM
     async def on_start(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
         elif self.verify(msg, name):
-            await self.bot.sender.sendMessage(Messages['start'])
+            await send_message(self.bot.bot,userID,Messages['start'])
 
 # Story behind the game
     async def on_story(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
         elif msg['chat']['type']!='private':
-            await self.bot.sender.sendMessage(Messages['notPrivateChat'])
+            await send_message(self.bot.bot,userID,Messages['notPrivateChat'])
             return
         elif self.verify(msg, name):
-            await self.bot.sender.sendMessage(Messages['story'])
+            await send_message(self.bot.bot,userID,Messages['story'])
             self.bot.close()
         return
 
 # Bot support
     async def on_support(self, msg, name):
+        userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
-        await self.bot.sender.sendMessage(Messages['support'])
+        await send_message(self.bot.bot,userID,Messages['support'])
         self.bot.close()
         return
 

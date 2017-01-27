@@ -3,7 +3,7 @@ import asyncio
 import telepot
 import telepot.aio
 import time
-from Messages import Messages
+from Messages import Messages, send_message
 from Database import DB,SPAM,STRIKE,BLOCKED
 
 THRESHOLD = {0:0.75, 1:0.7, 2:0.7, 3:0.6, 4:0.6, 5:0.6, 6:0.6, 7:0.6, 8:0.6}
@@ -38,7 +38,7 @@ async def check_spam(handler,msg):
         strike += 1
         STRIKE[userID] = strike 
         BLOCKED[userID] = round(time.time(),3) #store current time
-        await handler.bot.sendMessage(userID,Messages['spam'][strike],parse_mode='HTML')
+        await send_message(handler.bot,userID,Messages['spam'][strike],parse_mode='HTML')
         return True
     return False
 

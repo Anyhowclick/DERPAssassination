@@ -3,7 +3,7 @@ import telepot
 import time
 from telepot.aio.routing import *
 from telepot.namedtuple import *
-from Messages import Messages
+from Messages import Messages, send_message, edit_message
 from Database import DB
 
 # Function to group elements together by iterating through sequence
@@ -28,7 +28,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                                            InlineKeyboardButton(text="No",callback_data="No")]
                                            ])
             
-            await self.editor.editMessageText(text,reply_markup=markup,parse_mode='HTML')
+            await edit_message(self.editor,text,reply_markup=markup,parse_mode='HTML')
 
         elif queryData == "Yes":
             await self.editor.editMessageReplyMarkup(reply_markup=None)
@@ -40,11 +40,11 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                     result.append(InlineKeyboardButton(text=element,callback_data=element))
                 keyboard.append(result)
             markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
-            await self.bot.sendMessage(fromID,Messages['findOutChar'],reply_markup = markup)
+            await send_message(self.bot,fromID,Messages['findOutChar'],reply_markup = markup)
 
         elif queryData == "No":
             await self.editor.editMessageReplyMarkup(reply_markup=None)
-            await self.bot.sendMessage(fromID,'Alright.')
+            await send_message(self.bot,fromID,'Alright.')
             self.close()
 
         ##################################
@@ -59,17 +59,17 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
             
             if queryData == '{ULTYES}':
                 await agent.editor.editMessageReplyMarkup(reply_markup=None) #no acknowledgement message
-                await self.bot.sendMessage(fromID,Messages['abilityUsed'],parse_mode='HTML')
+                await send_message(self.bot,fromID,Messages['abilityUsed'],parse_mode='HTML')
                 queryData = queryData[:-1] + '|'+ str(date) + '|}' #so structure becomes {ULTYES|date|}
                 
             #If callback data is just an option to call another query
             elif queryData ==  '{ULTNO}':
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
-                await self.bot.sendMessage(fromID,Messages['abilityNotUsed'],parse_mode='HTML')
+                await send_message(self.bot,fromID,Messages['abilityNotUsed'],parse_mode='HTML')
 
             elif queryData == '{NONE}':
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
-                await self.bot.sendMessage(fromID,Messages['acknowledgement'],parse_mode='HTML')
+                await send_message(self.bot,fromID,Messages['acknowledgement'],parse_mode='HTML')
                 self.close()
                 return
 
@@ -77,7 +77,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
                 
             else: #callback data has the data structure: agentName{|targetAgentName|option|}
-                await agent.editor.editMessageText(Messages['choiceAccept']%(queryData.split('|')[1]),
+                await edit_message(agent.editor,Messages['choiceAccept']%(queryData.split('|')[1]),
                                                    reply_markup=None,
                                                    parse_mode='HTML')
                 queryData = queryData[:-1] + str(date) + '|}' #so structure becomes agentName{|targetAgentName|option|date|}
