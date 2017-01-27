@@ -1,4 +1,11 @@
 # DERP:Assassination
+
+## Changelog 28/1/17 0142 hrs
+What's new:
+- sendMessage and editMessageText now have a wrapper function called send_message and edit_message respectively, found under Messages.py for exception handling.
+- Timer has been set to at least 90s for discussion time.
+- Minor text fixes.
+
 ## Python code for the game DERP:Assassination on Telegram.
 
 This game was first conceptualised in October 2016. It has been a solo project up till this point (Jan 2017), so the code that I've written may not the best methods used. There's definitely room for improvement in terms of data structures and parsing / processing messages sent, so there'll be changes over time.
