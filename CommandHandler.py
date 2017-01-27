@@ -148,7 +148,7 @@ class CommandHandler(object):
         userID = msg['from']['id']
         if await check_spam(self.bot,msg):
             return
-        await send_message(self.bot.bot,userID,Messages['support'])
+        await send_message(self.bot.bot,userID,Messages['support'],parse_mode='HTML')
         self.bot.close()
         return
 
