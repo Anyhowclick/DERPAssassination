@@ -641,7 +641,7 @@ Messages = {
         "in further development (One man army at the moment, I don't mind extra hands, "\
         "but you won't get paid \U0001F61D), you may PM @Anyhowclick \U0001F603"\
         "You may refer to @DerpAssUpdates for server maintenance times and upcoming features as well!\n\n"\
-        "<a href='https://github.com/Anyhowclick/DERPAssassinationn'>Source code</a> for this game! \U0001F601!",
+        "Here's the <a href='https://github.com/Anyhowclick/DERPAssassinationn'>source code</a> for this game! \U0001F601!",
 
     'summary':
         {
