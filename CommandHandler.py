@@ -20,15 +20,19 @@ class CommandHandler(object):
     def verify(self, msg, name):
         return True if ('DERPAssassinBot' in name) or (not name and msg['chat']['type']=='private') else False
 
+# Route accordingly. If private msg, then send privately, else should send in the grp chat
+    def get_ID(self,msg):
+        return msg['from']['id'] if msg['chat']['type'] == 'private' else msg['chat']['id']
+
 # Methods are sorted by alphabetical order, but special handlers are placed at the bottom
 
 # Gives information about me! =)
     async def on_about(self, msg, name):
-        userID = msg['from']['id']
+        ID = self.get_ID(msg)
         if await check_spam(self.bot,msg):
             return
         elif self.verify(msg, name):
-            await send_message(self.bot.bot,userID,Messages['about'],parse_mode='HTML')
+            await send_message(self.bot.bot,ID,Messages['about'],parse_mode='HTML')
             self.bot.close()
             return
 
@@ -77,10 +81,10 @@ class CommandHandler(object):
 
 # Planned updates!
     async def on_future(self, msg, name):
-        userID = msg['from']['id']
+        ID = self.get_ID(msg)
         if await check_spam(self.bot,msg):
             return
-        await send_message(self.bot.bot,userID,Messages['future'])
+        await send_message(self.bot.bot,ID,Messages['future'])
         self.bot.close()
         return
 
@@ -106,29 +110,29 @@ class CommandHandler(object):
 
 # Rate the game!
     async def on_rate(self, msg, name):
-        userID = msg['from']['id']
+        ID = self.get_ID(msg)
         if await check_spam(self.bot,msg):
             return
-        await send_message(self.bot.bot,userID,Messages['rate'],parse_mode='HTML')
+        await send_message(self.bot.bot,ID,Messages['rate'],parse_mode='HTML')
         self.bot.close()
         return
 
 # Rules of the game
     async def on_rules(self, msg, name):
-        userID = msg['from']['id']
+        ID = self.get_ID(msg)
         if await check_spam(self.bot,msg):
             return
-        await send_message(self.bot.bot,userID,Messages['rules'],parse_mode='HTML')
+        await send_message(self.bot.bot,ID,Messages['rules'],parse_mode='HTML')
         self.bot.close()
         return
 
 # Default text user sees upon starting PM
     async def on_start(self, msg, name):
-        userID = msg['from']['id']
+        ID = self.get_ID(msg)
         if await check_spam(self.bot,msg):
             return
         elif self.verify(msg, name):
-            await send_message(self.bot.bot,userID,Messages['start'])
+            await send_message(self.bot.bot,ID,Messages['start'])
 
 # Story behind the game
     async def on_story(self, msg, name):
@@ -145,10 +149,10 @@ class CommandHandler(object):
 
 # Bot support
     async def on_support(self, msg, name):
-        userID = msg['from']['id']
+        ID = self.get_ID(msg)
         if await check_spam(self.bot,msg):
             return
-        await send_message(self.bot.bot,userID,Messages['support'],parse_mode='HTML')
+        await send_message(self.bot.bot,ID,Messages['support'],parse_mode='HTML')
         self.bot.close()
         return
 
