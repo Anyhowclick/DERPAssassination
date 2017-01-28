@@ -417,7 +417,7 @@ Messages = {
 
     'delay':
         "\nGame will start in 5s! Agents, prepare for battle!\n",
-    
+
     'donate':
         "Thank you for supporting the development of this game. You may "\
         "donate through paypal via this link: paypal.me/Anyhowclick \n"\
@@ -624,7 +624,7 @@ Messages = {
         "Make sure that all players must first have a private chat with the bot first before joining, "\
         "so that I can PM classified information to each player. Use /rules to find out how this game is played."\
         "/agents will give more info about each agent's ability and stats. "\
-        "/story gives the lore of the game. Here's the <a href='https://t.me/joinchat/AAAAAAtaFIkJXlK8G1odnQ'>main group</a> for the game currently. Have lots of fun!",
+        "/story gives the lore of the game. Here's the <a href='https://t.me/joinchat/AAAAAAtaFIkFyUyu7BCAfQ'>main group</a> for the game currently. Have lots of fun!",
 
     'story':
         "Long ago, the world \U0001F30E	lived together in harmony. Then, everything changed "\

@@ -132,7 +132,7 @@ class CommandHandler(object):
         if await check_spam(self.bot,msg):
             return
         elif self.verify(msg, name):
-            await send_message(self.bot.bot,ID,Messages['start'])
+            await send_message(self.bot.bot,ID,Messages['start'],parse_mode='HTML')
 
 # Story behind the game
     async def on_story(self, msg, name):
