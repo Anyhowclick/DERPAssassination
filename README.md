@@ -1,5 +1,14 @@
 # DERP:Assassination
 
+## Upcoming changes
+- Preparing code for multi-language support
+- Allowing people to leave after joining a game, but only if it hasn't started (/flee command)
+- Showing round number; giving extra space between sentences and bolding usernames in combat log for better readibility
+- Edited timer to be a custom math function instead of set values.
+- Raise minimum players from 2 to 3 (TBC)
+- Add support group link in /support
+- Remove private notifications upon successfully starting / joining a game
+
 ## Changelog 28/1/17 0142 hrs
 What's new:
 - sendMessage and editMessageText now have a wrapper function called send_message and edit_message respectively, found under Messages.py for exception handling.
