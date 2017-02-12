@@ -507,7 +507,7 @@ Messages = {
         "A new game has been started by %s! Use /join@DERPAssassinBot to join the game, and ensure "\
         "that you have started a private chat with me (click/tap: @DERPAssassinBot), then press /start in the private chat, "\
         "so I can interact with you throughout the game.\n\n"
-        "<b>%d</b> players minimum, <b>%d</b> maximum",
+        "<b>%d</b> players minimum, <b>%d</b> maximum\n",
 
     'newGameToUser':
         "You have successfully started a game!",
