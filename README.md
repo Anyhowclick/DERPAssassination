@@ -7,14 +7,13 @@ What's new:
   - Tweaked timer that auto-adjusts based on no. of survivors and no. of rounds elapsed
   - Shorter combat logs by no longer showing remaining hp and the word "damages" for normal attacks in combat log. Remaining hp will be displayed only in summary message
   
-## Upcoming changes
-- Preparing code for multi-language support
+## Upcoming changes, last updated 13/2/17
+- Preparing code for multi-language support (In progress)
 - Allowing people to leave after joining a game, but only if it hasn't started (/flee command)
 - Showing round number; giving extra space between sentences and bolding usernames in combat log for better readibility
-- Edited timer to be a custom math function instead of set values.
+- ~~Edited timer to be a custom math function instead of set values.~~ (Done!)
 - Raise minimum players from 2 to 3 (TBC)
 - Add support group link in /support
-- Remove private notifications upon successfully starting / joining a game
 
 ## Changelog 28/1/17 0142 hrs
 What's new:
