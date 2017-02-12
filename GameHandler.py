@@ -232,12 +232,14 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             self.chatID = None
             self.players = {}
             return
-        #Otherwise, set timer according to no. of survivors
-        if survivors <= 5:
-            timer = 90
-        elif survivors <= 11:
-            timer = 120
+        #Otherwise, set timer according to customised math function
+        rnd = self.game.round
+        if survivors == 2:
+            timer = 30
         else:
-            timer = 150
+            weight = 1/(1+0.001*math.pow(math.e,0.55*rnd))
+            timer = weight*(60*(1 + 1/(0.5+math.pow(math.e,4-0.55*survivors))))+(1-weight)*(-60*(2/(1+math.pow(math.e,5.2-0.73*rnd))-3))
+            timer = int(round(timer,-1))
+            
         await send_message(self.bot,self.chatID,Messages['countdownToPhase1']%(timer),parse_mode='HTML')
         self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
