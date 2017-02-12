@@ -3,6 +3,7 @@
 ## Changelog 13/2/17 0013 hrs
 What's new:
   - Tweaked ratio of VIPs to DERP agents (1:1.5 to 2 instead of 1:1)
+  - Rules were edited accordingly to reflect the tweaked ratio
   - Shorter combat logs by no longer showing remaining hp and the word "damages" for normal attacks in combat log. Remaining hp will be displayed only in summary message
   
 ## Upcoming changes
