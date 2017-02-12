@@ -341,9 +341,8 @@ Messages = {
             'failHeal': "%s failed to heal %s! \U0001F61E\n",
             'failHealSelf': "%s tried to recover health, but failed! \U0001F61E\n",
             'failShield': "%s could not shield %s!\n",
-            'hpLeft': "%s has %d hp left!\n",
             'heal': "%s has %d hp after healing from \U00002764 %s!\n",
-            'hurt': "%s damages \U0001F52A %s!\n",
+            'hurt': "%s \U0001F52A %s!\n",
             'intro': "<b>\U00002694 COMBAT \U00002694</b>\n",
             'invuln': "%s was attacked, but is invulnerable!\n",
             'KO': "<b>You have been assassinated \U0001F480!!</b>",
@@ -571,18 +570,18 @@ Messages = {
         "Each class has its strength (dealing most damage, or has damage reduction etc.), "\
         "and every agent has a unique ability. \n\n"\
 
-        "The number of DERP agents and VIP agents <b>are equal</b>. Assignment of VIPs/DERP agents is as follows:\n"\
-        "3-4 players: 1\n"\
-        "5-7 players: 2\n"\
-        "8-10 players: 3\n"\
-        "11-13 players: 4\n"\
-        "14-16 players: 5\n"\
-        "17-19 players: 6\n"\
-        "20-22 players: 7\n"\
-        "23-25 players: 8\n"\
-        "26-28 players: 9\n"\
-        "29-32 players: 10\n"\
-        "Each VIP will be made known to 1-2 other PYRO players, and <b>each DERP agent knows who other DERP agents are.</b> "\
+        "The assignment of DERP agents and VIP agents <b>(in brackets)</b> is as follows:\n"\
+        "3-4 players: 1 DERP, 1 VIP\n"\
+        "5-7 players: 2 DERP, 1 VIP\n"\
+        "8-10 players: 3 DERP, 2 VIPs\n"\
+        "11-13 players: 4 DERP, 2 VIPs\n"\
+        "14-16 players: 5 DERP, 3 VIPs\n"\
+        "17-19 players: 6 DERP, 3 VIPs\n"\
+        "20-22 players: 7 DERP, 4 VIPs\n"\
+        "23-25 players: 8 DERP, 4 VIPs\n"\
+        "26-28 players: 9 DERP, 5 VIPs\n"\
+        "29-32 players: 10 DERP, 5 VIPs\n"\
+        "Each VIP will be made known to 1 other PYRO agent, and <b>each DERP agent knows who other DERP agents are.</b> "\
         "So PYRO agents (and VIPs) have to figure out who to trust, while DERP agents try to blend in. This is where "\
         "deception can come into play.\n\n"\
 
@@ -607,6 +606,7 @@ Messages = {
         "each round lasts 150-210 seconds, a game is expected to take 15-30 mins, but can stretch to a maximum "\
         "of 87.5 mins.\n\n"\
         "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.",
+    
     'spam':
         {'start': 'Spam detector initialised!',
          1: "I won't respond for 10 seconds because you have been "\
@@ -624,7 +624,7 @@ Messages = {
         "Make sure that all players must first have a private chat with the bot first before joining, "\
         "so that I can PM classified information to each player. Use /rules to find out how this game is played."\
         "/agents will give more info about each agent's ability and stats. "\
-        "/story gives the lore of the game. Here's the <a href='https://t.me/joinchat/AAAAAAtaFIkFyUyu7BCAfQ'>main group</a> for the game currently. Have lots of fun!",
+        "/story gives the lore of the game. Here's the <a href='https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg'>main group</a> for the game currently. Have lots of fun!",
 
     'story':
         "Long ago, the world \U0001F30E	lived together in harmony. Then, everything changed "\

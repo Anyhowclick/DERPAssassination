@@ -11,21 +11,19 @@ from Database import DB
 '''
 no. of VIPs and DERP agents are determined as such:
 --VIPs and DERP agents--
-No. of VIPs = no. of DERP agents
-3-4 players: 1
-5-7 players: 2
-8-10 players: 3
-11-13 players: 4
-14-16 players: 5
-17-19 players: 6
-20-22 players: 7
-23-25 players: 8
-26-28 players: 9
-29-32 players: 10
+No. of DERP agents = 2x no. of VIPs (rounded up if odd)
+Numbers below are no. of DERP agents, brackets = no. of VIPs
 
---Innercircle--
-no.of players <=4: 1
-no.of players > 4: 2 if (no.of players - 1) divisible by 3 else 1
+3-4 players: 1
+5-7 players: 2 (1)
+8-10 players: 3 (2)
+11-13 players: 4 (2)
+14-16 players: 5 (3)
+17-19 players: 6 (3)
+20-22 players: 7 (4)
+23-25 players: 8 (4)
+26-28 players: 9 (5)
+29-32 players: 10 (5)
 '''
 
 #Sorting order for queries
@@ -91,22 +89,21 @@ class Game(object):
         self.agents = {}
         self.round = 0 # Denotes current round
         playerCount = len(players)
-        #determine no. of VIPs and DERP agents to have (both are the same!), and how many people should know per VIP
+        #determine no. of VIPs and DERP agents to have (DERP is 1.5 or 2x more than VIPs!)
         if playerCount <= 4:
-            VIPCount = 1
-            innerCircle = 1
+            DERPCount = 1
         else:
-            VIPCount = (playerCount+1)//3
-            innerCircle = 2 if not (playerCount-1)%3 else 1
-        self.VIPCount = VIPCount
-        self.innerCircle = innerCircle
+            DERPCount = (playerCount+1)//3
+        
+        self.DERPCount = DERPCount
+        self.VIPCount = int(round((DERPCount/2)+0.1, 0))
 
         #######################################################
         ### Assigning and PM-ing roles and teams to players ###
         #######################################################
     async def allocate(self,players,playerCount,game):
+        DERPCount = game.DERPCount
         VIPCount = game.VIPCount
-        innerCircle = game.innerCircle
         AGENTS = allAgents()
         
         for count in range(1,playerCount+1):
@@ -125,7 +122,7 @@ class Game(object):
             message = Messages['agentDescriptionFirstPerson'][player.agentName]%(player.agentName) #PM player role
             await self.bot.sendMessage(playerID,message,parse_mode='HTML')
             #Assigning teams
-            if count <= VIPCount: #first assign DERP agents
+            if count <= DERPCount: #first assign DERP agents
                 player.team = 'DERP'
                 await send_message(self.bot,playerID,Messages['teamDERP'])
             elif (playerCount-count) >= VIPCount: #followed by PYRO agents
@@ -135,12 +132,11 @@ class Game(object):
                 player.team = 'PYROVIP'
                 await send_message(self.bot,playerID,Messages['VIPself'],parse_mode='HTML')
                 if playerCount > 3: #Handle special case when only 3 people, then no need for innerCircle
-                    for innerCount in range(0,innerCircle):
-                        randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
-                        while randomPlayer.userID == player.userID: #ensure that someone other than the VIP himself is selected
-                            randomPlayer = random.choice(list(self.get_alive_PYROteam().values())) 
-                            #PM the chosen player
-                        await send_message(self.bot,randomPlayer.userID,Messages['VIP']%(player.agentName,player.firstName),parse_mode='HTML')
+                    randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
+                    while randomPlayer.userID == player.userID: #ensure that someone other than the VIP himself is selected
+                        randomPlayer = random.choice(list(self.get_alive_PYROteam().values())) 
+                    #PM the chosen player
+                    await send_message(self.bot,randomPlayer.userID,Messages['VIP']%(player.agentName,player.firstName),parse_mode='HTML')
 
         #Let DERP agents know who is on their team
         DERPmsg = Messages['summary']['teamDERP']

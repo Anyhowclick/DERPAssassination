@@ -23,6 +23,7 @@ class chatManager(telepot.aio.helper.ChatHandler):
                                                  'join',
                                                  'rate',
                                                  'rules',
+                                                 'setlang'
                                                  'start',
                                                  'story',
                                                  'support',
@@ -55,4 +56,10 @@ class chatManager(telepot.aio.helper.ChatHandler):
         return
 
     async def on_sticker(self,msg,name):
-        return    
+        return
+
+    async def on_location(self,msg,name):
+        return
+
+    async def on_new_chat_photo(self,msg,name):
+        return

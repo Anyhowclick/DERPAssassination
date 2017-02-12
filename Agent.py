@@ -111,7 +111,7 @@ class Agent(object):
         self.health = max(self.health-hp, 0)
         if (not self.health):
             return msg + self.die()
-        return msg + Messages['combat']['hpLeft']%(self.agentName,int(self.health))
+        return msg
         
 
     def add_dmg(self,dmg): #dmg > 0 = addDmg, dmg < 0 = reduceDmg

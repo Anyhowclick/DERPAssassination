@@ -426,7 +426,7 @@ class Ralpha(Healer):
             return result
         target.reset_health()
         if self == target:
-            self.dropHealth(0.2*self.health)
+            self.drop_health(0.2*self.health)
             return Messages['combat']['ult']['RalphaSelf']%(self.get_idty())
         return Messages['combat']['ult']['Ralpha']%(self.get_idty(),target.get_idty())
     
@@ -587,7 +587,7 @@ class Anna(Support):
 
             elif isinstance(ally,Impilo):
                 ally.add_ult_dmg_reduction(0.05)
-                ally.add_ult_ult_health(10)
+                ally.add_ult_health(10)
 
             elif isinstance(ally,Hamia):
                 ally.add_ult_dmg_reduction(0.08)
