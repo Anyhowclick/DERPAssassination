@@ -1,8 +1,12 @@
 # DERP:Assassination
 
 ## Upcoming changes, last updated 19/2/17
+* Increased randomness in choosing hero / selecting player
+* Health shown to 1dp instead of integer
+* Removal of /future command
+* Majority of commands will be 'disabled' and instead show maintenance message upon incoming fixes / updates
+* Added support group link in /support
 * Raise minimum players from 2 to 3 (TBC)
-* Add support group link in /support
 
 ## Changelog 19/2/17 1930 hrs
 What's new:
