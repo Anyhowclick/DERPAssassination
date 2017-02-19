@@ -6,13 +6,13 @@
 
 ## Changelog 19/2/17 1930 hrs
 What's new:
-    * Preparation for multi-language support
-    * New /leave command in GameHandler.py
-    * Used a bit more emojis in Messages.py (English version)
-    * Replaced "COMBAT" with round number
-    * Bot now sends fewer messages by editing previous messages whenever applicable. (To prevent hitting API limits)
-    * Fixed a bug involving the scenario where Harambe shields himself, dies and recovers negative health
-    * Minor bug fixes (Spelling errors, wrong caps etc.)
+  - Preparation for multi-language support
+  - New /leave command in GameHandler.py
+  - Used a bit more emojis in Messages.py (English version)
+  - Replaced "COMBAT" with round number
+  - Bot now sends fewer messages by editing previous messages whenever applicable. (To prevent hitting API limits)
+  - Fixed a bug involving the scenario where Harambe shields himself, dies and recovers negative health
+  - Minor bug fixes (Spelling errors, wrong caps etc.)
   
 ## Changelog 13/2/17 0051 hrs
 What's new:
