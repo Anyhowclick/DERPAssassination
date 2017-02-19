@@ -1,19 +1,25 @@
 # DERP:Assassination
 
+## Upcoming changes, last updated 19/2/17
+- Raise minimum players from 2 to 3 (TBC)
+- Add support group link in /support
+
+## Changelog 19/2/17 1930 hrs
+What's new:
+    - Preparation for multi-language support
+    - New /leave command in GameHandler.py
+    - Used a bit more emojis in Messages.py (English version)
+    - Replaced "COMBAT" with round number
+    - Bot now sends fewer messages by editing previous messages whenever applicable. (To prevent hitting API limits)
+    - Fixed a bug involving the scenario where Harambe shields himself, dies and recovers negative health
+    - Minor bug fixes (Spelling errors, wrong caps etc.)
+  
 ## Changelog 13/2/17 0051 hrs
 What's new:
   - Tweaked ratio of VIPs to DERP agents (1:1.5 to 2 instead of 1:1)
   - Rules were edited accordingly to reflect the tweaked ratio
   - Tweaked timer that auto-adjusts based on no. of survivors and no. of rounds elapsed
   - Shorter combat logs by no longer showing remaining hp and the word "damages" for normal attacks in combat log. Remaining hp will be displayed only in summary message
-  
-## Upcoming changes, last updated 13/2/17
-- Preparing code for multi-language support (In progress)
-- Allowing people to leave after joining a game, but only if it hasn't started (/flee command)
-- Showing round number; giving extra space between sentences and bolding usernames in combat log for better readibility
-- ~~Edited timer to be a custom math function instead of set values.~~ (Done!)
-- Raise minimum players from 2 to 3 (TBC)
-- Add support group link in /support
 
 ## Changelog 28/1/17 0142 hrs
 What's new:
@@ -55,5 +61,3 @@ Nevertheless, I hope what's explained below will make my code easier to read, an
   - This document!
 - Shield.py
   - Shield object for an agent. *Newest feature*
-
-### (To be continued)
