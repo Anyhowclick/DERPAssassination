@@ -1,15 +1,15 @@
 import telepot
 from telepot.namedtuple import *
 from Agent import Agent
-from Messages import Messages, send_message
-from Database import DB
+from Messages import send_message, edit_message
+from Database import DB, LANG
 
 #############################
 ##### GENERATE KEYBOARD #####
 #############################
 
 #generate inline keyboard for callback queries
-def generate_keyboard(agentName, choice, data):
+def generate_keyboard(Messages, agentName, choice, data):
     #For binary options, callback data is simple, explictly stated below
     if choice == 'ultOption': #Generate binary option
         return [[InlineKeyboardButton(text=Messages['yes'],callback_data="{ULTYES}"),
@@ -33,7 +33,7 @@ def generate_keyboard(agentName, choice, data):
     
     result = []        
     for agent in data:
-        result.append([InlineKeyboardButton(text=agent.get_idty(),
+        result.append([InlineKeyboardButton(text=agent.get_idty_query(),
                                             callback_data=agentName+"{|"+agent.agentName+"|"+choice+"|}")])
     return result
 
@@ -50,48 +50,55 @@ async def send_query(self,bot,data,players,mode):
     #single: select 1 target
     #multi: select multiple targets
     #data = callback data, players = list of agents
+    Messages = LANG[self.userID]
     if data == 'startQuery':
         if isinstance(self,Healer):
             if self.ultAvail:
                 message = Messages['query']['doWhat']
-                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'3options',players))
+                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'3options',players))
             else:
                 message = Messages['query']['doWhat']
-                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'attHeal',players))
+                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'attHeal',players))
         else:
             if self.ultAvail:
                 message = Messages['query']['canUlt']
-                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'ultOption',players))
+                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'ultOption',players))
             else:
                 message = Messages['query']['attack']
-                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'attack',players))
+                markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'attack',players))
 
     elif data =='healerOptionsAfterUlt':
         message = Messages['query']['doWhatNext']
-        markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'attHeal',players))
+        markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'attHeal',players))
         
     elif data == 'heal':
         message = Messages['query']['heal']
-        markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'heal',players))
+        markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'heal',players))
         
     elif 'ult' in data:
         if mode == 'single':
             message = Messages['query']['ult'][self.agentName]
-            markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'ult',players))
+            markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'ult',players))
 
         elif mode == 'multi': #Ult data will be (ult,%d) where %d is the nth target to use his ability on
             num = int(data[1])
             message = Messages['query']['select'][min(4,num)]%(num) + Messages['query']['ult'][self.agentName]
-            keyboard = generate_keyboard(self.agentName,'ult|'+str(num),players)
+            keyboard = generate_keyboard(Messages,self.agentName,'ult|'+str(num),players)
             if num > 1: #Add a 'I'm done' option
                 keyboard.append([InlineKeyboardButton(text=Messages['none'],callback_data='{NONE}')])
             markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
     else:
         message = Messages['query']['attack']
-        markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(self.agentName,'attack',players))
-            
-    sent = await bot.sendMessage(self.userID,message,reply_markup=markup)
-    self.editor = telepot.aio.helper.Editor(bot,telepot.message_identifier(sent))
+        markup = InlineKeyboardMarkup(inline_keyboard = generate_keyboard(Messages,self.agentName,'attack',players))
+
+    #If first query, send new message
+    if not self.editor:
+        sent = await send_message(bot,self.userID,message,reply_markup=markup)
+        self.editor = telepot.aio.helper.Editor(bot,telepot.message_identifier(sent))
+
+    #Otherwise, keep editing the old one!!
+    else:
+        await edit_message(self.editor,message,reply_markup=markup)
     return
 
 ###################
@@ -192,7 +199,7 @@ async def process_query_multi(self,game,queryData,limit): #limit = max no. of se
 
 #Offense heroes can have their ults powered up, except for 2 (Taiji & Saitami)
 class Offense(Agent):
-    def __init__(self, agentName, userID, username, firstName,
+    def __init__(self, agentName, userID, username, firstName, Messages,
                  baseHealth=None, baseDmg=25, baseUltCD=None, baseUltDmg=0, ultDmg=None,
                  alive=True,health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=True, attackAfterUlt=True,
@@ -204,7 +211,7 @@ class Offense(Agent):
         self.baseUltDmg = baseUltDmg
         self.ultDmg = ultDmg if ultDmg else self.baseUltDmg
         
-        super().__init__(agentName, userID, username, firstName,
+        super().__init__(agentName, userID, username, firstName, Messages,
                          baseHealth, baseDmg, baseUltCD,
                          alive, health, dmg,
                          ultCD, ultAvail, ultUsed, buffUlt, attackAfterUlt,
@@ -243,7 +250,7 @@ class Offense(Agent):
 ####################
         
 class Tank(Agent):
-    def __init__(self, agentName, userID, username, firstName,
+    def __init__(self, agentName, userID, username, firstName, Messages,
                  baseHealth=130, baseDmg=20, baseUltCD=3,
                  alive=True, health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=False, attackAfterUlt=True,
@@ -251,7 +258,7 @@ class Tank(Agent):
                  asleep=False, invuln=False, controlled=False, shield=None, dmgReduction=0.02, protector=None
                  ):
         
-        super().__init__(agentName, userID, username, firstName,
+        super().__init__(agentName, userID, username, firstName, Messages,
                          baseHealth, baseDmg, baseUltCD,
                          alive, health, dmg,
                          ultCD, ultAvail, ultUsed, buffUlt, attackAfterUlt,
@@ -281,7 +288,7 @@ class Tank(Agent):
 # Note that Healers have extra attributes: baseHealAmt and healAmt, and thus, have extra methods too
 
 class Healer(Agent):
-    def __init__(self, agentName, userID, username, firstName,
+    def __init__(self, agentName, userID, username, firstName, Messages,
                  baseHealth=90, baseDmg=17, baseUltCD=3, baseHealAmt=10,
                  alive=True, health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=False, healAmt=None, attackAfterUlt=False,
@@ -293,7 +300,7 @@ class Healer(Agent):
         self.healAmt = self.baseHealAmt
         self.canHeal = True
 
-        super().__init__(agentName, userID, username, firstName,
+        super().__init__(agentName, userID, username, firstName, Messages,
                          baseHealth, baseDmg, baseUltCD,
                          alive, health, dmg,
                          ultCD, ultAvail, ultUsed, buffUlt, attackAfterUlt,
@@ -312,14 +319,14 @@ class Healer(Agent):
         if self == ally:
             if self.canHeal and self.canBeHealed:
                 self.add_health(0.5*amt)
-                return Messages['combat']['selfHeal']%(self.get_idty(),self.health)
+                return self.Messages['combat']['selfHeal']%(self.get_idty(),self.health)
             else:
-                return Messages['combat']['failHealSelf']%(self.get_idty())
+                return self.Messages['combat']['failHealSelf']%(self.get_idty())
             
         elif self.canHeal and ally.canBeHealed:
             ally.add_health(amt)
-            return Messages['combat']['heal']%(ally.get_idty(),ally.health,self.get_idty())
-        return Messages['combat']['failHeal']%(self.get_idty(),ally.get_idty())
+            return self.Messages['combat']['heal']%(ally.get_idty(),ally.health,self.get_idty())
+        return self.Messages['combat']['failHeal']%(self.get_idty(),ally.get_idty())
 
     def add_heal_amt(self,amt):
         self.healAmt += amt
@@ -349,7 +356,7 @@ class Healer(Agent):
 ######################
             
 class Support(Agent):
-    def __init__(self, agentName, userID, username, firstName,
+    def __init__(self, agentName, userID, username, firstName, Messages,
                  baseHealth=None, baseDmg=None, baseUltCD=None,
                  alive=True, health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=False, attackAfterUlt=True,
@@ -357,7 +364,7 @@ class Support(Agent):
                  asleep=False, invuln=False, controlled=False, shield=None, dmgReduction=None, protector=None
                  ):
         
-        super().__init__(agentName, userID, username, firstName,
+        super().__init__(agentName, userID, username, firstName, Messages,
                          baseHealth, baseDmg, baseUltCD,
                          alive, health, dmg,
                          ultCD, ultAvail, ultUsed, buffUlt, attackAfterUlt,

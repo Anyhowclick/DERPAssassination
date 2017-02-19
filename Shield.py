@@ -1,5 +1,3 @@
-from Messages import Messages
-    
 #defining character class
 class Shield(object):
 
@@ -12,8 +10,8 @@ class Shield(object):
     def heal(self,person,target):
         if self.healAmt and target.canBeHealed:
             target.add_health(healAmt)
-            return Messages['combat']['shieldHeal']%(target.get_idty(),target.health,person.get_idty())
-        return Messages['combat']['failShieldHeal']%(person.get_idty(),target.get_idty())
+            return person.Messages['combat']['shieldHeal']%(target.get_idty(),target.health,person.get_idty())
+        return person.Messages['combat']['failShieldHeal']%(person.get_idty(),target.get_idty())
 
     def drop_shield_amt(self,dmg):
         self.amt -= dmg

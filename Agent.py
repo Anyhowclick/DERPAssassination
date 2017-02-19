@@ -1,10 +1,8 @@
-from Messages import Messages
-    
 #defining character class
 class Agent(object):
 
 #### Constructor #####
-    def __init__(self, agentName, userID, username, firstName,
+    def __init__(self, agentName, userID, username, firstName, Messages,
                  baseHealth=None, baseDmg=None, baseUltCD=None,
                  alive=True,health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=False, attackAfterUlt=True,
@@ -16,6 +14,7 @@ class Agent(object):
         self.username = username #telegram username
         self.firstName = firstName #telegram user first name
         self.editor = None #to be initialised if there's a callback query
+        self.Messages = Messages #this is the language database for the group chat
 
         #Base values for health = 100, damage = 15 and ulti cooldown = 3
         self.baseHealth = baseHealth if baseHealth else 100
@@ -52,7 +51,10 @@ class Agent(object):
     def get_user_info(self):
         return (self.userID,self.username)
 
-    def get_idty(self): #Returns a string as such. AgentName(Username)
+    def get_idty(self): #Returns a string as such. AgentName(Username), with bold tags.
+        return self.agentName + ' <b>(' + self.username + ')</b>'
+
+    def get_idty_query(self): #Returns a string as such. AgentName(Username), without bold tags for query display
         return self.agentName + ' (' + self.username + ')'
     
 ## Status accessors ##
@@ -124,7 +126,7 @@ class Agent(object):
     def die(self):
         self.reset()
         self.alive = False
-        return Messages['combat']['die']%(self.get_idty())
+        return self.Messages['combat']['die']%(self.get_idty())
 
     def reset_status(self):
         self.asleep, self.invuln, self.controlled, = (False,)*3
@@ -138,6 +140,7 @@ class Agent(object):
         self.reset_ult_used()
         self.reset_can_be_healed()
         self.reset_can_be_shielded()
+        self.editor = None
         
     ### Reset char ###
     def reset(self):
@@ -162,44 +165,44 @@ class Agent(object):
     def attack(self,enemy,dmg=None,msg=''):
         if self.asleep:
             #message indicating that player is asleep
-            return msg + Messages['combat']['sleepAtt']%(self.get_idty())
+            return msg + self.Messages['combat']['sleepAtt']%(self.get_idty())
         dmg = dmg if dmg else self.dmg
         return enemy.attacked(self,dmg,msg)
 
     def attacked(self,enemy,dmg,msg=''):
         if self.invuln:
             #message indicating that player is invulnerable
-            return msg + Messages['combat']['invuln']%(self.get_idty())
+            return msg + self.Messages['combat']['invuln']%(self.get_idty())
 
         elif self.is_protected() and self.protector != self:
             protector = self.protector
             #message that damage is taken by protector
-            msg = msg + Messages['combat']['protect']%(enemy.get_idty(),protector.get_idty())
+            msg = msg + self.Messages['combat']['protect']%(enemy.get_idty(),protector.get_idty())
             return protector.attacked(enemy,dmg,msg)
         
         elif self.is_shielded():
             if dmg > self.shield.amt:
-                msg +=  Messages['combat']['shieldBroken']%(self.get_idty(),enemy.get_idty())
+                msg +=  self.Messages['combat']['shieldBroken']%(self.get_idty(),enemy.get_idty())
                 msg += self.drop_health((1-self.dmgReduction)*(dmg-self.shield.amt),msg)
                 self.reset_shield()
                 #message that shield was broken, damage taken
                 return msg
             self.shield.drop_shield_amt(dmg)
             #message that shield remains intact
-            return msg + Messages['combat']['shieldIntact']%(enemy.get_idty(),self.get_idty(),self.shield.amt)
+            return msg + self.Messages['combat']['shieldIntact']%(enemy.get_idty(),self.get_idty(),self.shield.amt)
         if self == enemy:
             #self-inflict msg
-            msg += Messages['combat']['selfAtt']%(self.get_idty())
+            msg += self.Messages['combat']['selfAtt']%(self.get_idty())
             return self.drop_health((1-self.dmgReduction)*dmg,msg)
         #hurt msg
-        msg += Messages['combat']['hurt']%(enemy.get_idty(), self.get_idty())
+        msg += self.Messages['combat']['hurt']%(enemy.get_idty(), self.get_idty())
         return self.drop_health((1-self.dmgReduction)*dmg,msg)
 
     def ult(self):
         #return either a msg or nothing. No news is good news!
         if self.asleep:
             #insert asleep message
-            return Messages['combat']['sleepUlt']%(self.agentName)
+            return self.Messages['combat']['sleepUlt']%(self.agentName)
         else:
             self.ultUsed = True
             self.reset_ult_avail()

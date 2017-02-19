@@ -23,8 +23,9 @@ class chatManager(telepot.aio.helper.ChatHandler):
                                                  'join',
                                                  'rate',
                                                  'rules',
-                                                 'setlang'
+                                                 'setlang',
                                                  'start',
+                                                 'stats',
                                                  'story',
                                                  'support',
                                                  ((None,), commandHandler.on_invalid_text),
@@ -48,18 +49,27 @@ class chatManager(telepot.aio.helper.ChatHandler):
 
     async def on_new_chat_title(self,msg,name):
         return
+
+    async def on_location(self,msg,name):
+        return
+
+    async def on_delete_chat_photo(self,msg,name):
+        return
+    
+    async def on_new_chat_photo(self,msg,name):
+        return
+
+    async def on_new_pinned_message(self,msg,name):
+        return    
     
     async def on_photo(self,msg,name):
+        return
+
+    async def on_video(self,msg,name):
         return
 
     async def on_voice(self,msg,name):
         return
 
     async def on_sticker(self,msg,name):
-        return
-
-    async def on_location(self,msg,name):
-        return
-
-    async def on_new_chat_photo(self,msg,name):
-        return
+        return    

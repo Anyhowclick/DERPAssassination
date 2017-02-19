@@ -2,9 +2,9 @@
 import asyncio
 import telepot
 import telepot.aio
-import time
-from Messages import Messages, send_message
-from Database import DB,SPAM,STRIKE,BLOCKED
+import time, threading
+from Messages import send_message, EN
+from Database import DB,LANG,SPAM,STRIKE,BLOCKED
 
 THRESHOLD = {0:0.75, 1:0.7, 2:0.7, 3:0.6, 4:0.6, 5:0.6, 6:0.6, 7:0.6, 8:0.6}
 PENALTY = {0:0,1:10,2:60,3:900,4:3600,5:86400,6:259200, 7:999999999999} #Penalty time to ignore in seconds
@@ -28,7 +28,10 @@ async def check_spam(handler,msg):
         SPAM[userID] = (round(time.time(),3),0.5) 
         STRIKE[userID] = 0 #store no. of times person violated threshold
         return False
-    
+
+    elif userID not in LANG:
+        LANG[userID] = EN
+        
     pastTime,average = SPAM[userID]
     timeDiff = round(time.time()-pastTime,3)
     average = 0.78/timeDiff + 0.22*average #Take weighted average
@@ -38,14 +41,13 @@ async def check_spam(handler,msg):
         strike += 1
         STRIKE[userID] = strike 
         BLOCKED[userID] = round(time.time(),3) #store current time
-        await send_message(handler.bot,userID,Messages['spam'][strike],parse_mode='HTML')
+        await send_message(handler.bot,userID,LANG[userID]['spam'][strike],parse_mode='HTML')
         return True
     return False
 
 def start_spam():
-    while True:
-        SPAM={}
-        time.sleep(900)
+    SPAM={}
+    threading.Timer(900, start_spam).start()
 
 async def check_admin(bot,chatID,userID): #Check if user is admin based on userID
     admins = await bot.getChatAdministrators(chatID) #admins are in a list

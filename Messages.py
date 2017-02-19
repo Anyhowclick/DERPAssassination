@@ -1,6 +1,15 @@
 import telepot
+ALL_LANGS = ['EN',]#'ZH','IN']
 
-Messages = {
+LANGEMOTES = {
+    'EN': '\U0001F1EC\U0001F1E7',
+    #'ZH': '\U0001F1E8\U0001F1F3',
+    #'IN': '\U0001F1EE\U0001F1E9',
+    }
+
+setLang = 'Choose your preferred language:'
+    
+EN = {
     'about':
         "<b>About the game</b>\n"\
         "This game was inspired by Spyfall, Overwatch and Werewolf, combining elements from the 3. "\
@@ -337,23 +346,23 @@ Messages = {
     'combat':
         {
             'deflect': "%s deflects the attack from %s!\n",
-            'die': "<b>%s has been assassinated</b> \U00002620!!\n",
+            'die': "%s <b>has been assassinated</b> \U00002620!!\n",
             'failHeal': "%s failed to heal %s! \U0001F61E\n",
-            'failHealSelf': "%s tried to recover health, but failed! \U0001F61E\n",
-            'failShield': "%s could not shield %s!\n",
-            'heal': "%s has %d hp after healing from \U00002764 %s!\n",
+            'failHealSelf': "%s tried to self-\U0001F489, but failed! \U0001F61E\n",
+            'failShield': "%s couldn't shield %s!\n",
+            'heal': "%s has %d hp after \U0001F489 from \U00002764 %s!\n",
             'hurt': "%s \U0001F52A %s!\n",
-            'intro': "<b>\U00002694 COMBAT \U00002694</b>\n",
+            'intro': "<b>\U00002694 ROUND %d \U00002694</b>\n",
             'invuln': "%s was attacked, but is invulnerable!\n",
             'KO': "<b>You have been assassinated \U0001F480!!</b>",
             'protect': "%s's attack diverts to %s!\n",
             'res': "You have been <b>raised from the dead \U0001F3FB!</b> Get back into the fight \U0001F3FB!!",
             'recover': "%s recovers %d hp!\n",
             'selfAtt': "%s self-inflicts damage! \U0001F635\n",
-            'selfHeal': "%s now has %d hp after self-healing! \U0001F36C\n",
-            'sleepAtt': "%s wanted to attack but is asleep!\n",
-            'sleepUlt': "%s wanted to use his/her ability but is asleep!\n",
-            'shieldBroken': "%s's shield was broken by %s and takes damage!\n",
+            'selfHeal': "%s now has %d hp after self-\U0001F489! \U0001F36C\n",
+            'sleepAtt': "%s is \U0001F634, and so failed to \U0001F52A!\n",
+            'sleepUlt': "%s is \U0001F634 and thus couldn't use his/her ability!\n",
+            'shieldBroken': "%s's \U0001F6E1 was broken by %s and takes damage!\n",
             'shieldIntact': "%s damaged %s's shield, leaving it with %d energy \U000026A1 remaining!\n",
             'shieldFailHeal': " %s's shield failed to heal %s!\n",
             'shieldHeal': " %s now has %d hp after being healed by %s's shield!\n",
@@ -364,9 +373,9 @@ Messages = {
                 {
                     'Anna': "%s has been made stronger by %s this turn!\n",
                     'AnnaSelf': "%s is stronger this turn!\n",
-                    'Aspida': "%s gave %s with a shield of <b>%d</b> energy! \U000026A1\n",
+                    'Aspida': "%s \U0001F6E1 (<b>%d</b> energy \U000026A1) %s\n",
                     'AspidaSelf': "%s shielded herself with a shield of <b>%d</b> energy! \U000026A1\n",
-                    'Dracule': "%s's attack, if successful, recovers a portion of his health this turn!\n",
+                    'Dracule': "%s's attack, if successful, recovers a some health this turn!\n",
                     'Elias': "%s knows which team %s is on! \U0001F60F\n",
                     'EliasSelf': "%s revealed his own identity to himself, which is sort of pointless, but well...\n",
                     'EliasPrivate': "%s is %s",
@@ -380,9 +389,9 @@ Messages = {
                     'Munie': '%s caused %s to be invulnerable this turn!\n',
                     'MunieSelf': "%s is invulnerable this turn!\n",
                     'NovahNOK': "%s tried to activate his ability but has insufficient health!\n",
-                    'NovahOK': "%s sacrificed 5 hp to deal extra damage this turn!\n",
-                    'Prim': "%s caused %s's ability to be ready for use next turn!\n",
-                    'PrimSelf': "%s tried to use her ability on herself, but failed!\n",
+                    'NovahOK': "%s sacrificed 5 hp to deal extra damage!\n",
+                    'Prim': "%s caused %s's ability to be usable next turn!\n",
+                    'PrimSelf': "%s tried, but failed, to use her ability on herself!\n",
                     'Ralpha': "%s restored %s back to full health! \U0001F48A\n ",
                     'RalphaSelf': "%s heals himself back to 80%% of his base health! \U0001F48A\n ",
                     'revealFail': "Sorry, %s is invulnerable! ¯\_(ツ)_/¯",
@@ -397,9 +406,8 @@ Messages = {
 
         },
 
-    'countdownNoRemind':
-        "<b>%d</b> seconds left to join the game!",
-
+    'countdownNoRemind': "<b>%d</b> seconds left to join the game!",
+    
     'countdownRemind':
         "<b>%d</b> seconds left to join the game! Make sure "\
         "that you have a private chat open with me (tap/click this: @DERPAssassinBot) before "\
@@ -409,7 +417,7 @@ Messages = {
         "<b>%d</b> seconds left for all surviving agents to execute their plans!",
 
     'countdownToPhase1':
-        "Everyone now has <b>%d</b> seconds to discover who their allies are and formulate strategies!",
+        "\nEveryone now has <b>%d</b> seconds to discover who their allies are and formulate strategies!",
 
     'countdownToPhase2':
         "Surviving agents are given <b>%d</b> seconds to carry our their actions!",
@@ -442,10 +450,14 @@ Messages = {
 
     'failTalk':
         "%s failed to start / join a game! Would you kindly start a private chat with me first? "\
-        "Tap/click this: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat</b>",
+        "Tap/click this: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat.</b> Set "\
+        "your preferred language as well!",
 
     'findOutChar':
         "Which character would you like to know more about?",
+
+    'findOutMoreChar':
+        "\n\nWould you like to find out about other agents?",
 
     'future':
         "Refer to @DerpAssUpdates for server downtimes and upcoming features!",
@@ -467,6 +479,10 @@ Messages = {
          'DERPVidID': "BQADBQADGgADtFzTEZqVI4tYFx3MAg",
          'PYROVidID': "BQADBQADGQADtFzTEZ5k3pNuPxYKAg",
          },
+
+    'initialise':
+        "Initialising...",
+    
     'invalidCommand':
         "Sorry, I can't interpret the command you gave.",
 
@@ -493,6 +509,9 @@ Messages = {
     'killGameAgents':
         "Sorry, there was a problem with the bot. The game has been terminated by a group admin.",
 
+    'leaveGame': "<b>%s</b> left the game!\n",
+    'leaveGame1': "The game stopped as <b>%s</b> left.\n",
+    
     'lonely':
         "Can't play this game by yourself! (well it could in the future, but anyway...) "\
         "Find some friends to play with!",
@@ -520,6 +539,13 @@ Messages = {
 
     'notPrivateChat':
         "This command is only enabled in private chats.",
+
+    'okStart':
+        "Game is starting... Please wait while I assign roles, "\
+        "teams and VIPs.",
+
+    'privateChat':
+        "This command is only enabled in group chats.",
 
     'query':
         {'canUlt': "Your ability is available! Would you like to use it?",
@@ -550,37 +576,30 @@ Messages = {
               },
          },
 
-    'okStart':
-        "Game is starting... Please wait while I assign roles, "\
-        "teams and VIPs.",
-
-    'privateChat':
-        "This command is only enabled in group chats.",
-
     'rate':
         'You may leave a review for this bot <a href="https://telegram.me/storebot?start=derpassassinbot">here</a>! '\
         'Thank you for doing so! \U0001F60A ',
 
     'rules':
         "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.\n"\
-        "<b>Rules</b>:\n\nPlayers are split into 2 teams: \U0001F530DERP and \U0001F525PYRO. "\
+        "\n<b>Rules</b>:\nPlayers are split into 2 teams: \U0001F530DERP and \U0001F525PYRO. "\
         "DERP's objective is to find and kill all VIPs \U0001F31F, while PYRO's objective is to "\
         "protect their VIPs and eliminate all DERP agents. "\
         "All agents are categorized into 4 classes: Offense, Tank, Healer and Support. "\
         "Each class has its strength (dealing most damage, or has damage reduction etc.), "\
         "and every agent has a unique ability. \n\n"\
 
-        "The assignment of DERP agents and VIP agents <b>(in brackets)</b> is as follows:\n"\
-        "3-4 players: 1 DERP, 1 VIP\n"\
-        "5-7 players: 2 DERP, 1 VIP\n"\
-        "8-10 players: 3 DERP, 2 VIPs\n"\
-        "11-13 players: 4 DERP, 2 VIPs\n"\
-        "14-16 players: 5 DERP, 3 VIPs\n"\
-        "17-19 players: 6 DERP, 3 VIPs\n"\
-        "20-22 players: 7 DERP, 4 VIPs\n"\
-        "23-25 players: 8 DERP, 4 VIPs\n"\
-        "26-28 players: 9 DERP, 5 VIPs\n"\
-        "29-32 players: 10 DERP, 5 VIPs\n"\
+        "The assignment of DERP agents and VIP agents is as follows:\n"\
+        "3-4 players: 1 each\n"\
+        "5-7 players: 2 \U0001F530, 1 \U0001F31F\n"\
+        "8-10 players: 3 \U0001F530, 2 \U0001F31F\n"\
+        "11-13 players: 4 \U0001F530, 2 \U0001F31F\n"\
+        "14-16 players: 5 \U0001F530, 3 \U0001F31F\n"\
+        "17-19 players: 6 \U0001F530, 3 \U0001F31F\n"\
+        "20-22 players: 7 \U0001F530, 4 \U0001F31F\n"\
+        "23-25 players: 8 \U0001F530, 4 \U0001F31F\n"\
+        "26-28 players: 9 \U0001F530, 5 \U0001F31F\n"\
+        "29-32 players: 10 \U0001F530, 5 \U0001F31F\n"\
         "Each VIP will be made known to 1 other PYRO agent, and <b>each DERP agent knows who other DERP agents are.</b> "\
         "So PYRO agents (and VIPs) have to figure out who to trust, while DERP agents try to blend in. This is where "\
         "deception can come into play.\n\n"\
@@ -608,7 +627,7 @@ Messages = {
         "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.",
     
     'spam':
-        {'start': 'Spam detector initialised!',
+        {
          1: "I won't respond for 10 seconds because you have been "\
              "a little agressive with interacting with me. This is an anti-spam preventive measure. Sorry about that! \U0001F605",
          2: "I won't respond for 1 minute because you've again been a little too hyperactive for me. "\
@@ -662,10 +681,10 @@ Messages = {
         },
 
     'teamDERP':
-        "You are a DERP \U0001F530 agent! Identify and kill all VIPs!",
+        "\nYou are a DERP \U0001F530 agent! Identify and kill all VIPs!",
 
     'teamPYRO':
-        "You are a PYRO \U0001F525 agent! Identify and protect all VIPs!",
+        "\nYou are a PYRO \U0001F525 agent! Identify and protect all VIPs!",
 
     'timeUp':
         "Time is up!",
@@ -674,26 +693,45 @@ Messages = {
         "To be updated!",
 
     'VIP':
-        "%s (<b>%s</b>) is one of the VIPs (or the only one)!",
+        "\n\n%s (<b>%s</b>) is one of the VIPs (or the only one)!",
 
     'VIPself':
-        "You are one of the \U0001F31F <b>VIPs</b> (or the only one), and thus, a <b>PYRO \U0001F525 agent!</b> "\
+        "\n\nYou are one of the \U0001F31F <b>VIPs</b> (or the only one), and thus, a <b>PYRO \U0001F525 agent!</b> "\
         "Find other PYRO agents and get them to protect you!",
+
+    'welcomeChoice':
+        "English selected!",
 
     'yes':
         "Yes",
     }
 
+ZH = {
+    'about': '我叫伟伦。',
+    'start': '你好',
+    'welcomeChoice': '华文选择',
+    }
 
+IN = {
+    'about': 'Insert some bahasa indo here',
+    'start': 'Selamat Datang!',
+    'welcomeChoice': 'Terimah Kasih!',
+    }
+    
 async def send_message(bot,ID,message,parse_mode=None,reply_markup=None):
     try:
-        await bot.sendMessage(ID,message,parse_mode=parse_mode,reply_markup=reply_markup)
+        result = await bot.sendMessage(ID,message,parse_mode=parse_mode,reply_markup=reply_markup)
     except telepot.exception.BotWasBlockedError:
         return
     except telepot.exception.TelegramError:
         return
-    return
+    return result
 
 async def edit_message(editor,message,reply_markup=None,parse_mode=None):
-    await editor.editMessageText(message,reply_markup=reply_markup,parse_mode='HTML')
-    return
+    try:
+        result = await editor.editMessageText(message,reply_markup=reply_markup,parse_mode='HTML')
+    except telepot.exception.TelegramError:
+        result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
+    except AttributeError:
+        return
+    return result
