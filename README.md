@@ -1,13 +1,20 @@
 # DERP:Assassination
 
-## Upcoming changes, last updated 19/2/17
-* Increased randomness in choosing hero / selecting player
-* Health shown to 1dp instead of integer
-* Removal of /future command
-* Majority of commands will be 'disabled' and instead show maintenance message upon incoming fixes / updates
-* Added support group link in /support
-* Raise minimum players from 2 to 3 (TBC)
+## Upcoming changes, last updated 3/3/17
+- Stay tuned!
 
+## Changelog 3/3/17 1200 hrs
+What's new:
+  - Names are now clickable, and first names are used instead of usernames. Also, only agent names are shown in the combat log.
+  - Allocation of heroes to players has been made more random.
+  - Health shows 1 hp instead of 0 hp in cases where actual health of player is 0.something hp
+  - Removed /future command
+  - Majority of commands will be 'disabled' and instead show maintenance message upon incoming fixes / updates
+  - Hero Elias is made compulsory for games with >= 5 people; but not included in games with 3-4 people
+  - Dracule's lifesteal decreased from 100% to 60%
+  - Minimum number of players raised from 2 to 3
+  - Added link for support group.
+  
 ## Changelog 19/2/17 1930 hrs
 What's new:
   - Preparation for multi-language support
