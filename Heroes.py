@@ -3,16 +3,33 @@ from AgentClasses import *
 from Messages import send_message
 from Database import DB, LANG
 from Shield import Shield
+import random
 
 #Generate a list of 1 instance of each character
-def allAgents():
-    return {'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule, 
-            'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
-            'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo, 
-            'Elias':Elias, 'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
-            'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
-            'Aspida':Aspida,
-            } 
+#Compulsory contains all agents that will definitely be included every game
+def allAgents(playerCount):
+    compulsory = {'Elias':Elias}
+    result = {'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
+              'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
+              #'Jordan':Jordan,
+              'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
+              'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
+              'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
+              'Aspida':Aspida,
+            }
+    #Exclude Elias
+    if playerCount <= 4:
+        return result
+
+    #Making sure Elias (and potentially other agents in the future) is included otherwise
+    for i in range(0,playerCount-len(compulsory)):
+        key = list(result.keys())
+        for j in range(0,random.randint(1,10)):
+            random.shuffle(key)
+        key = random.choice(key)
+        compulsory[key] = result[key]
+        del result[key]
+    return compulsory
 
 #########################################
 ############# OFFENSE CLASS #############
@@ -89,14 +106,15 @@ class Dracule(Offense):
         return self.Messages['combat']['ult']['Dracule']%(self.get_idty())
 
     def attack(self,enemy,msg=''):
-        recoveredHp = self.dmg
+        #60% lifesteal
+        recoveredHp = 0.6*self.dmg
         msg += super().attack(enemy)
-        while enemy.is_protected():
+        while enemy.is_protected() and enemy.protector != enemy:
            enemy = enemy.protector
         if self.ultUsed and not self.canBeHealed:
             return msg + self.Messages['combat']['failHealSelf']%(self.get_idty())
         if self.ultUsed and not enemy.invuln:
-            self.add_health(recoveredHp) #100% lifesteal
+            self.add_health(recoveredHp) 
             return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)
         return msg
         
@@ -195,6 +213,69 @@ class Grim(Offense):
     async def process_query(self,game,queryData):
         await process_query_multi(self,game,queryData,3)
 
+
+####################
+###### JORDAN ######
+####################
+            
+class Jordan(Offense):
+    def __init__(self, userID, username, firstName, Messages):
+        self.selected = None #Will be an agent
+        super().__init__('Jordan', userID, username, firstName, Messages, ultAvail=True,
+                         baseUltCD=99)
+
+    def reset_next_round(self):
+        if not self.selected: #If person hasn't chosen someone
+            self.ultCD = 0
+            self.ultAvail = True
+            super().reset_next_round()
+
+        elif not self.selected.alive: #If chosen target died
+            self.ultCD = 0
+            self.ultAvail = True
+            super().reset_next_round()
+
+        else:
+            self.reset_ult_avail()
+            self.reset_ult_CD()
+            super().reset_next_round()
+    
+    def ult(self,enemy):
+        result = super().ult()
+        if result:
+            return result
+        self.selected = enemy
+        return ''
+
+    def die(self):
+        if not self.selected or (self.selected == self): #Didn't choose anyone or selected self
+            return super().die()
+
+        elif self.selected.invuln: #Person invulnerable
+            return self.Messages['combat']['ult']['JordanFail']%(self.selected.get_idty(),self.get_idty())
+
+        else:
+            message = self.Messages['combat']['ult']['Jordan']%(self.get_idty(),self.selected.get_idty())
+            message += self.Messages['combat']['die']%(self.get_idty())
+            message += self.selected.die()
+            self.reset()
+            self.alive = False
+        return message
+        
+    
+    ################
+    ## SEND QUERY ##
+    ################
+    #refer to flowchart for greater clarity
+    async def send_query(self,bot,data,players):
+        await send_query(self,bot,data,players,'single')
+
+    ###################
+    ## PROCESS QUERY ##
+    ###################
+    #refer to flowchart for greater clarity
+    async def process_query(self,game,queryData):
+        await process_query_single(self,game,queryData)
 
 
 ######################################
@@ -394,7 +475,7 @@ class Elias(Healer):
                 msg = Messages['combat']['ult']['EliasSelfPrivate']%(msg)
             else:
                 msg = Messages['combat']['ult']['EliasPrivate']%(target.get_idty(),msg)
-        await send_message(game.bot,self.userID,msg,parse_mode='HTML')
+        await send_message(game.bot,self.userID,msg)
         return
 
     ################

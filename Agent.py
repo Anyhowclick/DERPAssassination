@@ -49,13 +49,23 @@ class Agent(object):
         
 ## User info accessors ##
     def get_user_info(self):
-        return (self.userID,self.username)
+        return (self.userID,self.firstName)
 
-    def get_idty(self): #Returns a string as such. AgentName(Username), with bold tags.
-        return self.agentName + ' <b>(' + self.username + ')</b>'
+    def get_idty(self): #Returns only agent name, to keep messages shorter
+        return '<b>' + self.agentName + '</b>'
 
-    def get_idty_query(self): #Returns a string as such. AgentName(Username), without bold tags for query display
-        return self.agentName + ' (' + self.username + ')'
+    def get_full_idty(self): #Returns agentName together with clickable first name (assuming user has username)
+        if self.username:
+            return self.agentName + "<a href='http://telegram.me/" + self.username + "'> (" + self.firstName + ")</a>"
+        return self.agentName + '<b> (' + self.firstName + ')</b>'
+
+    def get_clickable_name(self): #Returns just the first name of the hero, together with link if user has username
+        if self.username:
+            return "<a href='http://telegram.me/" + self.username + "'> " + self.firstName + "</a>"
+        return '<b>' + self.firstName + '</b>'
+    
+    def get_idty_query(self): #Returns a string as such. AgentName(firstName), without bold tags for query display
+        return self.agentName + ' (' + self.firstName + ')'
     
 ## Status accessors ##
 

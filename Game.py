@@ -29,14 +29,17 @@ Numbers below are no. of DERP agents, brackets = no. of VIPs
 #Sorting order for queries
 ORDER = {'ult':0, 'attack':1, 'heal':1}
 AGENTULTS = {'Sonhae':0,'Taiji':-200,'Dracule':-100,'Novah':-100,'Saitami':0,
-             'Grim':0,'Harambe':-300,'Impilo':-200,'Hamia':-300,'Aspida':-300,
+             'Grim':0,'Jordan':-999,'Harambe':-300,'Impilo':-200,'Hamia':-300,'Aspida':-300,
              'Grote':-300,'Mitsuha':-100,
              'Grace':100,'Ralpha':0,'Sanar':0, 'Prim':-100, 'Elias':-400,
              'Yunos':-300,'Munie':-1000,'Anna':-500,'Wanda':-300}
 
 #Randomly selects from a dictionary, deletes selected entry from it and returns the selection
-def random_select(dicty): 
-    key = random.choice(list(dicty.keys()))
+def random_select(dicty):
+    key = list(dicty.keys())
+    for i in range(0,random.randint(1,10)):
+        random.shuffle(key)
+    key = random.choice(key)
     result = dicty[key]
     del dicty[key]
     return result
@@ -105,8 +108,9 @@ class Game(object):
     async def allocate(self,players,playerCount,game):
         DERPCount = game.DERPCount
         VIPCount = game.VIPCount
-        AGENTS = allAgents()
-        
+        #allAgents in Heroes.py will filter special heroes based on no. of players
+        AGENTS = allAgents(playerCount)
+            
         for count in range(1,playerCount+1):
             player = random_select(players)
             agent = random_select(AGENTS) #returns Hero object
@@ -114,7 +118,7 @@ class Game(object):
             try: #see if user has a username
                 username = player['username']
             except KeyError:
-                username = player['first_name'] #otherwise use first name as username
+                username = None
             #As usual, define Messages variable
             Messages = LANG[playerID]
             player = agent(playerID,username,player['first_name'],self.Messages) #assign player to hero
@@ -124,7 +128,7 @@ class Game(object):
 
             # Also, game object is added for retrieving important info by CallbackHandler
             self.message = Messages['agentDescriptionFirstPerson'][player.agentName]%(player.agentName) #PM player role
-            sent = await send_message(self.bot,playerID,self.message,parse_mode='HTML')
+            sent = await send_message(self.bot,playerID,self.message)
             player.editor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent)) #editor will be used to append team message later on
         
             #Assigning teams
@@ -140,8 +144,8 @@ class Game(object):
             else: #finally VIPs
                 player.team = 'PYROVIP'
                 self.message += Messages['VIPself']
-                await edit_message(player.editor,self.message,parse_mode='HTML')
-                if playerCount > 2: #Exclude games with 2-4 people: no need for people to be informed
+                await edit_message(player.editor,self.message)
+                if playerCount > 3: #Exclude games with 2-3 people: no need for people to be informed
                     randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
                     while randomPlayer.userID == player.userID: #ensure that someone other than the VIP himself is selected
                         randomPlayer = random.choice(list(self.get_alive_PYROteam().values())) 
@@ -156,18 +160,18 @@ class Game(object):
         Messages = self.Messages
         self.message = Messages['summary']['teamDERP']
         for agent in list(self.get_all_DERP().values()):
-            self.message += Messages['summary']['agent']%(agent.get_idty())
+            self.message += Messages['summary']['agent']%(agent.get_full_idty())
         self.message += Messages['teamDERP']
         for agent in list(self.get_all_DERP().values()):
-            await send_message(self.bot,agent.userID,self.message,parse_mode='HTML')
+            await send_message(self.bot,agent.userID,self.message)
                                                               
         #Finally, announce player assignment to group chat
         players = self.get_alive_all()
         self.message = Messages['allotSuccess']
         for agentName,agent in players.items():
-            self.message += Messages['summary']['agentStart']%(agent.username,agentName)
+            self.message += Messages['summary']['agentStart']%(agent.get_clickable_name(),agentName)
         self.message += Messages['delay']
-        await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+        await edit_message(self.messageEditor,self.message)
         time.sleep(5)
         self.message = None #reset variable
         return
@@ -241,12 +245,12 @@ class Game(object):
         #If message becomes too long, split up the message to send
         while len(message)>4096:
             idx = message.find('\n',3900) + 2
-            await send_message(self.bot,self.chatID,message[:idx],parse_mode='HTML')
+            await send_message(self.bot,self.chatID,message[:idx])
             message = message[idx:].strip()
             await asyncio.sleep(2)
 
         #Last iteration    
-        await send_message(self.bot,self.chatID,message,parse_mode='HTML')
+        await send_message(self.bot,self.chatID,message)
 
         #Send summary message
         message = Messages['summary']['intro']
@@ -254,7 +258,7 @@ class Game(object):
         if agents:
             message += Messages['summary']['aliveStart']
             for agent in agents:
-                message += Messages['summary']['alive']%(agent.get_idty(),int(agent.health))
+                message += Messages['summary']['alive']%(agent.get_full_idty(),1 if (agent.health < 1) else agent.health)
                 #At the same time, reset agent statuses for next round
                 agent.reset_next_round()
         agents = list(self.get_dead_all())
@@ -263,15 +267,15 @@ class Game(object):
         #A lot of code reuse below, maybe I should modularise it
         agents = list(self.get_dead_DERP().values())
         for agent in agents:
-            message += Messages['summary']['deadDERP']%(agent.get_idty())
+            message += Messages['summary']['deadDERP']%(agent.get_full_idty())
         agents = list(self.get_dead_PYRO().values())
         for agent in agents:
-            message += Messages['summary']['deadPYRO']%(agent.get_idty())
+            message += Messages['summary']['deadPYRO']%(agent.get_full_idty())
         agents = list(self.get_dead_PYROVIP().values())
         for agent in agents:
-            message += Messages['summary']['deadPYROVIP']%(agent.get_idty())
+            message += Messages['summary']['deadPYROVIP']%(agent.get_full_idty())
         
-        sent = await send_message(self.bot,self.chatID,message,parse_mode='HTML')
+        sent = await send_message(self.bot,self.chatID,message)
         self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
         self.message = message #To append end-game message,if any
 
@@ -281,14 +285,14 @@ class Game(object):
 #            await self.bot.sendChatAction(self.chatID,action='upload_video')
 #            await self.bot.sendDocument(self.chatID,Messages['gifs']['drawVidID'])
             self.message += Messages['endGame']['draw']
-            await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+            await edit_message(self.messageEditor,self.message)
             return (True,self.messageEditor,self.message)
         elif not self.get_alive_DERP():
             #Send message that Team PYRO won as all DERP agents have been killed!
 #            await self.bot.sendChatAction(self.chatID,action='upload_video')
 #            await self.bot.sendDocument(self.chatID,Messages['gifs']['PYROVidID'])
             self.message += Messages['endGame']['DERP.KO']
-            await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+            await edit_message(self.messageEditor,self.message)
             return (True,self.messageEditor,self.message)
 #        
         elif not self.get_alive_PYROVIP():
@@ -296,7 +300,7 @@ class Game(object):
 #            await self.bot.sendChatAction(self.chatID,action='upload_video')
 #            await self.bot.sendDocument(self.chatID,Messages['gifs']['DERPVidID'])
             self.message += Messages['endGame']['PYROVIP.KO']
-            await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+            await edit_message(self.messageEditor,self.message)
             return (True,self.messageEditor,self.message)
         
         elif self.round == 25:
@@ -313,25 +317,25 @@ class Game(object):
                 PYROhealth += agent.health
                 
             self.message += Messages['endGame']['tooLongSummary']%(DERPhealth,PYROhealth)
-            await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+            await edit_message(self.messageEditor,self.message)
             
             if DERPhealth > PYROhealth:
                 await self.bot.sendChatAction(self.chatID,action='upload_video')
                 await self.bot.sendDocument(self.chatID,Messages['gifs']['DERPVidID'])
                 self.message += Messages['endGame']['DERPWin']
-                await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+                await edit_message(self.messageEditor,self.message)
                 
             elif PYROhealth > DERPhealth:
                 await self.bot.sendChatAction(self.chatID,action='upload_video')
                 await self.bot.sendDocument(self.chatID,Messages['gifs']['PYROVidID'])
                 self.message += Messages['endGame']['PYROWin']
-                await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+                await edit_message(self.messageEditor,self.message)
                 
             else: #In the highly unlikely event of a draw
                 await self.bot.sendChatAction(self.chatID,action='upload_video')
                 await self.bot.sendDocument(self.chatID,Messages['gifs']['drawVidID'])
                 self.message += Messages['endGame']['rareDraw']
-                await edit_message(self.messageEditor,self.message,parse_mode='HTML')
+                await edit_message(self.messageEditor,self.message)
             return (True,self.messageEditor,self.message)
         return (False,self.messageEditor,self.message)
 
@@ -356,7 +360,7 @@ class Game(object):
                 msg += self.Messages['summary']['agent']%(agent.get_idty())
 
         #Send message
-        await send_message(self.bot,self.chatID,msg,parse_mode='HTML')
+        await send_message(self.bot,self.chatID,msg)
         
         #Finally delete in DB
         del DB[self.chatID]
@@ -369,6 +373,8 @@ class Game(object):
             try:
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
             except telepot.exception.TelegramError:
+                continue
+            except AttributeError:
                 continue
             await send_message(self.bot,agent.userID,LANG[agent.userID]['killGameAgents'],reply_markup=None)  
         #Let people know their identities

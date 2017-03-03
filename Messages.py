@@ -36,6 +36,10 @@ EN = {
             "<b>Ability:</b> Attacks up to 3 agents, dealing 30 damage per target. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
+            "Jordan":"<b>Name:</b> Jordan\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
+            "<b>Ability:</b> Upon death, kills someone with him! \n"\
+            "<b>Ability cooldown:</b> No selection made or when selected target is dead",
+
             "Novah":"<b>Name:</b> Novah\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Sacrifices some hp to deal extra damage. \n"\
             "<b>Ability cooldown:</b> 2 turns",
@@ -170,6 +174,12 @@ EN = {
             "<b>Ability:</b> Attack up to 3 agents, dealing 30 damage per target. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
+            "Jordan": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Health:</b> 100\n"\
+            "<b>Damage:</b> 25\n"\
+            "<b>Ability:</b> When you die, you kill someone with you! \n"\
+            "<b>Ability cooldown:</b> No selection made or when selected target is dead.",
+            
             "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
@@ -326,7 +336,7 @@ EN = {
 
     'agentNames':
         ["Anna","Aspida","Dracule","Elias","Grim",
-         "Harambe","Hamia","Impilo","Munie",
+         "Harambe","Hamia","Impilo","Jordan","Munie",
          "Novah","Prim","Ralpha","Saitami",
          "Sanar","Sonhae","Taiji","Wanda",
          ],
@@ -386,6 +396,8 @@ EN = {
                     'Hamia': "%s increased %s's damage reduction this turn!\n",
                     'Impilo': "%s has increased damage reduction and recovered %d health!\n",
                     'ImpiloFailHeal': "%s has increased damage reduction, but failed to recover health! \U0001F61E\n",
+                    'Jordan': "%s cursed %s to \U0001F480 together with him \U0001F608!\n",
+                    'JordanFail': "%s was invulnerable, thus escaping %s's curse!\n", 
                     'Munie': '%s caused %s to be invulnerable this turn!\n',
                     'MunieSelf': "%s is invulnerable this turn!\n",
                     'NovahNOK': "%s tried to activate his ability but has insufficient health!\n",
@@ -518,8 +530,8 @@ EN = {
 
     'maintenance':
         {'OK': "Shutting down...",
-         'shutdown': "Sorry, this bot is closing for maintenance. Refer to @DerpAssUpdates for "\
-                     "the latest information!",
+         'shutdown': "The bot is <b>closing for maintenance.</b> Refer to @DerpAssUpdates for "\
+                     "the latest information!\n\n",
          },
 
     'newGame':
@@ -566,6 +578,8 @@ EN = {
               'Grim': "to PEW! \U0001F52B",
               'Hamia': "Choose someone to increase their damage reduction. \U0001F590\U0001F3FE",
               'Harambe': "Who would you like to \U0001F6E1 protect?",
+              'Jordan': "You either have not chosen anyone yet, or your target died. Select your desired target to die with you! "\
+                        "<b>CHOOSE CAREFULLY!</b>",
               'Munie': "Choose someone to be invulnerable.",
               'Prim': "Pick someone to enable his ability to be available next turn.",
               'Ralpha': "Who would you like to restore back to full health? \U0001F36D",
@@ -657,9 +671,9 @@ EN = {
 
     'support':
         "If you have any feedback or suggestions / discovered bugs in the game / would like to join me "\
-        "in further development (One man army at the moment, I don't mind extra hands, "\
-        "but you won't get paid \U0001F61D), you may PM @Anyhowclick \U0001F603"\
-        "You may refer to @DerpAssUpdates for server maintenance times and upcoming features as well!\n\n"\
+        "in further development (I don't mind extra hands, "\
+        "but you won't get paid \U0001F61D), you may leave your feedback <a href='https://t.me/joinchat/AAAAAD-uDcr_i1DMwwAybg'>in this support group</a> "
+        "\U0001F603. You may also refer to @DerpAssUpdates for server maintenance times and upcoming features!\n\n"\
         "Here's the <a href='https://github.com/Anyhowclick/DERPAssassination'>source code</a> for this game! \U0001F601",
 
     'summary':
@@ -718,18 +732,24 @@ IN = {
     'welcomeChoice': 'Terimah Kasih!',
     }
     
-async def send_message(bot,ID,message,parse_mode=None,reply_markup=None):
+async def send_message(bot,ID,message,parse_mode='HTML',reply_markup=None,disable_web_page_preview=True):
     try:
-        result = await bot.sendMessage(ID,message,parse_mode=parse_mode,reply_markup=reply_markup)
+        result = await bot.sendMessage(ID,message,
+                                       parse_mode=parse_mode,
+                                       reply_markup=reply_markup,
+                                       disable_web_page_preview=disable_web_page_preview)
     except telepot.exception.BotWasBlockedError:
         return
     except telepot.exception.TelegramError:
         return
     return result
 
-async def edit_message(editor,message,reply_markup=None,parse_mode=None):
+async def edit_message(editor,message,reply_markup=None,parse_mode='HTML',disable_web_page_preview=True):
     try:
-        result = await editor.editMessageText(message,reply_markup=reply_markup,parse_mode='HTML')
+        result = await editor.editMessageText(message,
+                                              reply_markup=reply_markup,
+                                              parse_mode=parse_mode,
+                                              disable_web_page_preview=disable_web_page_preview)
     except telepot.exception.TelegramError:
         result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
     except AttributeError:

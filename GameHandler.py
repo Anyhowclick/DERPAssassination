@@ -92,7 +92,6 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                     await self.game.kill_game()
                     self.game = None
                 await send_message(self.bot,chatID,Messages['killGame'])
-                self.chatID = None
                 return
 
 #########################
@@ -126,10 +125,11 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         self.chatID = chatID
         Messages = LANG[chatID]
         username = msg['from']['first_name']
+        #First check if bot is closing for maintenance...
         if get_maintenance():
             await send_message(self.bot,chatID,Messages['maintenance']['shutdown'],parse_mode='HTML')
             return
-    #Check for an ongoing game
+    #Then check for an ongoing game
         if self.game:
             await send_message(self.bot,chatID,Messages['existingGame'])
             return

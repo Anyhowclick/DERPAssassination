@@ -3,7 +3,7 @@ import telepot
 import time
 from telepot.aio.routing import *
 from telepot.namedtuple import *
-from Messages import ALL_LANGS, send_message, edit_message
+from Messages import ALL_LANGS, send_message, edit_message, EN
 from Database import DB, LANG, save_lang
 from Admin import check_admin
 
@@ -37,7 +37,12 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
             self.close()
             return
 
-        Messages = LANG[ID]
+        try:
+            Messages = LANG[ID]
+        except KeyError:
+            save_lang(ID,'EN')
+            Messages = LANG[ID]
+            
         ################################
         ##### AGENT INFO CALLBACKS #####
         ################################
