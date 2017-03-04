@@ -56,12 +56,12 @@ class Agent(object):
 
     def get_full_idty(self): #Returns agentName together with clickable first name (assuming user has username)
         if self.username:
-            return self.agentName + "<a href='http://telegram.me/" + self.username + "'> (" + self.firstName + ")</a>"
+            return self.agentName + " " + "<a href='http://telegram.me/" + self.username + "'>(" + self.firstName + ")</a>"
         return self.agentName + '<b> (' + self.firstName + ')</b>'
 
-    def get_clickable_name(self): #Returns just the first name of the hero, together with link if user has username
+    def get_clickable_name(self): #Returns just the first name of the person, together with link if user has username
         if self.username:
-            return "<a href='http://telegram.me/" + self.username + "'> " + self.firstName + "</a>"
+            return "<a href='http://telegram.me/" + self.username + "'>" + self.firstName + "</a>"
         return '<b>' + self.firstName + '</b>'
     
     def get_idty_query(self): #Returns a string as such. AgentName(firstName), without bold tags for query display

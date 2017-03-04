@@ -347,7 +347,7 @@ class Game(object):
         msg = self.Messages['summary']['endIntro'] + self.Messages['summary']['teamDERP']
         for agent in agents.values():
             del DB[agent.userID]
-            msg += self.Messages['summary']['agent']%(agent.get_idty())
+            msg += self.Messages['summary']['agent']%(agent.get_full_idty())
             
         #Then team PYRO
         agents = self.get_all_PYROteam()
@@ -355,9 +355,9 @@ class Game(object):
         for agent in agents.values():
             del DB[agent.userID]
             if agent.team == 'PYROVIP':
-                msg += self.Messages['summary']['VIP']%(agent.get_idty())
+                msg += self.Messages['summary']['VIP']%(agent.get_full_idty())
             else:
-                msg += self.Messages['summary']['agent']%(agent.get_idty())
+                msg += self.Messages['summary']['agent']%(agent.get_full_idty())
 
         #Send message
         await send_message(self.bot,self.chatID,msg)

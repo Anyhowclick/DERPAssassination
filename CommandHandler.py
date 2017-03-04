@@ -95,19 +95,6 @@ class CommandHandler(object):
         self.bot.close()
         return
 
-# Planned updates!
-    async def on_future(self, msg, name):
-        ID = self.get_ID(msg)
-        if await check_spam(self.bot,msg):
-            return
-        
-        if ID not in LANG: #default language will be english
-            save_lang(ID,'EN')
-        
-        await send_message(self.bot.bot,ID,LANG[ID]['future'])
-        self.bot.close()
-        return
-
 # Let GameHandler take the command, will ignore
     async def on_join(self, msg, name):
         ID = msg['from']['id']

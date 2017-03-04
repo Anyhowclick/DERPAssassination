@@ -18,7 +18,6 @@ class chatManager(telepot.aio.helper.ChatHandler):
                                                  'dlyw81',
                                                  'donate',
                                                  'fixstuff81',
-                                                 'future',
                                                  'newgame',
                                                  'join',
                                                  'rate',
