@@ -333,7 +333,6 @@ EN = {
             "<b>Ability cooldown:</b> Depends on target chosen. 3 turns for non-healers, 4 for healers.",
         },
 
-
     'agentNames':
         ["Anna","Aspida","Dracule","Elias","Grim",
          "Harambe","Hamia","Impilo","Jordan","Munie",
@@ -727,9 +726,327 @@ ZH = {
     }
 
 IN = {
-    'about': 'Insert some bahasa indo here',
-    'start': 'Selamat Datang!',
-    'welcomeChoice': 'Terimah Kasih!',
+    'about':
+        "<b>Tentang permainan ini</b>\n"\
+        "Permainan ini terinspirasi oleh Spyfall, Overwatch, and Werewolf, kombinasi dari 3 permainan "\
+        "Hal ini juga merupakan pengalaman pribadi. Kamu bisa menghubungi saya di @Anyhowclick!",
+
+    'abilityUsed':
+        "<b>Kemampuan digunakan!</b>",
+
+    'abilityNotUsed':
+        "<b>Kemampuan tidak digunakan!</b>",
+
+    'acknowledgement':
+        "Telah diterima.",
+
+    'agentDescription':
+        {   #Offense class
+            "Dracule":"<b>Nama:</b> Dracule\n<b>Nyawa:</b> 100\n<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Recovers a portion of his health when attacking. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Grim":"<b>Nama:</b> Grim\n<b>Nyawa:</b> 100\n<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Attacks up to 3 agents, dealing 30 damage per target. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Jordan":"<b>Nama:</b> Jordan\n<b>Nyawa:</b> 100\n<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Upon death, kills someone with him! \n"\
+            "<b>Jeda antar kemampuan:</b> No selection made or when selected target is dead",
+
+            "Novah":"<b>Nama:</b> Novah\n<b>Nyawa:</b> 100\n<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Sacrifices some hp to deal extra damage. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Saitami":"<b>Nama:</b> Saitami\n<b>Nyawa:</b> 100\n<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Drops an agent's health to 1hp.\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+            "Sonhae":"<b>Nama:</b> Sonhae\n<b>Nyawa:</b> 85\n<b>Serangan:</b> 30\n"\
+            "<b>Kemampuan:</b> Throws C4 explosives at an opponent to deal 40 damage.\n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Taiji":"<b>Nama:</b> Taiji\n<b>Nyawa:</b> 100\n<b>Serangan:</b> 25\n"\
+            "<b>Ability:</b> Deflects all attacks back to attackers, except for some abilities.\n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            #Tank class
+            "Aspida":"<b>Nama:</b> Asipda\n<b>Nyawa:</b> 130\n<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Provides a shield barrier (lasts 1 turn) to 1 agent. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Hamia":"<b>Nama:</b> Hamia\n<b>Nyawa:</b> 130\n<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Increases damage reduction of 1 agent. \n"\
+            "<b>Jeda antar kemampuan:</b> 1 giliran",
+
+            "Harambe":"<b>Nama:</b> Harambe\n<b>Nyawa:</b> 150\n<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Bites the bullet for an agent! All damage meant for the agent will be directed"\
+            "to Harambe instead. Furthermore, he recovers 25% of all damage taken this turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Impilo":"<b>Nama:</b> Impilo\n<b>Nyawa:</b> 130\n<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Recovers 20 hp or 25% of remaining health, whever is higher."\
+            "In addition, he has increased damage reduction.\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+
+            #Healer class
+            "Elias":"<b>Nama</b> Elias\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+            "or heal agents, not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Reveal which team an agent is from!\n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Grace":"<b>Nama:</b> Grace\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+            "or heal agents, not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Resurrects a dead agent with half of their base health. \n"\
+            "<b>Jeda antar kemampuan:</b> 5 giliran",
+
+            "Prim":"<b>Nama:</b> Prim\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+            "or heal agents, not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Makes an agent's ability available for use for him/her next turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Ralpha":"<b>Nama:</b> Ralpha\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+            "or heal agents, not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Restores an agent to full health (including yourself, but less effective).\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+            "Sanar":"<b>Nama:</b> Sanar\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+            "or heal agents, not both, in the same turn.\n"\
+            "<b>Kemampuan:</b> Heals up to 3 agents for 20 hp each (50% effective on self still). \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Yunos":"<b>Nama:</b> Yunos\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+            "or heal agents, not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Provides energy shields for up to 3 agents. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            #Support class
+            "Anna":"<b>Nama:</b> Anna\n<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Powers up an agent (Target agent will have increased damage, heal amount (if applicable), "\
+            "and abilities powered up (if possible), for 1 turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Jigglet":"<b>Nama:</b> Jigglet\n<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Lulls an agent to sleep, rendering that agent useless for 1 turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Munie":"<b>Nama:</b> Munie\n<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Causes an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
+            "<b>Ability cooldown:</b> 3 giliran",
+
+            "Puppenspieler":"<b>Nama:</b> Puppenspieler\n<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Controls an agent for 1 turn. That agent's ability may be used as well (if available).\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+            "Simo":"<b>Nama:</b> Simo\n<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Fires a shield-piercing bullet, breaking the shield of an agent (and so deals extra damage). "\
+            "If the agent is not shielded, then the bullet does slightly lower damage.\n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Wanda":"<b>Nama:</b> Wanda\n<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
+            "he/she will be unable to heal others.\n"\
+            "<b>Jeda antar kemampuan:</b> Depends on target chosen. 3 giliran for non-healers, 4 for healers.",
+        },
+
+    'agentDescriptionFirstPerson':
+        {   #Offense class
+            "Dracule": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Recover a portion of your health when attacking. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Grim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Attack up to 3 agents, dealing 30 damage per target. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Jordan": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> When you die, you kill someone with you! \n"\
+            "<b>Jeda antar kemampuan:</b> No selection made or when selected target is dead.",
+            
+            "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Sacrifice some of your health to deal extra damage. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Saitami": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Leave your target with 1hp remaining.\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+            "Sonhae": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 30\n"\
+            "<b>Kemampuan:</b> Throw C4 explosives at an opponent to deal 40 damage.\n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Taiji": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 25\n"\
+            "<b>Kemampuan:</b> Deflect all damage targeted at you back to attackers for 1 turn (excludes some abilities).\n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            #Tank class
+            "Aspida": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 130\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Provide a shield (lasting 1 turn) to 1 agent. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Hamia": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 130\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Increase damage reduction of 1 agent. \n"\
+            "<b>Jeda antar kemampuan:</b> 1 giliran",
+
+            "Harambe": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 150\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
+            "to you instead. Furthermore, you will recover 25%% of all damage taken this turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Impilo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 130\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+
+            #Healer class
+            "Elias": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that healing yourself is an option, but is only 50%% effective. "\
+            "Also, you can choose only to either damage or heal agents, "\
+            "not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Reveal which team an agent is from!\n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Grace": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that healing yourself is an option, but is only 50%% effective. "\
+            "Also, you can choose only to either damage or heal agents, "\
+            "not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Resurrect a dead agent with half of their base health. \n"\
+            "<b>Jeda antar kemampuan:</b> 5 giliran",
+
+            "Prim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that healing yourself is an option, but is only 50%% effective. "\
+            "Also, you can choose only to either damage or heal agents, "\
+            "not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Cause an agent's ability to be available for use for him/her next turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Ralpha": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that healing yourself is an option, but is only 50%% effective. "\
+            "Also, you can choose only to either damage or heal agents, "\
+            "not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Restore an agent to full health (works on yourself too, but less effective).\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+            "Sanar": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that healing yourself is an option, but is only 50%% effective. "\
+            "Also, you can choose only to either damage or heal agents, "\
+            "not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Heal up to 3 agents, 20 hp for each agent (50%% effectiveness on healing yourself still applies). \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Yunos": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 90\n"\
+            "<b>Serangan:</b> 17\n"\
+            "<b>Heal Amount:</b> 10\n"\
+            "Note that healing yourself is an option, but is only 50%% effective. "\
+            "Also, you can choose only to either damage or heal agents, "\
+            "not both in the same turn.\n"\
+            "<b>Kemampuan:</b> Give energy shields to a maximum of 3 agents. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            #Support class
+            "Anna": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Power up an agent (Target agent will have increased damage, heal amount (if applicable), "\
+            "and abilities powered up (if possible), for 1 turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Jigglet": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Lull an agent to sleep, rendering that agent useless for 1 turn. \n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Munie": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Cause an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
+
+            "Puppenspieler": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Control an agent for 1 turn. That agent's ability may be used as well (if available).\n"\
+            "<b>Jeda antar kemampuan:</b> 4 giliran",
+
+            "Simo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Fire a shield-piercing bullet, breaking the shield of an agent (and so deals extra damage). "\
+            "If the agent is not shielded, then the bullet does slightly lower damage.\n"\
+            "<b>Jeda antar kemampuan:</b> 2 giliran",
+
+            "Wanda": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
+            "<b>Nyawa:</b> 100\n"\
+            "<b>Serangan:</b> 20\n"\
+            "<b>Kemampuan:</b> Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
+            "he/she will be unable to heal others.\n"\
+            "<b>Jeda antar kemampuan:</b> Depends on target chosen. 3 giliran for non-healers, 4 for healers.",
+        },
+    'welcomeChoice': 'You selected Bahasa Indo!',
     }
     
 async def send_message(bot,ID,message,parse_mode='HTML',reply_markup=None,disable_web_page_preview=True):
