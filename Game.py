@@ -31,7 +31,7 @@ ORDER = {'ult':0, 'attack':1, 'heal':1}
 AGENTULTS = {'Sonhae':0,'Taiji':-200,'Dracule':-100,'Novah':-100,'Saitami':0,
              'Grim':0,'Jordan':-999,'Harambe':-300,'Impilo':-200,'Hamia':-300,'Aspida':-300,
              'Grote':-300,'Mitsuha':-100,
-             'Grace':100,'Ralpha':0,'Sanar':0, 'Prim':-100, 'Elias':-400,
+             'Grace':100,'Ralpha':0,'Sanar':0, 'Prim':100, 'Elias':-400,
              'Yunos':-300,'Munie':-1000,'Anna':-500,'Wanda':-300}
 
 #Randomly selects from a dictionary, deletes selected entry from it and returns the selection
@@ -360,10 +360,14 @@ class Game(object):
                 msg += self.Messages['summary']['agent']%(agent.get_full_idty())
 
         #Send message
-        await send_message(self.bot,self.chatID,msg)
+        sent = await send_message(self.bot,self.chatID,msg)
+        sent = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
         
         #Finally delete in DB
         del DB[self.chatID]
+
+        #Return (editor,msg) so that next game notification can be appended
+        return (sent,msg)
 
     #In case of error, kill the game
     async def kill_game(self):

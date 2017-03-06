@@ -368,7 +368,7 @@ EN = {
             'res': "You have been <b>raised from the dead \U0001F3FB!</b> Get back into the fight \U0001F3FB!!",
             'recover': "%s recovers %d hp!\n",
             'selfAtt': "%s self-inflicts damage! \U0001F635\n",
-            'selfHeal': "%s now has %d hp after self-\U0001F489! \U0001F36C\n",
+            'selfHeal': "%s now has %d hp after self-\U0001F489!\n",
             'sleepAtt': "%s is \U0001F634, and so failed to \U0001F52A!\n",
             'sleepUlt': "%s is \U0001F634 and thus couldn't use his/her ability!\n",
             'shieldBroken': "%s's \U0001F6E1 was broken by %s and takes damage!\n",
@@ -421,7 +421,7 @@ EN = {
     
     'countdownRemind':
         "<b>%d</b> seconds left to join the game! Make sure "\
-        "that you have a private chat open with me (tap/click this: @DERPAssassinBot) before "\
+        "that you have a private chat open with me (tap/click: @DERPAssassinBot) before "\
         "using the /join@DERPAssassinBot command!",
 
     'countdownChoice':
@@ -461,7 +461,7 @@ EN = {
 
     'failTalk':
         "%s failed to start / join a game! Would you kindly start a private chat with me first? "\
-        "Tap/click this: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat.</b> Set "\
+        "Tap/click: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat.</b> Set "\
         "your preferred language as well!",
 
     'findOutChar':
@@ -530,6 +530,15 @@ EN = {
     'newGameToUser':
         "You have successfully started a game!",
 
+    'nextGameNotify':
+        "You will be notified when the game ends in <b>%s</b>!",
+    
+    'nextGameUsername':
+        '\nThe game has ended! Start a new game?\n',
+
+    'nextGameNoUsername':
+        'The game has ended in the group <b>%s</b>.',
+    
     'no':
         "No",
 
@@ -735,7 +744,7 @@ IN = {
             "<b>Jeda antar kemampuan:</b> 2 giliran",
 
             "Grim":"<b>Nama:</b> Grim\n<b>Nyawa/HP:</b> 100\n<b>Jumlah Serangan:</b> 25\n"\
-            "<b>Kemampuan:</b> Dapat menyerang maksimum 3 agen sekaligus, 30 serangan sekali target serang.\n"\
+            "<b>Kemampuan:</b> Dapat menyerang maksimum 3 agen sekaligus, 30 serangan per target serang.\n"\
             "<b>Jeda antar kemampuan:</b> 2 giliran",
 
             "Jordan":"<b>Nama:</b> Jordan\n<b>Nyawa/HP:</b> 100\n<b>Jumlah Serangan:</b> 25\n"\
@@ -1123,7 +1132,7 @@ IN = {
     
     'countdownRemind':
         "<b>%d</b> seconds left to join the game! Make sure "\
-        "that you have a private chat open with me (tap/click this: @DERPAssassinBot) before "\
+        "that you have a private chat open with me (tap/click: @DERPAssassinBot) before "\
         "using the /join@DERPAssassinBot command!",
 
     'countdownChoice':
@@ -1163,7 +1172,7 @@ IN = {
 
     'failTalk':
         "%s failed to start / join a game! Would you kindly start a private chat with me first? "\
-        "Tap/click this: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat.</b> Set "\
+        "Tap/click: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat.</b> Set "\
         "your preferred language as well!",
 
     'findOutChar':
@@ -1416,6 +1425,7 @@ async def send_message(bot,ID,message,parse_mode='HTML',reply_markup=None,disabl
                                        disable_web_page_preview=disable_web_page_preview)
     except telepot.exception.BotWasBlockedError:
         return
+    
     except telepot.exception.TelegramError:
         return
     return result
@@ -1427,7 +1437,18 @@ async def edit_message(editor,message,reply_markup=None,parse_mode='HTML',disabl
                                               parse_mode=parse_mode,
                                               disable_web_page_preview=disable_web_page_preview)
     except telepot.exception.TelegramError:
-        result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
+        try:
+            result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
+        except telepot.exception.TelegramError:
+            return
+        
+    except exception.TelegramError:
+        try:
+            result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
+        except exception.TelegramError:
+            return
+        
     except AttributeError:
         return
+    
     return result

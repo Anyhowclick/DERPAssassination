@@ -382,7 +382,7 @@ class Harambe(Tank):
         recoveredHp = 0.25*(recoveredHp-self.health)
         if not self.canBeHealed:
             return msg + self.Messages['combat']['failHealSelf']%(self.get_idty())
-        elif not recoveredHp or (self.health <= 0):
+        elif recoveredHp <= 0:
             return msg
         self.add_health(recoveredHp)
         return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)

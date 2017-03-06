@@ -39,7 +39,7 @@ class chatManager(telepot.aio.helper.ChatHandler):
         self.router.routing_table['chat'] = contentTypeRouter.route
         
 
-    #Define other non-essential methods
+    #Define other non-essential methods, in no particular order
     async def on_new_chat_member(self,msg,name):
         return
 
@@ -60,11 +60,17 @@ class chatManager(telepot.aio.helper.ChatHandler):
 
     async def on_new_pinned_message(self,msg,name):
         return    
+
+    aync def on_document(self,msg,name):
+        return
     
     async def on_photo(self,msg,name):
         return
 
     async def on_video(self,msg,name):
+        return
+
+    async def on_audio(self,msg,name):
         return
 
     async def on_voice(self,msg,name):
