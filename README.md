@@ -1,7 +1,13 @@
 # DERP:Assassination
 
-## Upcoming changes, last updated 3/3/17
-- Stay tuned!
+## Changelog 12/3/17 2228 hrs
+- Adding Bahasa Indo in Messages.py
+- Improved /nextgame command: Notification now occurs when a game starts, not when one ends!
+- Added /group command to show groups which people can join
+- Fixed a bug where Prim's ability failed to work for some characters (has to do with ordering in the dictionary in Game.py)
+- Hamia now gives 50% dmg reduction! Also, Anna will boost this amount to 70%! His ability cooldown has been increased to 2 turns to balance this buff.
+- Added auto-updated script (called with the special command in CommandHandler.py, routed to ChatManager.py for scheduling every hour, which calls the main function found in Admin.py). The script updates no. of members found in groups, and in the future, stats in the database
+- Improved /killgame command (Forgot to remove users from DB, resulting in them being unable to join any other subsequent games)
 
 ## Changelog 3/3/17 1200 hrs
 - Names are now clickable, and first names are used instead of usernames. Also, only agent names are shown in the combat log.
