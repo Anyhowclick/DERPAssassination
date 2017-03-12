@@ -2,13 +2,18 @@
 import asyncio
 import telepot
 import telepot.aio
-import time, threading
+import time
 from Messages import send_message, EN
 from Database import DB,LANG,SPAM,STRIKE,BLOCKED
 
-THRESHOLD = {0:0.75, 1:0.7, 2:0.7, 3:0.6, 4:0.6, 5:0.6, 6:0.6, 7:0.6, 8:0.6}
+THRESHOLD = {0:0.75, 1:0.7, 2:0.7, 3:0.6, 4:0.6, 5:0.6, 6:0.6, 7:0.6, 8:0.6} 
 PENALTY = {0:0,1:10,2:60,3:900,4:3600,5:86400,6:259200, 7:999999999999} #Penalty time to ignore in seconds
-MAINTENANCE = False
+MAINTENANCE = True
+GRPS = [('-1001101622786','<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'),#]
+        ('-1001090679151','<a href="https://t.me/joinchat/AAAAAEECcW8ICTmNpWQgVQ">'),
+        ('-1001117357538', '<a href="https://t.me/joinchat/AAAAAEKZheLEzw0_JFj81Q">'),
+        ('-1001103517150', '<a href="https://t.me/joinchat/AAAAAEHGVd5xynxQ-I3KbQ">'),] #Groups for people to join
+GRPS_INFO = {}
 
 #Return true if user is in blocked list
 async def check_spam(handler,msg):
@@ -44,10 +49,31 @@ async def check_spam(handler,msg):
         await send_message(handler.bot,userID,LANG[userID]['spam'][strike],parse_mode='HTML')
         return True
     return False
-
-def start_spam():
+        
+async def auto_update(bot):
+    #restart spam
     SPAM={}
-    threading.Timer(900, start_spam).start()
+    #Retrieve information of groups
+    global GRPS, GRPS_INFO
+    for chatID,link in GRPS:
+        #Update group member count and group title
+        #Stored in GRPS_INFO using chatID as the key: {chatID: {'title':GrpTitle,'link':link,'members':memberCount}}
+        try:
+            result = await bot.bot.getChat(chatID)
+        except telepot.exception.TelegramError:
+            continue
+        result = result['title'] #Obtain group title
+        try:
+            GRPS_INFO[chatID]['title'] = result
+        except KeyError:
+            GRPS_INFO[chatID] = {}
+            GRPS_INFO[chatID]['title'] = result
+            
+        GRPS_INFO[chatID]['link'] = link
+        
+        result = await bot.bot.getChatMembersCount(chatID)
+        GRPS_INFO[chatID]['members'] = result
+    return
 
 async def check_admin(bot,chatID,userID): #Check if user is admin based on userID
     admins = await bot.getChatAdministrators(chatID) #admins are in a list
@@ -56,12 +82,16 @@ async def check_admin(bot,chatID,userID): #Check if user is admin based on userI
             return True
     return False
 
-def on_maintenance():
+def toggle_maintenance():
     global MAINTENANCE
-    MAINTENANCE = True
+    MAINTENANCE = not MAINTENANCE
     return
 
 def get_maintenance():
     global MAINTENANCE
     return MAINTENANCE
+
+def get_grp_info():
+    global GRPS_INFO
+    return GRPS_INFO
                 

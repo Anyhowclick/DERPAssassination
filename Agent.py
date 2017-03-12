@@ -150,6 +150,7 @@ class Agent(object):
         self.reset_ult_used()
         self.reset_can_be_healed()
         self.reset_can_be_shielded()
+        self.reset_dmg_reduction()
         self.editor = None
         
     ### Reset char ###

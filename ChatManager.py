@@ -3,6 +3,7 @@ import telepot
 import pprint
 from telepot.aio.routing import *
 from CommandHandler import CommandHandler
+from Admin import auto_update
 
 # ChatManager routes messages according to 1) message flavour 2) content type
 class chatManager(telepot.aio.helper.ChatHandler):
@@ -18,6 +19,7 @@ class chatManager(telepot.aio.helper.ChatHandler):
                                                  'dlyw81',
                                                  'donate',
                                                  'fixstuff81',
+                                                 'groups',
                                                  'newgame',
                                                  'join',
                                                  'rate',
@@ -34,16 +36,28 @@ class chatManager(telepot.aio.helper.ChatHandler):
         contentTypeRouter = telepot.aio.helper.Router(by_content_type(),make_content_type_routing_table(self))
         contentTypeRouter.routing_table['text'] = commandRouter.route
         contentTypeRouter.routing_table['new_chat_member'] = self.on_new_chat_member
-     
+
         #Assign router to routing table
         self.router.routing_table['chat'] = contentTypeRouter.route
-        
+        #Assign auto_update_script
+        self.router.routing_table['_auto_update'] = self.on__auto_update
+
+    #Calls auto_update script found in Admin.py
+    #Updates the no. of members in each group using the /group command, and in the future
+    #the stats database
+    async def on__auto_update(self,event):
+        await auto_update(self)
+        self.scheduler.event_later(3600, ('_auto_update',{'seconds': 3600}))
+        return
 
     #Define other non-essential methods, in no particular order
     async def on_new_chat_member(self,msg,name):
         return
 
     async def on_left_chat_member(self,msg,name):
+        return
+
+    async def on_pinned_message(self,msg,name):
         return
 
     async def on_new_chat_title(self,msg,name):
@@ -54,17 +68,20 @@ class chatManager(telepot.aio.helper.ChatHandler):
 
     async def on_delete_chat_photo(self,msg,name):
         return
-    
+
     async def on_new_chat_photo(self,msg,name):
         return
 
     async def on_new_pinned_message(self,msg,name):
-        return    
-
-    aync def on_document(self,msg,name):
         return
-    
+
+    async def on_document(self,msg,name):
+        return
+
     async def on_photo(self,msg,name):
+        return
+
+    async def on_contact(self,msg,name):
         return
 
     async def on_video(self,msg,name):
@@ -77,4 +94,4 @@ class chatManager(telepot.aio.helper.ChatHandler):
         return
 
     async def on_sticker(self,msg,name):
-        return    
+        return

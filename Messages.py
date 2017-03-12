@@ -1,14 +1,14 @@
 import telepot
-ALL_LANGS = ['EN','IN']#ZH'],'IN']
+ALL_LANGS = ['EN',]#'IN',ZH']
 
 LANGEMOTES = {
     'EN': '\U0001F1EC\U0001F1E7',
     #'ZH': '\U0001F1E8\U0001F1F3',
-    'IN': '\U0001F1EE\U0001F1E9',
+    #'IN': '\U0001F1EE\U0001F1E9',
     }
 
 setLang = 'Choose your preferred language:'
-    
+
 EN = {
     'about':
         "<b>About the game</b>\n"\
@@ -62,8 +62,8 @@ EN = {
             "<b>Ability cooldown:</b> 3 turns",
 
             "Hamia":"<b>Name:</b> Hamia\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Increases damage reduction of 1 agent. \n"\
-            "<b>Ability cooldown:</b> 1 turn",
+            "<b>Ability:</b> Increases damage reduction of 1 agent by 50%. \n"\
+            "<b>Ability cooldown:</b> 2 turns",
 
             "Harambe":"<b>Name:</b> Harambe\n<b>Health:</b> 150\n<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Bites the bullet for an agent! All damage meant for the agent will be directed"\
@@ -179,7 +179,7 @@ EN = {
             "<b>Damage:</b> 25\n"\
             "<b>Ability:</b> When you die, you kill someone with you! \n"\
             "<b>Ability cooldown:</b> No selection made or when selected target is dead.",
-            
+
             "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 25\n"\
@@ -214,8 +214,8 @@ EN = {
             "Hamia": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Increase damage reduction of 1 agent. \n"\
-            "<b>Ability cooldown:</b> 1 turn",
+            "<b>Ability:</b> Increase damage reduction of 1 agent by 50%%. \n"\
+            "<b>Ability cooldown:</b> 2 turns",
 
             "Harambe": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 150\n"\
@@ -384,7 +384,7 @@ EN = {
                     'AnnaSelf': "%s is stronger this turn!\n",
                     'Aspida': "%s \U0001F6E1 (<b>%d</b> energy \U000026A1) %s\n",
                     'AspidaSelf': "%s shielded herself with a shield of <b>%d</b> energy! \U000026A1\n",
-                    'Dracule': "%s's attack, if successful, recovers a some health this turn!\n",
+                    'Dracule': "%s's attack, if successful, recovers some health this turn!\n",
                     'Elias': "%s knows which team %s is on! \U0001F60F\n",
                     'EliasSelf': "%s revealed his own identity to himself, which is sort of pointless, but well...\n",
                     'EliasPrivate': "%s is %s",
@@ -396,7 +396,7 @@ EN = {
                     'Impilo': "%s has increased damage reduction and recovered %d health!\n",
                     'ImpiloFailHeal': "%s has increased damage reduction, but failed to recover health! \U0001F61E\n",
                     'Jordan': "%s cursed %s to \U0001F480 together with him \U0001F608!\n",
-                    'JordanFail': "%s was invulnerable, thus escaping %s's curse!\n", 
+                    'JordanFail': "%s was invulnerable, thus escaping %s's curse!\n",
                     'Munie': '%s caused %s to be invulnerable this turn!\n',
                     'MunieSelf': "%s is invulnerable this turn!\n",
                     'NovahNOK': "%s tried to activate his ability but has insufficient health!\n",
@@ -418,7 +418,7 @@ EN = {
         },
 
     'countdownNoRemind': "<b>%d</b> seconds left to join the game!",
-    
+
     'countdownRemind':
         "<b>%d</b> seconds left to join the game! Make sure "\
         "that you have a private chat open with me (tap/click: @DERPAssassinBot) before "\
@@ -445,12 +445,12 @@ EN = {
         "A game is running at the moment!",
 
     'endGame':
-        {'draw': "Everyone is dead, so the game <b>ENDS IN A DRAW!</b>",
-         'rareDraw': "Somehow both teams have the same health, so the game <b>ENDS IN A DRAW!</b>",
-         'DERP.KO': "Alas, the PYRO agents proved to be too hot \U0001F525 to handle! <b>TEAM PYRO \U0001F525 WINS!</b>",
+        {'draw': "\nEveryone is dead, so the game <b>ENDS IN A DRAW!</b>",
+         'rareDraw': "\nSomehow both teams have the same health, so the game <b>ENDS IN A DRAW!</b>",
+         'DERP.KO': "\nAlas, the PYRO agents proved to be too hot \U0001F525 to handle! <b>TEAM PYRO \U0001F525 WINS!</b>",
          'DERPWin': "<b>TEAM DERP \U0001F530 WINS!</b>",
-         'PYRO.KO': "The cool guys have chilled \U00002744 the evil-doers into oblivion! <b>TEAM DERP \U0001F530 WINS!</b>",
-         'PYROVIP.KO': "All VIP targets were iced \U00002744! <b>TEAM DERP \U0001F530 WINS!</b>",
+         'PYRO.KO': "\nThe cool guys have chilled \U00002744 the evil-doers into oblivion! <b>TEAM DERP \U0001F530 WINS!</b>",
+         'PYROVIP.KO': "\nAll VIP targets were iced \U00002744! <b>TEAM DERP \U0001F530 WINS!</b>",
          'PYROWin': "<b>TEAM PYRO \U0001F525 WINS!</b>",
          'tooLong': "This game has gone long enough! Team with the most health wins!",
          'tooLongSummary': "Team DERP: <b>%d hp</b>\nTeam PYRO: <b>%d hp</b>\n",
@@ -479,9 +479,15 @@ EN = {
          'PYROVidID': "BQADBQADGQADtFzTEZ5k3pNuPxYKAg",
          },
 
+    'groups':
+        "Here are groups you may be interested to join:\n\n",
+
+    'groupsMemberCount':
+        "<b>%s members</b>\n\n",
+
     'initialise':
         "Initialising...",
-    
+
     'invalidCommand':
         "Sorry, I can't interpret the command you gave.",
 
@@ -506,23 +512,23 @@ EN = {
         "Game has been killed!",
 
     'killGameAgents':
-        "Sorry, there was a problem with the bot. The game has been terminated by a group admin.",
+        "Sorry, there was a problem. The game has been terminated by a group admin.",
 
     'leaveGame': "<b>%s</b> left the game!\n",
     'leaveGame1': "The game stopped as <b>%s</b> left.\n",
-    
+
     'lonely':
         "Can't play this game by yourself! (well it could in the future, but anyway...) "\
         "Find some friends to play with!",
 
     'maintenance':
         {'OK': "Shutting down...",
-         'shutdown': "The bot is <b>closing for maintenance.</b> Refer to @DerpAssUpdates for "\
+         'shutdown': "The bot is <b>closed for maintenance.</b> Refer to @DerpAssUpdates for "\
                      "the latest information!\n\n",
          },
 
     'newGame':
-        "A new game has been started by %s! Use /join@DERPAssassinBot to join the game, and ensure "\
+        "\nA new game has been started by %s! Use /join@DERPAssassinBot to join the game, and ensure "\
         "that you have started a private chat with me (click/tap: @DERPAssassinBot), then press /start in the private chat, "\
         "so I can interact with you throughout the game.\n\n"
         "<b>%d</b> players minimum, <b>%d</b> maximum\n",
@@ -531,14 +537,14 @@ EN = {
         "You have successfully started a game!",
 
     'nextGameNotify':
-        "You will be notified when the game ends in <b>%s</b>!",
-    
-    'nextGameUsername':
-        '\nThe game has ended! Start a new game?\n',
+        "You will be notified when a game starts in <b>%s</b>!",
+
+    'nextGameNotifyNoTitle':
+        "You will be notified when a game starts!",
 
     'nextGameNoUsername':
-        'The game has ended in the group <b>%s</b>.',
-    
+        '\nA new game has started in <b>%s</b>\n',
+
     'no':
         "No",
 
@@ -635,7 +641,7 @@ EN = {
         "each round lasts 150-210 seconds, a game is expected to take 15-30 mins, but can stretch to a maximum "\
         "of 87.5 mins.\n\n"\
         "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.",
-    
+
     'spam':
         {
          1: "I won't respond for 10 seconds because you have been "\
@@ -651,9 +657,11 @@ EN = {
     'start':
         "Hi there! Add me into group chats and use /newgame@DERPAssassinBot to start a new game with your friends! "\
         "Make sure that all players must first have a private chat with the bot first before joining, "\
-        "so that I can PM classified information to each player. Use /rules to find out how this game is played."\
-        "/agents will give more info about each agent's ability and stats. "\
-        "/story gives the lore of the game. Here's the <a href='https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg'>main group</a> for the game currently. Have lots of fun!",
+        "so that I can PM classified information to each player.\n"\
+        "Use /rules to find out how this game is played.\n"\
+        "/agents will give more info about each agent's ability and stats.\n"\
+        "/story gives the lore of the game.\n"\
+        "/group shows you existing groups which you may join! Have lots of fun!",
 
     'story':
         "Long ago, the world \U0001F30E	lived together in harmony. Then, everything changed "\
@@ -890,7 +898,7 @@ IN = {
             "<b>Jumlah Serangan:</b> 25\n"\
             "<b>Kemampuan:</b> When you die, you kill someone with you! \n"\
             "<b>Jeda antar kemampuan:</b> No selection made or when selected target is dead.",
-            
+
             "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Nyawa/HP:</b> 100\n"\
             "<b>Jumlah Serangan:</b> 25\n"\
@@ -1107,7 +1115,7 @@ IN = {
                     'Impilo': "%s has increased damage reduction and recovered %d health!\n",
                     'ImpiloFailHeal': "%s has increased damage reduction, but failed to recover health! \U0001F61E\n",
                     'Jordan': "%s cursed %s to \U0001F480 together with him \U0001F608!\n",
-                    'JordanFail': "%s was invulnerable, thus escaping %s's curse!\n", 
+                    'JordanFail': "%s was invulnerable, thus escaping %s's curse!\n",
                     'Munie': '%s caused %s to be invulnerable this turn!\n',
                     'MunieSelf': "%s is invulnerable this turn!\n",
                     'NovahNOK': "%s tried to activate his ability but has insufficient health!\n",
@@ -1129,7 +1137,7 @@ IN = {
         },
 
     'countdownNoRemind': "<b>%d</b> seconds left to join the game!",
-    
+
     'countdownRemind':
         "<b>%d</b> seconds left to join the game! Make sure "\
         "that you have a private chat open with me (tap/click: @DERPAssassinBot) before "\
@@ -1192,7 +1200,7 @@ IN = {
 
     'initialise':
         "Initialising...",
-    
+
     'invalidCommand':
         "Sorry, I can't interpret the command you gave.",
 
@@ -1221,7 +1229,7 @@ IN = {
 
     'leaveGame': "<b>%s</b> left the game!\n",
     'leaveGame1': "The game stopped as <b>%s</b> left.\n",
-    
+
     'lonely':
         "Can't play this game by yourself! (well it could in the future, but anyway...) "\
         "Find some friends to play with!",
@@ -1337,7 +1345,7 @@ IN = {
         "each round lasts 150-210 seconds, a game is expected to take 15-30 mins, but can stretch to a maximum "\
         "of 87.5 mins.\n\n"\
         "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.",
-    
+
     'spam':
         {
          1: "I won't respond for 10 seconds because you have been "\
@@ -1410,13 +1418,13 @@ IN = {
     'VIPself':
         "\n\nYou are one of the \U0001F31F <b>VIPs</b> (or the only one), and thus, a <b>PYRO \U0001F525 agent!</b> "\
         "Find other PYRO agents and get them to protect you!",
-    
+
     'welcomeChoice': 'You selected Bahasa Indo!',
 
     'yes':
         "Yes",
     }
-    
+
 async def send_message(bot,ID,message,parse_mode='HTML',reply_markup=None,disable_web_page_preview=True):
     try:
         result = await bot.sendMessage(ID,message,
@@ -1425,7 +1433,7 @@ async def send_message(bot,ID,message,parse_mode='HTML',reply_markup=None,disabl
                                        disable_web_page_preview=disable_web_page_preview)
     except telepot.exception.BotWasBlockedError:
         return
-    
+
     except telepot.exception.TelegramError:
         return
     return result
@@ -1441,14 +1449,8 @@ async def edit_message(editor,message,reply_markup=None,parse_mode='HTML',disabl
             result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
         except telepot.exception.TelegramError:
             return
-        
-    except exception.TelegramError:
-        try:
-            result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
-        except exception.TelegramError:
-            return
-        
+
     except AttributeError:
         return
-    
+
     return result

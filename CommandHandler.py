@@ -3,8 +3,9 @@ import telepot
 from telepot.aio.delegate import *
 from telepot.aio.routing import *
 from telepot.namedtuple import *
+import threading
 from Messages import EN, ALL_LANGS, send_message
-from Admin import check_admin, start_spam, check_spam, on_maintenance
+from Admin import check_admin, check_spam, get_maintenance, toggle_maintenance, get_grp_info
 from Database import DB, LANG, load_preferences, set_lang, save_lang
 
 # Function to group elements together by iterating through sequence
@@ -69,10 +70,11 @@ class CommandHandler(object):
 #To initialise admin stuff --> DON"T LOSE YOUR WAYYYYY. YOUR MINDDDDD
     async def on_dlyw81(self, msg, name):
         if int(msg['from']['id']) == 28173774:
+            load_preferences() #Load preferences
+            self.bot.scheduler.event_later(0, ('_auto_update', {'seconds': 0})) #Start auto update script in CommandHandler, which is routed to Admin.py
+            #The function is placed in ChatManager for continual scheduling of the task every hour
+            toggle_maintenance()
             await self.bot.sender.sendMessage(EN['initialise'])
-            start_spam()
-            load_preferences()
-        self.bot.close()
         return
 
 # Funding the development of this game!
@@ -88,13 +90,32 @@ class CommandHandler(object):
             await self.bot.sender.sendMessage(LANG[ID]['donate'],disable_web_page_preview=True)
             self.bot.close()
 
+#SPECIAL COMMAND to close bot for maintenance
     async def on_fixstuff81(self, msg, name):
         if int(msg['from']['id']) == 28173774:
             await self.bot.sender.sendMessage(EN['maintenance']['OK'])
-            on_maintenance()
+            toggle_maintenance()
         self.bot.close()
         return
 
+#Command to get groups to join
+    async def on_groups(self, msg, name):
+        if await check_spam(self.bot,msg):
+            return
+        ID = msg['from']['id']
+        if ID not in LANG: #default language will be english
+            save_lang(ID,'EN')
+
+        message = LANG[ID]['groups']
+        grps = get_grp_info()
+        for key in list(grps.keys()):
+            result = grps[key]
+            message += result['link'] + result['title'] + '</a>\n'
+            message += LANG[ID]['groupsMemberCount']%(result['members'])
+        await send_message(self.bot.bot,self.get_ID(msg),message)
+        self.bot.close()
+        return
+    
 # Let GameHandler take the command, will ignore
     async def on_join(self, msg, name):
         ID = msg['from']['id']
@@ -217,7 +238,7 @@ class CommandHandler(object):
         await send_message(self.bot.bot,ID,LANG[ID]['support'],parse_mode='HTML')
         self.bot.close()
         return
-
+        
 ####################
 ##SPECIAL HANDLERS##
 ####################
