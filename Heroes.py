@@ -113,7 +113,7 @@ class Dracule(Offense):
            enemy = enemy.protector
         if self.ultUsed and not self.canBeHealed:
             return msg + self.Messages['combat']['failHealSelf']%(self.get_idty())
-        if self.ultUsed and not enemy.invuln:
+        elif self.ultUsed and not enemy.invuln:
             self.add_health(recoveredHp) 
             return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)
         return msg
@@ -325,8 +325,8 @@ class Aspida(Tank):
 class Hamia(Tank):
     def __init__(self, userID, username, firstName, Messages):
         super().__init__('Hamia', userID, username, firstName, Messages,
-                         buffUlt=True,baseUltCD=1)
-        self.baseUltDmgReduction = 0.05
+                         buffUlt=True,baseUltCD=2)
+        self.baseUltDmgReduction = 0.5
         self.ultDmgReduction = self.baseUltDmgReduction
 
     def reset_next_round(self):
@@ -382,7 +382,7 @@ class Harambe(Tank):
         recoveredHp = 0.25*(recoveredHp-self.health)
         if not self.canBeHealed:
             return msg + self.Messages['combat']['failHealSelf']%(self.get_idty())
-        elif not recoveredHp or (self.health <= 0):
+        elif recoveredHp <= 0:
             return msg
         self.add_health(recoveredHp)
         return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)
@@ -672,7 +672,7 @@ class Anna(Support):
                 ally.add_ult_health(10)
 
             elif isinstance(ally,Hamia):
-                ally.add_ult_dmg_reduction(0.08)
+                ally.add_ult_dmg_reduction(0.2)
             # elif ally.agentName in ('Aspida','Yunos'):
                 #TO-DO: Increase provide shield amt
 
