@@ -106,7 +106,7 @@ EN = {
             "<b>Heal Amount:</b> 10\n"\
             "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
             "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Restores an agent to full health (including yourself, but less effective).\n"\
+            "<b>Ability:</b> Heal an agent to 80% of his base health (70% if used on self).\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
             "Sanar":"<b>Name:</b> Sanar\n<b>Health:</b> 90\n"\
@@ -227,7 +227,7 @@ EN = {
             "Impilo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn. \n"\
+            "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn.\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
 
@@ -269,7 +269,7 @@ EN = {
             "Note that healing yourself is an option, but is only 50%% effective. "\
             "Also, you can choose only to either damage or heal agents, "\
             "not both in the same turn.\n"\
-            "<b>Ability:</b> Restore an agent to full health (works on yourself too, but less effective).\n"\
+            "<b>Ability:</b> Heal an agent to 80%% of his base health (70%% if used on yourself).\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
             "Sanar": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
@@ -359,7 +359,7 @@ EN = {
             'failHeal': "%s failed to heal %s! \U0001F61E\n",
             'failHealSelf': "%s tried to self-\U0001F489, but failed! \U0001F61E\n",
             'failShield': "%s couldn't shield %s!\n",
-            'heal': "%s has %d hp after \U0001F489 from \U00002764 %s!\n",
+            'heal': "%s has %d hp after \U0001F489 from %s!\n",
             'hurt': "%s \U0001F52A %s!\n",
             'intro': "<b>\U00002694 ROUND %d \U00002694</b>\n",
             'invuln': "%s was attacked, but is invulnerable!\n",
@@ -371,8 +371,8 @@ EN = {
             'selfHeal': "%s now has %d hp after self-\U0001F489!\n",
             'sleepAtt': "%s is \U0001F634, and so failed to \U0001F52A!\n",
             'sleepUlt': "%s is \U0001F634 and thus couldn't use his/her ability!\n",
-            'shieldBroken': "%s's \U0001F6E1 was broken by %s and takes damage!\n",
-            'shieldIntact': "%s damaged %s's shield, leaving it with %d energy \U000026A1 remaining!\n",
+            'shieldBroken': "%s's \U0001F6E1 was broken by %s!\n",
+            'shieldIntact': "%s damaged %s's shield (%d energy \U000026A1 left)!\n",
             'shieldFailHeal': " %s's shield failed to heal %s!\n",
             'shieldHeal': " %s now has %d hp after being healed by %s's shield!\n",
             'teamDERP': 'on <b>team DERP \U0001F530</b>',
@@ -383,15 +383,15 @@ EN = {
                     'Anna': "%s has been made stronger by %s this turn!\n",
                     'AnnaSelf': "%s is stronger this turn!\n",
                     'Aspida': "%s \U0001F6E1 (<b>%d</b> energy \U000026A1) %s\n",
-                    'AspidaSelf': "%s shielded herself with a shield of <b>%d</b> energy! \U000026A1\n",
-                    'Dracule': "%s's attack, if successful, recovers some health this turn!\n",
+                    'AspidaSelf': "%s \U0001F6E1 herself (<b>%d</b> energy \U000026A1)\n",
+                    'Dracule': "%s's attack, if successful, recovers health this turn!\n",
                     'Elias': "%s knows which team %s is on! \U0001F60F\n",
                     'EliasSelf': "%s revealed his own identity to himself, which is sort of pointless, but well...\n",
                     'EliasPrivate': "%s is %s",
                     'EliasSelfPrivate': "You don't know which team you're on? \U0001F611 "\
                                         "Perhaps you're too lazy to scroll up. Oh well... you're %s",
-                    'Grim': '%s fires his blasters at %s!\n',
-                    'Harambe': "%s protects %s this turn! Also, he will recover 25%% of all damage dealt to him!\n",
+                    'Grim': '%s \U0001F52B at %s!\n',
+                    'Harambe': "%s protects %s this turn! He also recovers 25%% of all damage dealt to him!\n",
                     'Hamia': "%s increased %s's damage reduction this turn!\n",
                     'Impilo': "%s has increased damage reduction and recovered %d health!\n",
                     'ImpiloFailHeal': "%s has increased damage reduction, but failed to recover health! \U0001F61E\n",
@@ -403,16 +403,17 @@ EN = {
                     'NovahOK': "%s sacrificed 5 hp to deal extra damage!\n",
                     'Prim': "%s caused %s's ability to be usable next turn!\n",
                     'PrimSelf': "%s tried, but failed, to use her ability on herself!\n",
-                    'Ralpha': "%s restored %s back to full health! \U0001F48A\n ",
-                    'RalphaSelf': "%s heals himself back to 80%% of his base health! \U0001F48A\n ",
+                    'Ralpha': "%s restored 80%% of %s's health! \U0001F48A\n",
+                    'RalphaSelf': "%s restored 70%% of his own health! \U0001F48A\n",
                     'revealFail': "Sorry, %s is invulnerable! ¯\_(ツ)_/¯",
-                    'Saitami': "%s got hit by %s's divinity bullet, and so is barely alive with 1 hp!\n",
+                    'Saitami': "%s got hit by %s's divinity bullet, and so has 1 hp left!\n",
                     'Sonhae': "%s threw C4 explosives at %s!\n",
                     'Taiji': "%s will deflect all incoming damage to his attackers this turn!\n",
                     'Wanda': "%s prevented %s from being healed \U0001F48A this turn!\n",
                     'WandaSelf': "For unknown reasons, %s prevented herself from being healed \U0001F48A this turn!\n",
                     'WandaHealer': "%s prevented %s from being healed \U0001F48A and from healing others \U00002695 this turn!\n",
                 },
+            
             'ultInvuln': "%s tried to use his/her ability on %s, but %s is invulnerable!\n",
 
         },
@@ -445,7 +446,7 @@ EN = {
         "A game is running at the moment!",
 
     'endGame':
-        {'draw': "\nEveryone is dead, so the game <b>ENDS IN A DRAW!</b>",
+        {'draw': "\nNeither side prevailed this time... the game <b>ENDS IN A DRAW!</b>",
          'rareDraw': "\nSomehow both teams have the same health, so the game <b>ENDS IN A DRAW!</b>",
          'DERP.KO': "\nAlas, the PYRO agents proved to be too hot \U0001F525 to handle! <b>TEAM PYRO \U0001F525 WINS!</b>",
          'DERPWin': "<b>TEAM DERP \U0001F530 WINS!</b>",
@@ -584,7 +585,7 @@ EN = {
                         "<b>CHOOSE CAREFULLY!</b>",
               'Munie': "Choose someone to be invulnerable.",
               'Prim': "Pick someone to enable his ability to be available next turn.",
-              'Ralpha': "Who would you like to restore back to full health? \U0001F36D",
+              'Ralpha': "Whose health would you like to restore? \U0001F36D",
               'Sanar': "to heal! \U0001F496",
               'Saitami': "Who would you like to use your divinity bullet \U0001F52B on?",
               'Sonhae': "Who would you like to see explode \U0001F600?",
@@ -596,9 +597,22 @@ EN = {
         'You may leave a review for this bot <a href="https://telegram.me/storebot?start=derpassassinbot">here</a>! '\
         'Thank you for doing so! \U0001F60A ',
 
-    'rules':
-        "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.\n"\
-        "\n<b>Rules</b>:\nPlayers are split into 2 teams: \U0001F530DERP and \U0001F525PYRO. "\
+    'rulesGroup':
+        "Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.\n"\
+        "The assignment of DERP agents and VIP agents is as follows:\n"\
+        "3-4 players: 1 each\n"\
+        "5-7 players: 2 \U0001F530, 1 \U0001F31F\n"\
+        "8-10 players: 3 \U0001F530, 2 \U0001F31F\n"\
+        "11-13 players: 4 \U0001F530, 2 \U0001F31F\n"\
+        "14-16 players: 5 \U0001F530, 3 \U0001F31F\n"\
+        "17-19 players: 6 \U0001F530, 3 \U0001F31F\n"\
+        "20-22 players: 7 \U0001F530, 4 \U0001F31F\n"\
+        "23-25 players: 8 \U0001F530, 4 \U0001F31F\n"\
+        "26-28 players: 9 \U0001F530, 5 \U0001F31F\n"\
+        "29-32 players: 10 \U0001F530, 5 \U0001F31F",      
+    
+    'rulesPrivate':
+        "<b>Rules</b>:\nPlayers are split into 2 teams: \U0001F530DERP and \U0001F525PYRO. "\
         "DERP's objective is to find and kill all VIPs \U0001F31F, while PYRO's objective is to "\
         "protect their VIPs and eliminate all DERP agents. "\
         "All agents are categorized into 4 classes: Offense, Tank, Healer and Support. "\
@@ -636,7 +650,7 @@ EN = {
         "strategies for the next round. \n\n"
 
         "The game ends when either all DERP or PYRO agents are dead, or when all VIPs have been "\
-        "assassinated. If it doesn't end in 10 rounds, all players will have 2x damage. The game will "\
+        "assassinated. The game will "\
         "automatically end after 25 rounds, where the team with the most health declared the winner. Since "\
         "each round lasts 150-210 seconds, a game is expected to take 15-30 mins, but can stretch to a maximum "\
         "of 87.5 mins.\n\n"\
@@ -654,6 +668,7 @@ EN = {
          6: "Really? Haven't learnt your lesson eh? You will be ignored for 1 week.",
          7: "Congratulations on making it this far. I never thought anyone would ever reach this stage. You are the kind of person I'm trying to prevent. Goodbye for a long time!",
         },
+    
     'start':
         "Hi there! Add me into group chats and use /newgame@DERPAssassinBot to start a new game with your friends! "\
         "Make sure that all players must first have a private chat with the bot first before joining, "\

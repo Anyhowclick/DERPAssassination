@@ -155,7 +155,7 @@ class CommandHandler(object):
         if ID not in LANG: #default language will be english
             save_lang(ID,'EN')
         
-        await send_message(self.bot.bot,ID,LANG[ID]['rate'],parse_mode='HTML')
+        await send_message(self.bot.bot,ID,LANG[ID]['rate'])
         self.bot.close()
         return
 
@@ -167,8 +167,11 @@ class CommandHandler(object):
 
         if ID not in LANG: #default language will be english
             save_lang(ID,'EN')
-        
-        await send_message(self.bot.bot,ID,LANG[ID]['rules'],parse_mode='HTML')
+
+        if msg['chat']['type'] == 'private': #Give the full version of rules
+            await send_message(self.bot.bot,ID,LANG[ID]['rulesPrivate'])
+        else: #Give the TLDR version
+            await send_message(self.bot.bot,ID,LANG[ID]['rulesGroup'])
         self.bot.close()
         return
 

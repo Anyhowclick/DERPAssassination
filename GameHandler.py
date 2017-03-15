@@ -87,16 +87,23 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             elif command == '/killgame': #First need to check if user is admin
                 if not await check_admin(self.bot,chatID,userID): #Function returns true if admin, false otherwise
                     return
+
+                #Joining phase
                 if self.players:
                     for player in self.players:
                         DB.pop(player,None) #remove players from DB, because it's how I identify whether the person is in a game or not
                         self.players = {}
-                if self.countdownEvent: #Cancel countdown if any
+
+                #Cancel countdown if any      
+                if self.countdownEvent: 
                     self.scheduler.cancel(self.countdownEvent)
                     self.countdownEvent = None
-                elif self.game: #Instance of game running
+
+                #Instance of game running
+                if self.game: 
                     await self.game.kill_game()
                     self.game = None
+
                 await send_message(self.bot,chatID,Messages['killGame'])
                 return
 
@@ -219,7 +226,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             else:
                 playerCount += 1
                 sent = await send_message(self.bot,chatID,Messages['joinGame']['notMax']%(msg['from']['first_name'],playerCount,MINPLAYERS,MAXPLAYERS),parse_mode='HTML')
-                self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent)) #So that above message can be edited if the person leaves
+                if sent:
+                    self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent)) #So that above message can be edited if the person leaves
                 # Generate countdown event
                 self.countdownEvent = self.scheduler.event_later(10, ('_countdown_game_start', {'seconds': 10})) #FOR TESTING
                 #self.countdownEvent = self.scheduler.event_later(30, ('_countdown_game_start', {'seconds': 40})) #FOR IMPLEMENTATION
@@ -233,7 +241,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         timer = event['_countdown_game_start']['seconds']
         if timer == 40: #60 to 20s
             sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['countdownRemind']%(20),parse_mode='HTML')
-            self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
+            if sent:
+                self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
             self.countdownEvent = self.scheduler.event_later(20, ('_countdown_game_start', {'seconds': 20}))
         else:
             if len(self.players) < MINPLAYERS: #Prevent the game from starting
@@ -252,10 +261,10 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         try:
             await self.bot.sendMessage(userID,message)
         except telepot.exception.BotWasBlockedError:
-            await self.bot.sendMessage(self.chatID,LANG[self.chatID]['failTalk']%(username))
+            await send_message(self.bot,self.chatID,LANG[self.chatID]['failTalk']%(username))
             return False
         except telepot.exception.TelegramError:
-            await self.bot.sendMessage(self.chatID,LANG[self.chatID]['failTalk']%(username))
+            await send_message(self.bot,self.chatID,LANG[self.chatID]['failTalk']%(username))
             return False
         else:
             return True
@@ -268,7 +277,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         if self.game:
             return
         sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['okStart'])
-        self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
+        if sent:
+            self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
         self.game = Game(self.bot,self.chatID,self.players,self.messageEditor)
         await self.game.allocate(self.players,len(self.players),self.game)
         self.countdownEvent = self.scheduler.event_later(1, ('_countdown_game_next_round', {'seconds': 1}))
@@ -289,7 +299,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         else:
             timer = 55
         sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['countdownToPhase2']%(timer+20))
-        self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
+        if sent:
+            self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
         self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_collate_result', {'seconds': timer}))
 
     ##Phase 2##

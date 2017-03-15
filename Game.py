@@ -372,6 +372,8 @@ class Game(object):
         if not agents:
             return
         for agent in list(agents.values()):
+            DB.pop(agent.userID,None)
+            print(str(agent.userID) + ' cleared!')
             try:
                 #Close any open queries
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
@@ -381,7 +383,6 @@ class Game(object):
                 continue
             #Tell player game has been killed
             await send_message(self.bot,agent.userID,LANG[agent.userID]['killGameAgents'],reply_markup=None)
-            DB.pop(agent.userID,None)
         return
 
 
