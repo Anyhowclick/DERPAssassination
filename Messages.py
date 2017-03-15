@@ -106,7 +106,7 @@ EN = {
             "<b>Heal Amount:</b> 10\n"\
             "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
             "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Restores an agent to full health (including yourself, but less effective).\n"\
+            "<b>Ability:</b> Heal an agent to 80% of his base health (70% if used on self).\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
             "Sanar":"<b>Name:</b> Sanar\n<b>Health:</b> 90\n"\
@@ -227,7 +227,7 @@ EN = {
             "Impilo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn. \n"\
+            "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn.\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
 
@@ -269,7 +269,7 @@ EN = {
             "Note that healing yourself is an option, but is only 50%% effective. "\
             "Also, you can choose only to either damage or heal agents, "\
             "not both in the same turn.\n"\
-            "<b>Ability:</b> Restore an agent to full health (works on yourself too, but less effective).\n"\
+            "<b>Ability:</b> Heal an agent to 80%% of his base health (70%% if used on yourself).\n"\
             "<b>Ability cooldown:</b> 4 turns",
 
             "Sanar": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
@@ -403,8 +403,8 @@ EN = {
                     'NovahOK': "%s sacrificed 5 hp to deal extra damage!\n",
                     'Prim': "%s caused %s's ability to be usable next turn!\n",
                     'PrimSelf': "%s tried, but failed, to use her ability on herself!\n",
-                    'Ralpha': "%s restored %s back to full health! \U0001F48A\n ",
-                    'RalphaSelf': "%s heals himself back to 80%% of his base health! \U0001F48A\n ",
+                    'Ralpha': "%s restored 80%% of %s's health! \U0001F48A\n",
+                    'RalphaSelf': "%s restored 70%% of his own health! \U0001F48A\n",
                     'revealFail': "Sorry, %s is invulnerable! ¯\_(ツ)_/¯",
                     'Saitami': "%s got hit by %s's divinity bullet, and so has 1 hp left!\n",
                     'Sonhae': "%s threw C4 explosives at %s!\n",
@@ -585,7 +585,7 @@ EN = {
                         "<b>CHOOSE CAREFULLY!</b>",
               'Munie': "Choose someone to be invulnerable.",
               'Prim': "Pick someone to enable his ability to be available next turn.",
-              'Ralpha': "Who would you like to restore back to full health? \U0001F36D",
+              'Ralpha': "Whose health would you like to restore? \U0001F36D",
               'Sanar': "to heal! \U0001F496",
               'Saitami': "Who would you like to use your divinity bullet \U0001F52B on?",
               'Sonhae': "Who would you like to see explode \U0001F600?",

@@ -9,13 +9,13 @@ import random
 #Compulsory contains all agents that will definitely be included every game
 def allAgents(playerCount):
     compulsory = {'Elias':Elias}
-    result = {'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
-              'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
+    result = {#'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
+              #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
               #'Jordan':Jordan,
-              'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
-              'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
-              'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
-              'Aspida':Aspida,
+              #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
+              'Prim':Prim, 'Ralpha':Ralpha,#'Sanar':Sanar,
+              #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
+              #'Aspida':Aspida,
             }
     #Exclude Elias
     if playerCount <= 4:
@@ -506,11 +506,29 @@ class Ralpha(Healer):
         result = super().ult()
         if result:
             return result
+        beforeHealth = target.health
         target.reset_health()
+        #Reset to 70% of base health if self
         if self == target:
-            self.drop_health(0.2*self.health)
-            return self.Messages['combat']['ult']['RalphaSelf']%(self.get_idty())
-        return self.Messages['combat']['ult']['Ralpha']%(self.get_idty(),target.get_idty())
+            target.drop_health(0.3*self.health)
+            #Target's health increased compared to last time
+            if target.health >= beforeHealth:
+                return self.Messages['combat']['ult']['RalphaSelf']%(self.get_idty())
+            #Otherwise reset back to before ability was used
+            else:
+                target.health = beforeHealth 
+                return self.Messages['combat']['failHealSelf']%(self.get_idty())
+
+        #Otherwise reset to 80% of base health
+        else:
+            target.drop_health(0.2*self.health)
+            #Target's health increased compared to last time
+            if target.health >= beforeHealth:
+                return self.Messages['combat']['ult']['Ralpha']%(self.get_idty(),target.get_idty())
+            #Otherwise reset back to before ability was used
+            else:
+                target.health = beforeHealth 
+                return self.Messages['combat']['failHeal']%(self.get_idty(),target.get_idty())
     
     ################
     ## SEND QUERY ##
