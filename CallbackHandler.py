@@ -99,8 +99,10 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 return
 
             elif queryData in ('{ATTACK}','{HEAL}'):
-                await agent.editor.editMessageReplyMarkup(reply_markup=None)
-                
+                try:
+                    await agent.editor.editMessageReplyMarkup(reply_markup=None)
+                except AttributeError:
+                    pass
             else: #callback data has the data structure: agentName{|targetAgentName|option|}
                 await edit_message(agent.editor,Messages['choiceAccept']%(queryData.split('|')[1]),
                                                    reply_markup=None,

@@ -32,9 +32,9 @@ EN = {
             "<b>Ability:</b> Recovers a portion of his health when attacking. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Grim":"<b>Name:</b> Grim\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Attacks up to 3 agents, dealing 30 damage per target. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+            "Grim":"<b>Name:</b> Grim\n<b>Health:</b> 100\n<b>Damage:</b> 22\n"\
+            "<b>Ability:</b> Attacks up to 3 agents, dealing 25 damage per target. \n"\
+            "<b>Ability cooldown:</b> 3 turns",
 
             "Jordan":"<b>Name:</b> Jordan\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Upon death, kills someone with him! \n"\
@@ -170,9 +170,9 @@ EN = {
 
             "Grim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Attack up to 3 agents, dealing 30 damage per target. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+            "<b>Damage:</b> 22\n"\
+            "<b>Ability:</b> Attack up to 3 agents, dealing 25 damage per target. \n"\
+            "<b>Ability cooldown:</b> 3 turns",
 
             "Jordan": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
@@ -766,9 +766,9 @@ IN = {
             "<b>Kemampuan:</b> Mendapatkan kembali poin nyawa ketika menyerang.\n"\
             "<b>Jeda antar kemampuan:</b> 2 giliran",
 
-            "Grim":"<b>Nama:</b> Grim\n<b>Nyawa/HP:</b> 100\n<b>Jumlah Serangan:</b> 25\n"\
-            "<b>Kemampuan:</b> Dapat menyerang maksimum 3 agen sekaligus, 30 serangan per target serang.\n"\
-            "<b>Jeda antar kemampuan:</b> 2 giliran",
+            "Grim":"<b>Nama:</b> Grim\n<b>Nyawa/HP:</b> 100\n<b>Jumlah Serangan:</b> 22\n"\
+            "<b>Kemampuan:</b> Dapat menyerang maksimum 3 agen sekaligus, 25 serangan per target serang.\n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
 
             "Jordan":"<b>Nama:</b> Jordan\n<b>Nyawa/HP:</b> 100\n<b>Jumlah Serangan:</b> 25\n"\
             "<b>Kemampuan:</b> Upon death, kills someone with him!\n"\
@@ -904,9 +904,9 @@ IN = {
 
             "Grim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Nyawa/HP:</b> 100\n"\
-            "<b>Jumlah Serangan:</b> 25\n"\
-            "<b>Kemampuan:</b> Attack up to 3 agents, dealing 30 damage per target. \n"\
-            "<b>Jeda antar kemampuan:</b> 2 giliran",
+            "<b>Jumlah Serangan:</b> 22\n"\
+            "<b>Kemampuan:</b> Attack up to 3 agents, dealing 25 damage per target. \n"\
+            "<b>Jeda antar kemampuan:</b> 3 giliran",
 
             "Jordan": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Nyawa/HP:</b> 100\n"\
@@ -1463,6 +1463,8 @@ async def edit_message(editor,message,reply_markup=None,parse_mode='HTML',disabl
         try:
             result = await editor.editMessageReplyMarkup(reply_markup=reply_markup)
         except telepot.exception.TelegramError:
+            return
+        except AttributeError:
             return
 
     except AttributeError:

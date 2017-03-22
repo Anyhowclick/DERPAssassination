@@ -15,15 +15,18 @@ No. of DERP agents = 2x no. of VIPs (rounded up if odd)
 Numbers below are no. of DERP agents, brackets = no. of VIPs
 
 3-4 players: 1
-5-7 players: 2 (1)
-8-10 players: 3 (2)
-11-13 players: 4 (2)
-14-16 players: 5 (3)
-17-19 players: 6 (3)
-20-22 players: 7 (4)
-23-25 players: 8 (4)
-26-28 players: 9 (5)
-29-32 players: 10 (5)
+5-6 players: 2 (1)
+7-9 players: 3 (2)
+10-11 players: 4 (2)
+12-14 players: 5 (3)
+15-16 players: 6 (3)
+17-19 players: 7 (4)
+20-21 players: 8 (4)
+22-24 players: 9 (5)
+25-26 players: 10 (5)
+27-29 players: 11 (5)
+30-31 players: 12 (6)
+32 players: 13 (6)
 '''
 
 #Sorting order for queries
@@ -33,6 +36,8 @@ AGENTULTS = {'Sonhae':0,'Taiji':-200,'Dracule':-100,'Novah':-100,'Saitami':0,
              'Grote':-300,'Mitsuha':-100,
              'Grace':100,'Ralpha':0,'Sanar':0, 'Prim':100, 'Elias':-400,
              'Yunos':-300,'Munie':-1000,'Anna':-500,'Wanda':-300}
+#Limit for agents who can select multiple agents
+LIMITS = {'Grim':3,'Sanar':3}
 
 #Randomly selects from a dictionary, deletes selected entry from it and returns the selection
 def random_select(dicty):
@@ -43,6 +48,32 @@ def random_select(dicty):
     result = dicty[key]
     del dicty[key]
     return result
+
+#Function to handle cases where more queries than allowed are received, due to pressing the callback button multiple times (my hypothesis)
+#(Eg. Grim attacking more than 3 unique ppl, when it should be 3 max)
+#Reminder that each query is a tuple of form: (date,agent,target,option)
+#Because we want to avoid mutating the list while iterating through it,
+#it's better to store the results in a separate list and return this separate list instead
+def remove_extras(queries):
+    #make a duplicate 
+    limit = LIMITS
+    #create a new list to be returned
+    result = []
+    for query in queries:
+        #if query is from multiple selection agent as described above)
+        if query[1] in limit:
+            #Check if limit exceeded
+            if limit[query[1]]:
+                #include in result
+                result.append(query)
+                #Subtract 1
+                limit[query[1]] -= 1
+            #Otherwise don't include (dont need to do anything)
+        #Otherwise leave it alone
+        else:
+            result.append(query)
+    return result
+    
 
 #Processing query
 #Returns a message to be sent to group chat
@@ -96,7 +127,14 @@ class Game(object):
         if playerCount <= 4:
             DERPCount = 1
         else:
-            DERPCount = (playerCount+1)//3
+            #observe that we can to determine the no. of DERP via a 2-piece function.
+            #If no. of players modulo 5 = 0 or 1, it will be 1 function, otherwise it will another function
+            #DERPCount will be abused to save space
+            DERPCount = (playerCount%5)
+            if DERPCount <= 1:
+                DERPCount = 2*(playerCount//5)
+            else:
+                DERPCount = 1 + 2*(playerCount//5)
 
         self.DERPCount = DERPCount
         self.VIPCount = int(round((DERPCount/2)+0.1, 0))
@@ -145,7 +183,7 @@ class Game(object):
                 player.team = 'PYROVIP'
                 self.message += Messages['VIPself']
                 await edit_message(player.editor,self.message)
-                if playerCount > 3: #Exclude games with 2-3 people: no need for people to be informed
+                if playerCount > 4: #Exclude games with 3-4 people: no need for people to be informed
                     randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
                     while randomPlayer.userID == player.userID: #ensure that someone other than the VIP himself is selected
                         randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
@@ -204,6 +242,8 @@ class Game(object):
         #Set Messages variable, obtain queries
         Messages = self.Messages
         queries = DB[self.chatID]
+        #Remove duplicate queries (so each query is unique)
+        queries = list(set(queries))
         #Clear the queries!
         DB[self.chatID] = []
         #Each query is a tuple: (date,agent,target,option)
@@ -216,7 +256,8 @@ class Game(object):
                 del queries[0]
             else:
                 break
-
+        #Handle cases where more queries than allowed are received (Eg. Grim attacking more than 3 ppl, when it should be 3 max)
+        imptQueries = remove_extras(imptQueries)
         #Sort by date, but with queries grouped by agent
         order = {}
         for idx,query in reversed(list(enumerate(imptQueries))):
@@ -378,11 +419,13 @@ class Game(object):
                 #Close any open queries
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
             except telepot.exception.TelegramError:
-                continue
+                pass
             except AttributeError:
-                continue
+                pass
             #Tell player game has been killed
             await send_message(self.bot,agent.userID,LANG[agent.userID]['killGameAgents'],reply_markup=None)
+        #Clear all agents
+        self.agents = None
         return
 
 

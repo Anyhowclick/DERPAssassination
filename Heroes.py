@@ -13,9 +13,10 @@ def allAgents(playerCount):
               #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
               #'Jordan':Jordan,
               #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
-              'Prim':Prim, 'Ralpha':Ralpha,#'Sanar':Sanar,
+              #'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
               #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
               #'Aspida':Aspida,
+            'Grim':Grim, 'Sanar':Sanar,
             }
     #Exclude Elias
     if playerCount <= 4:
@@ -163,7 +164,7 @@ class Saitami(Offense):
         if enemy.invuln:
             return self.Messages['combat']['ultInvuln']%(self.get_idty(),enemy.get_idty(),enemy.get_idty())
         enemy.health = 1
-        return self.Messages['combat']['ult']['Saitami']%(self.get_idty(),enemy.get_idty())
+        return self.Messages['combat']['ult']['Saitami']%(enemy.get_idty(),self.get_idty())
     
     ################
     ## SEND QUERY ##
@@ -187,7 +188,7 @@ class Saitami(Offense):
 class Grim(Offense):
     def __init__(self, userID, username, firstName, Messages):
         super().__init__('Grim', userID, username, firstName, Messages,
-                         baseUltDmg=30, attackAfterUlt=False)
+                         baseDmg=22, baseUltCD=3, baseUltDmg=25, attackAfterUlt=False)
         self.selected = []
 
     def reset_next_round(self):

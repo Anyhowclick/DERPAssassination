@@ -171,18 +171,22 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         if get_maintenance():
             await send_message(self.bot,chatID,Messages['maintenance']['shutdown'])
             return
+        
     #Then check for an ongoing game
         if self.game:
             await send_message(self.bot,chatID,Messages['existingGame'])
             return
-    #Game hasn't started, but someone initiated one, then help the person join
-        elif self.players:
-            await self._joinGame(chatID,userID,msg)
-            return
+        
     #Check if player is already in a game in another group chat
         elif userID in DB:
             await send_message(self.bot,userID,Messages['isInGame'])
             return
+        
+    #Game hasn't started, but someone initiated one, then help the person join
+        elif self.players:
+            await self._joinGame(chatID,userID,msg)
+            return
+
         #Check if bot can talk to user
         elif await self._talk('/newgame',userID,username):
             self.players[userID] = msg['from'] #Add user info
@@ -198,15 +202,15 @@ class gameHandler(telepot.aio.helper.ChatHandler):
     async def _joinGame(self,chatID,userID,msg):
         Messages = LANG[chatID]
         username = msg['from']['first_name']
+        #Check if user has already joined a game, or this game
+        if userID in DB:
+            await send_message(self.bot,userID,LANG[userID]['isInGame'])
+            return
+        
         #Check if a game has been initiated, assuming a game isn't running already
-        if not self.players:
+        elif not self.players:
             #Then we help to start a new game!
             await self._initGame(chatID,userID,msg)
-            return
-
-        #Check if user has already joined a game, or this game
-        elif userID in DB:
-            await send_message(self.bot,userID,LANG[userID]['isInGame'])
             return
 
         #Check if bot can talk to user
