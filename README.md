@@ -1,5 +1,10 @@
 # DERP:Assassination
 
+## Changelog 15/3/17 1806 hrs
+- Fixed HTML tag for "failed to join..." (just had to change method to send_message)
+- Improved /rules command: Show TL:DR version in grp chats, full version obtained privately
+- Ralpha nerfed: Restore 80% health on others / 70% on self (before was 100% / 80% respectively)
+
 ## Changelog 12/3/17 2228 hrs
 - Adding Bahasa Indo in Messages.py
 - Improved /nextgame command: Notification now occurs when a game starts, not when one ends!
