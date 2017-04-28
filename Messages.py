@@ -409,6 +409,7 @@ EN = {
                     'RalphaSelf': "%s restored 70%% of his own health! \U0001F48A\n",
                     'revealFail': "Sorry, %s is invulnerable! ¯\_(ツ)_/¯",
                     'Saitami': "%s got hit by %s's divinity bullet, and so has 1 hp left!\n",
+                    'SaitamiPower': "%s's powered up, so his fatality bullet kills %s!\n",
                     'Sonhae': "%s threw C4 explosives at %s!\n",
                     'Taiji': "%s will deflect all incoming damage to his attackers this turn!\n",
                     'Wanda': "%s prevented %s from being healed \U0001F48A this turn!\n",

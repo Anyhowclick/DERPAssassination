@@ -154,6 +154,7 @@ class Saitami(Offense):
     def __init__(self, userID, username, firstName, Messages):
         super().__init__('Saitami', userID, username, firstName, Messages,
                          baseUltCD=4, attackAfterUlt=False)
+        self.poweredUp = False
 
     def ult(self,enemy):
         result = super().ult()
@@ -163,8 +164,18 @@ class Saitami(Offense):
             enemy = enemy.protector
         if enemy.invuln:
             return self.Messages['combat']['ultInvuln']%(self.get_idty(),enemy.get_idty(),enemy.get_idty())
-        enemy.health = 1
-        return self.Messages['combat']['ult']['Saitami']%(enemy.get_idty(),self.get_idty())
+        if self.poweredUp:
+            return self.Messages['combat']['ult']['SaitamiPower']%(self.get_idty(),enemy.get_idty()) + enemy.die()
+        else:
+            enemy.health = 1
+            return self.Messages['combat']['ult']['Saitami']%(enemy.get_idty(),self.get_idty())
+
+    def buff_ult(self):
+        self.poweredUp = True
+        
+    def reset_next_round(self):
+        super().reset_next_round()
+        self.poweredUp = False
     
     ################
     ## SEND QUERY ##
@@ -668,6 +679,9 @@ class Anna(Support):
 
             elif isinstance(ally,Hamia):
                 ally.add_ult_dmg_reduction(0.2)
+
+            elif isinstance(ally,Saitami):
+                ally.buff_ult()
             # elif ally.agentName in ('Aspida','Yunos'):
                 #TO-DO: Increase provide shield amt
 
