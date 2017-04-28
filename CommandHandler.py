@@ -108,8 +108,12 @@ class CommandHandler(object):
 
         message = LANG[ID]['groups']
         grps = get_grp_info()
-        for key in list(grps.keys()):
-            result = grps[key]
+        #Convert to a list for sorting
+        grps = sorted(grps.items(),key=lambda x:x[0])
+        grps.sort(key=lambda y:y[1]['members'],reverse=True)
+        #Each item in grps is a tuple as follows: (grpID,{'memberCount':members,'title':GrpTitle,'link':inviteLink})
+        for item in grps:
+            result = item[1]
             message += result['link'] + result['title'] + '</a>\n'
             message += LANG[ID]['groupsMemberCount']%(result['members'])
         await send_message(self.bot.bot,self.get_ID(msg),message)

@@ -32,7 +32,7 @@ Numbers below are no. of DERP agents, brackets = no. of VIPs
 #Sorting order for queries
 ORDER = {'ult':0, 'attack':1, 'heal':1}
 AGENTULTS = {'Sonhae':0,'Taiji':-200,'Dracule':-100,'Novah':-100,'Saitami':0,
-             'Grim':0,'Jordan':-999,'Harambe':-300,'Impilo':-200,'Hamia':-300,'Aspida':-300,
+             'Grim':0,'Jordan':-200,'Harambe':-300,'Impilo':-200,'Hamia':-300,'Aspida':-300,
              'Grote':-300,'Mitsuha':-100,
              'Grace':100,'Ralpha':0,'Sanar':0, 'Prim':100, 'Elias':-400,
              'Yunos':-300,'Munie':-1000,'Anna':-500,'Wanda':-300}
@@ -55,15 +55,24 @@ def random_select(dicty):
 #Because we want to avoid mutating the list while iterating through it,
 #it's better to store the results in a separate list and return this separate list instead
 def remove_extras(queries):
-    #make a duplicate 
-    limit = LIMITS
+    #First, because the date is unique, the good thing is we don't need it anymore
+    #So will remove and replace with arbitary number 1
+    #This is to allow me to use set() to remove duplicates!
+    tmp = []
+    for query in queries:
+        tmp.append((1,query[1],query[2],query[3]))
+
+    tmp = list(set(tmp))
+    #make a duplicate of the LIMITS defined above in globals
+    limit = LIMITS.copy()
+                   
     #create a new list to be returned
     result = []
-    for query in queries:
+    for query in tmp:
         #if query is from multiple selection agent as described above)
         if query[1] in limit:
             #Check if limit exceeded
-            if limit[query[1]]:
+            if limit[query[1]] > 0:
                 #include in result
                 result.append(query)
                 #Subtract 1
@@ -242,8 +251,7 @@ class Game(object):
         #Set Messages variable, obtain queries
         Messages = self.Messages
         queries = DB[self.chatID]
-        #Remove duplicate queries (so each query is unique)
-        queries = list(set(queries))
+        
         #Clear the queries!
         DB[self.chatID] = []
         #Each query is a tuple: (date,agent,target,option)
@@ -256,8 +264,7 @@ class Game(object):
                 del queries[0]
             else:
                 break
-        #Handle cases where more queries than allowed are received (Eg. Grim attacking more than 3 ppl, when it should be 3 max)
-        imptQueries = remove_extras(imptQueries)
+        
         #Sort by date, but with queries grouped by agent
         order = {}
         for idx,query in reversed(list(enumerate(imptQueries))):
@@ -269,6 +276,10 @@ class Game(object):
         #Recombine queries
         imptQueries.extend(queries)
 
+        #Handle cases where more queries than allowed are received (Eg. Grim attacking more than 3 ppl, when it should be 3 max)
+        #Also remove duplicate queries
+        imptQueries = remove_extras(imptQueries)
+        
         #Getting AFK players
         AFK = list(self.get_alive_all().keys())
         for query in imptQueries:

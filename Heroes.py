@@ -12,11 +12,11 @@ def allAgents(playerCount):
     result = {#'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
               #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
               #'Jordan':Jordan,
+                'Grim':Grim, 'Sanar':Sanar,
               #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
               #'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
               #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
               #'Aspida':Aspida,
-            'Grim':Grim, 'Sanar':Sanar,
             }
     #Exclude Elias
     if playerCount <= 4:
@@ -222,48 +222,24 @@ class Grim(Offense):
 class Jordan(Offense):
     def __init__(self, userID, username, firstName, Messages):
         self.selected = None #Will be an agent
-        super().__init__('Jordan', userID, username, firstName, Messages, ultAvail=True,
-                         baseUltCD=99)
+        super().__init__('Jordan', userID, username, firstName, Messages,
+                         baseDmg=22, baseUltCD=5)
 
-    def reset_next_round(self):
-        if not self.selected: #If person hasn't chosen someone
-            self.ultCD = 0
-            self.ultAvail = True
-            super().reset_next_round()
-
-        elif not self.selected.alive: #If chosen target died
-            self.ultCD = 0
-            self.ultAvail = True
-            super().reset_next_round()
-
-        else:
-            self.reset_ult_avail()
-            self.reset_ult_CD()
-            super().reset_next_round()
-    
-    def ult(self,enemy):
+    def ult(self,target):
         result = super().ult()
         if result:
             return result
-        self.selected = enemy
-        return ''
-
-    def die(self):
-        if not self.selected or (self.selected == self): #Didn't choose anyone or selected self
-            return super().die()
-
-        elif self.selected.invuln: #Person invulnerable
-            return self.Messages['combat']['ult']['JordanFail']%(self.selected.get_idty(),self.get_idty())
-
-        else:
-            message = self.Messages['combat']['ult']['Jordan']%(self.get_idty(),self.selected.get_idty())
-            message += self.Messages['combat']['die']%(self.get_idty())
-            message += self.selected.die()
-            self.reset()
-            self.alive = False
-        return message
+        if target.invuln:
+            return self.Messages['combat']['ultInvuln']%(self.get_idty(),target.get_idty(),target.get_idty())
+        #Use on self
+        elif self == target:
+            return self.Messages['combat']['ult']['JordanSelf']%(self.get_idty())
+        #Split health 50-50 (ratio might change in the future)
+        self.health = (self.health + target.health) / 2
+        target.health = self.health
+        return self.Messages['combat']['ult']['Jordan']%(self.get_idty(),target.get_idty(),self.health)
         
-    
+        
     ################
     ## SEND QUERY ##
     ################

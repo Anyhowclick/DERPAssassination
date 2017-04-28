@@ -9,7 +9,8 @@ from Database import DB,LANG,SPAM,STRIKE,BLOCKED
 THRESHOLD = {0:0.75, 1:0.7, 2:0.7, 3:0.6, 4:0.6, 5:0.6, 6:0.6, 7:0.6, 8:0.6} 
 PENALTY = {0:0,1:10,2:60,3:900,4:3600,5:86400,6:259200, 7:999999999999} #Penalty time to ignore in seconds
 MAINTENANCE = True
-GRPS = [('-1001101622786','<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'),#]
+GRPS = [#('-198106155','<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'), #FOR TESTING
+        ('-1001101622786','<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'),
         ('-1001090679151','<a href="https://t.me/joinchat/AAAAAEECcW8ICTmNpWQgVQ">'),
         ('-1001117357538', '<a href="https://t.me/joinchat/AAAAAEKZheLEzw0_JFj81Q">'),
         ('-1001103517150', '<a href="https://t.me/joinchat/AAAAAEHGVd5xynxQ-I3KbQ">'),] #Groups for people to join

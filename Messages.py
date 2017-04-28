@@ -36,9 +36,9 @@ EN = {
             "<b>Ability:</b> Attacks up to 3 agents, dealing 25 damage per target. \n"\
             "<b>Ability cooldown:</b> 3 turns",
 
-            "Jordan":"<b>Name:</b> Jordan\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Upon death, kills someone with him! \n"\
-            "<b>Ability cooldown:</b> No selection made or when selected target is dead",
+            "Jordan":"<b>Name:</b> Jordan\n<b>Health:</b> 100\n<b>Damage:</b> 22\n"\
+            "<b>Ability:</b> Combines and splits health equally with another agent. \n"\
+            "<b>Ability cooldown:</b> 5 turns",
 
             "Novah":"<b>Name:</b> Novah\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
             "<b>Ability:</b> Sacrifices some hp to deal extra damage. \n"\
@@ -176,9 +176,9 @@ EN = {
 
             "Jordan": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> When you die, you kill someone with you! \n"\
-            "<b>Ability cooldown:</b> No selection made or when selected target is dead.",
+            "<b>Damage:</b> 22\n"\
+            "<b>Ability:</b> Combine your health with your target and split it equally!\n"\
+            "<b>Ability cooldown:</b> 5 turns.",
 
             "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
@@ -395,8 +395,8 @@ EN = {
                     'Hamia': "%s increased %s's damage reduction this turn!\n",
                     'Impilo': "%s has increased damage reduction and recovered %d health!\n",
                     'ImpiloFailHeal': "%s has increased damage reduction, but failed to recover health! \U0001F61E\n",
-                    'Jordan': "%s cursed %s to \U0001F480 together with him \U0001F608!\n",
-                    'JordanFail': "%s was invulnerable, thus escaping %s's curse!\n",
+                    'Jordan': "%s \U0001F494 split health with %s! Both agents now have %d hp!\n",
+                    'JordanSelf': "%s's ability failed!\n",
                     'Munie': '%s caused %s to be invulnerable this turn!\n',
                     'MunieSelf': "%s is invulnerable this turn!\n",
                     'NovahNOK': "%s tried to activate his ability but has insufficient health!\n",
@@ -581,8 +581,7 @@ EN = {
               'Grim': "to PEW! \U0001F52B",
               'Hamia': "Choose someone to increase their damage reduction. \U0001F590\U0001F3FE",
               'Harambe': "Who would you like to \U0001F6E1 protect?",
-              'Jordan': "You either have not chosen anyone yet, or your target died. Select your desired target to die with you! "\
-                        "<b>CHOOSE CAREFULLY!</b>",
+              'Jordan': "Who would you like to \U0001F494 split health with?",
               'Munie': "Choose someone to be invulnerable.",
               'Prim': "Pick someone to enable his ability to be available next turn.",
               'Ralpha': "Whose health would you like to restore? \U0001F36D",
@@ -601,15 +600,18 @@ EN = {
         "Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.\n"\
         "The assignment of DERP agents and VIP agents is as follows:\n"\
         "3-4 players: 1 each\n"\
-        "5-7 players: 2 \U0001F530, 1 \U0001F31F\n"\
-        "8-10 players: 3 \U0001F530, 2 \U0001F31F\n"\
-        "11-13 players: 4 \U0001F530, 2 \U0001F31F\n"\
-        "14-16 players: 5 \U0001F530, 3 \U0001F31F\n"\
-        "17-19 players: 6 \U0001F530, 3 \U0001F31F\n"\
-        "20-22 players: 7 \U0001F530, 4 \U0001F31F\n"\
-        "23-25 players: 8 \U0001F530, 4 \U0001F31F\n"\
-        "26-28 players: 9 \U0001F530, 5 \U0001F31F\n"\
-        "29-32 players: 10 \U0001F530, 5 \U0001F31F",      
+        "5-6 players: 2 \U0001F530, 1 \U0001F31F\n"\
+        "7-9 players: 3 \U0001F530, 2 \U0001F31F\n"\
+        "10-11 players: 4 \U0001F530, 2 \U0001F31F\n"\
+        "12-14 players: 5 \U0001F530, 3 \U0001F31F\n"\
+        "15-16 players: 6 \U0001F530, 3 \U0001F31F\n"\
+        "17-19 players: 7 \U0001F530, 4 \U0001F31F\n"\
+        "20-21 players: 8 \U0001F530, 4 \U0001F31F\n"\
+        "22-24 players: 9 \U0001F530, 5 \U0001F31F\n"\
+        "25-26 players: 10 \U0001F530, 5 \U0001F31F\n"\
+        "27-29 players: 11 \U0001F530, 5 \U0001F31F\n"\
+        "30-31 players: 12 \U0001F530, 6 \U0001F31F\n"\
+        "32 players: 13 \U0001F530, 6 \U0001F31F",      
     
     'rulesPrivate':
         "<b>Rules</b>:\nPlayers are split into 2 teams: \U0001F530DERP and \U0001F525PYRO. "\
@@ -621,15 +623,18 @@ EN = {
 
         "The assignment of DERP agents and VIP agents is as follows:\n"\
         "3-4 players: 1 each\n"\
-        "5-7 players: 2 \U0001F530, 1 \U0001F31F\n"\
-        "8-10 players: 3 \U0001F530, 2 \U0001F31F\n"\
-        "11-13 players: 4 \U0001F530, 2 \U0001F31F\n"\
-        "14-16 players: 5 \U0001F530, 3 \U0001F31F\n"\
-        "17-19 players: 6 \U0001F530, 3 \U0001F31F\n"\
-        "20-22 players: 7 \U0001F530, 4 \U0001F31F\n"\
-        "23-25 players: 8 \U0001F530, 4 \U0001F31F\n"\
-        "26-28 players: 9 \U0001F530, 5 \U0001F31F\n"\
-        "29-32 players: 10 \U0001F530, 5 \U0001F31F\n"\
+        "5-6 players: 2 \U0001F530, 1 \U0001F31F\n"\
+        "7-9 players: 3 \U0001F530, 2 \U0001F31F\n"\
+        "10-11 players: 4 \U0001F530, 2 \U0001F31F\n"\
+        "12-14 players: 5 \U0001F530, 3 \U0001F31F\n"\
+        "15-16 players: 6 \U0001F530, 3 \U0001F31F\n"\
+        "17-19 players: 7 \U0001F530, 4 \U0001F31F\n"\
+        "20-21 players: 8 \U0001F530, 4 \U0001F31F\n"\
+        "22-24 players: 9 \U0001F530, 5 \U0001F31F\n"\
+        "25-26 players: 10 \U0001F530, 5 \U0001F31F\n"\
+        "27-29 players: 11 \U0001F530, 5 \U0001F31F\n"\
+        "30-31 players: 12 \U0001F530, 6 \U0001F31F\n"\
+        "32 players: 13 \U0001F530, 6 \U0001F31F\n"\
         "Each VIP will be made known to 1 other PYRO agent, and <b>each DERP agent knows who other DERP agents are.</b> "\
         "So PYRO agents (and VIPs) have to figure out who to trust, while DERP agents try to blend in. This is where "\
         "deception can come into play.\n\n"\

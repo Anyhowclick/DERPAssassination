@@ -23,7 +23,7 @@ imported from Messages
 
 MINPLAYERS = 2 #FOR TESTING
 #MINPLAYERS = 3 #FOR IMPLEMENTATION
-MAXPLAYERS = 17
+MAXPLAYERS = 18
 
 class gameHandler(telepot.aio.helper.ChatHandler):
     def __init__(self, *args, **kwargs):

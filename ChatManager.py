@@ -47,6 +47,7 @@ class chatManager(telepot.aio.helper.ChatHandler):
     #the stats database
     async def on__auto_update(self,event):
         await auto_update(self)
+        print('OK!')
         self.scheduler.event_later(3600, ('_auto_update',{'seconds': 3600}))
         return
 
