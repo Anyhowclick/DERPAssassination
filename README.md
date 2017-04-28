@@ -1,5 +1,18 @@
 # DERP:Assassination
 
+## Changelog 28/4/17 1006 hrs
+- Grim has been nerfed.
+  - Cooldown increase from 2 to 3 turns
+  - Base damage from 25 to 22
+  - Ability damage from 30 to 25
+- Prevent duplicate queries using Python's set() function
+- Reordered some parts with regards to /newgame and /join commands in GameHandler.py
+- Increased no. of DERP agents for a hopefully more balanced game
+- 4 player game: DERP is highly outnumbered, so knowledge of VIP wont be made known, as is the case for 3 players
+- Minor text fix for Saitami's ability
+- Groups now shown in decreasing no. of members
+- New hero: Jordan!
+
 ## Changelog 15/3/17 1806 hrs
 - Fixed HTML tag for "failed to join..." (just had to change method to send_message)
 - Improved /rules command: Show TL:DR version in grp chats, full version obtained privately
