@@ -65,7 +65,7 @@ EN = {
             "<b>Ability:</b> Increases damage reduction of 1 agent by 50%. \n"\
             "<b>Ability cooldown:</b> 2 turns",
 
-            "Harambe":"<b>Name:</b> Harambe\n<b>Health:</b> 150\n<b>Damage:</b> 20\n"\
+            "Harambe":"<b>Name:</b> Harambe\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Bites the bullet for an agent! All damage meant for the agent will be directed"\
             "to Harambe instead. Furthermore, he recovers 25% of all damage taken this turn. \n"\
             "<b>Ability cooldown:</b> 3 turns",
@@ -135,7 +135,7 @@ EN = {
             "Jigglet":"<b>Name:</b> Jigglet\n<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Lulls an agent to sleep, rendering that agent useless for 1 turn. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+            "<b>Ability cooldown:</b> 3 turns",
 
             "Munie":"<b>Name:</b> Munie\n<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
@@ -218,7 +218,7 @@ EN = {
             "<b>Ability cooldown:</b> 2 turns",
 
             "Harambe": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 150\n"\
+            "<b>Health:</b> 130\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
             "to you instead. Furthermore, you will recover 25%% of all damage taken this turn. \n"\
@@ -304,7 +304,7 @@ EN = {
             "<b>Health:</b> 100\n"\
             "<b>Damage:</b> 20\n"\
             "<b>Ability:</b> Lull an agent to sleep, rendering that agent useless for 1 turn. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+            "<b>Ability cooldown:</b> 3 turns",
 
             "Munie": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
             "<b>Health:</b> 100\n"\
@@ -335,7 +335,7 @@ EN = {
 
     'agentNames':
         ["Anna","Aspida","Dracule","Elias","Grim",
-         "Harambe","Hamia","Impilo","Jordan","Munie",
+         "Harambe","Hamia","Impilo","Jigglet","Jordan","Munie",
          "Novah","Prim","Ralpha","Saitami",
          "Sanar","Sonhae","Taiji","Wanda",
          ],
@@ -395,6 +395,8 @@ EN = {
                     'Hamia': "%s increased %s's damage reduction this turn!\n",
                     'Impilo': "%s has increased damage reduction and recovered %d health!\n",
                     'ImpiloFailHeal': "%s has increased damage reduction, but failed to recover health! \U0001F61E\n",
+                    'Jigglet': "%s caused %s to \U0001F634!\n",
+                    'JiggletSelf': "%s fell asleep U0001F634!\n",
                     'Jordan': "%s \U0001F494 split health with %s! Both agents now have %d hp!\n",
                     'JordanSelf': "%s's ability failed!\n",
                     'Munie': '%s caused %s to be invulnerable this turn!\n',
@@ -581,6 +583,7 @@ EN = {
               'Grim': "to PEW! \U0001F52B",
               'Hamia': "Choose someone to increase their damage reduction. \U0001F590\U0001F3FE",
               'Harambe': "Who would you like to \U0001F6E1 protect?",
+              'Jigglet': "Who do you want to \U0001F634?",
               'Jordan': "Who would you like to \U0001F494 split health with?",
               'Munie': "Choose someone to be invulnerable.",
               'Prim': "Pick someone to enable his ability to be available next turn.",
@@ -804,7 +807,7 @@ IN = {
             "<b>Kemampuan:</b> Menambah pengurangan jumlah serangan yang diterima seorang agen.\n"\
             "<b>Jeda antar kemampuan:</b> 1 giliran",
 
-            "Harambe":"<b>Nama:</b> Harambe\n<b>Nyawa/HP:</b> 150\n<b>Jumlah Serangan:</b> 20\n"\
+            "Harambe":"<b>Nama:</b> Harambe\n<b>Nyawa/HP:</b> 130\n<b>Jumlah Serangan:</b> 20\n"\
             "<b>Kemampuan:</b> Memakan peluru yang diterima oleh seorang agen. Semua serangan akan ditimpakan pada Harambe. "\
             "Dia juga mendapatkan kembali nyawa/HP sebanyak 25% serangan yang diterima pada giliran tersebut.\n"\
             "<b>Jeda antar kemampuan:</b> 3 giliran",
@@ -957,7 +960,7 @@ IN = {
             "<b>Jeda antar kemampuan:</b> 1 giliran",
 
             "Harambe": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Nyawa/HP:</b> 150\n"\
+            "<b>Nyawa/HP:</b> 130\n"\
             "<b>Jumlah Serangan:</b> 20\n"\
             "<b>Kemampuan:</b> Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
             "to you instead. Furthermore, you will recover 25%% of all damage taken this turn. \n"\

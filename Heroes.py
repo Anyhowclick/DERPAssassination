@@ -11,8 +11,8 @@ def allAgents(playerCount):
     compulsory = {'Elias':Elias}
     result = {#'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
               #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
-              #'Jordan':Jordan,
-                'Grim':Grim, 'Sanar':Sanar,
+              #'Jordan':Jordan, 'Jigglet':Jigglet,
+                'Sonhae':Sonhae, 'Jigglet':Jigglet,
               #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
               #'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
               #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
@@ -342,7 +342,7 @@ class Hamia(Tank):
 class Harambe(Tank):
     def __init__(self, userID, username, firstName, Messages):
         super().__init__('Harambe', userID, username, firstName, Messages,
-                         baseHealth=150)
+                         baseHealth=130)
 
     def ult(self,target):
         result = super().ult()
@@ -716,6 +716,41 @@ class Wanda(Support):
         if target == self:
             return self.Messages['combat']['ult']['WandaSelf']%(self.get_idty())
         return self.Messages['combat']['ult']['Wanda']%(self.get_idty(),target.get_idty())
+
+    ################
+    ## SEND QUERY ##
+    ################
+    #refer to flowchart for greater clarity
+    async def send_query(self,bot,data,players):
+        await send_query(self,bot,data,players,'single')
+
+    ###################
+    ## PROCESS QUERY ##
+    ###################
+    #refer to flowchart for greater clarity
+    async def process_query(self,game,queryData):
+        await process_query_single(self,game,queryData)
+
+
+#####################
+###### JIGGLET ######
+#####################
+class Jigglet(Support):
+    def __init__(self, userID, username, firstName, Messages):
+        super().__init__('Jigglet', userID, username, firstName, Messages,
+                         baseUltCD=3)
+
+    def ult(self,target):
+        result = super().ult()
+        if result:
+            return result
+        if target.invuln:
+            return self.Messages['combat']['ultInvuln']%(self.get_idty(),target.get_idty(),target.get_idty())
+        #Target goes to sleep!
+        target.asleep = True
+        if target == self:
+            return self.Messages['combat']['ult']['JiggletSelf']%(self.get_idty())
+        return self.Messages['combat']['ult']['Jigglet']%(self.get_idty(),target.get_idty())
 
     ################
     ## SEND QUERY ##

@@ -31,11 +31,13 @@ Numbers below are no. of DERP agents, brackets = no. of VIPs
 
 #Sorting order for queries
 ORDER = {'ult':0, 'attack':1, 'heal':1}
-AGENTULTS = {'Sonhae':0,'Taiji':-200,'Dracule':-100,'Novah':-100,'Saitami':0,
-             'Grim':0,'Jordan':-200,'Harambe':-300,'Impilo':-200,'Hamia':-300,'Aspida':-300,
-             'Grote':-300,'Mitsuha':-100,
-             'Grace':100,'Ralpha':0,'Sanar':0, 'Prim':100, 'Elias':-400,
-             'Yunos':-300,'Munie':-1000,'Anna':-500,'Wanda':-300}
+AGENTULTS = {
+    'Anna':-500, 'Aspida':-300, 'Dracule':-100, 'Elias':-400,
+    'Grace':100, 'Grim':0, 'Grote':-300, 'Hamia':-300, 'Harambe':-300,
+    'Impilo':-200, 'Jigglet':-1000, 'Jordan':-200,
+    'Mitsuha':-100, 'Munie':-1000, 'Novah':-100, 'Prim':100,
+    'Ralpha':0, 'Saitami':0,'Sanar':0, 'Sonhae':0,'Taiji':-200,
+    'Wanda':-300, 'Yunos':-300,}
 #Limit for agents who can select multiple agents
 LIMITS = {'Grim':3,'Sanar':3}
 
