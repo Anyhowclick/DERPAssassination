@@ -562,6 +562,19 @@ EN = {
         "Game is starting... Please wait while I assign roles, "\
         "teams and VIPs.",
 
+    'powerUp':
+        {
+            'DmgX':
+                "\U0001F347: \U0001F53C (up to 2x) or \U0001F53D (possibly to 0) damage.\n"\
+                "<b>%s</b> \U0001F347's available. Who wants to eat it?\n\n",
+            'Health':
+                "\U0001F34E: \U0001F53C or \U0001F53D <b>20</b> hp.\n"\
+                "<b>%s</b> \U0001F34E's available. Who wants to eat it?\n\n",
+            'LoD':
+                "\U0001F351: Restores health to full \U0001F607, or brings death \U00002620.\n"\
+                "<b>%s</b> \U0001F351's available. Who wants to eat it?\n\n",
+        },
+
     'privateChat':
         "This command is only enabled in group chats.",
 

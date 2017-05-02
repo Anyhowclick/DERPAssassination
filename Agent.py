@@ -45,7 +45,7 @@ class Agent(object):
         self.protector = protector #Protector object so that all damage can be deflected to him
         
 
-##### Accessors #####
+
         
 ## User info accessors ##
     def get_user_info(self):

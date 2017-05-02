@@ -3,6 +3,7 @@ import telepot
 import telepot.aio
 import telepot.aio.helper
 import math
+import time
 from telepot.exception import *
 from telepot.namedtuple import *
 from Game import Game
@@ -39,6 +40,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         self.router.routing_table['_countdown_game_start'] = self.on__countdown_game_start
         self.router.routing_table['_countdown_game_next_round'] = self.on__countdown_game_next_round
         self.router.routing_table['_countdown_collate_result'] = self.on__countdown_collate_result
+        self.router.routing_table['_power_up'] = self.on__power_up
 
     async def on_chat_message(self, msg):
         contentType, chatType, chatID = telepot.glance(msg)
@@ -332,17 +334,22 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         #Otherwise, set timer according to customised math function
         rnd = self.game.round
         if survivors == 2:
-            timer = 5 #FOR TESTING
-            #timer = 30 #FOR IMPLEMENTATION
+            timer = 30
         else:
             weight = 1/(1+0.001*math.pow(math.e,0.55*rnd))
             timer = weight*(60*(1 + 1/(0.5+math.pow(math.e,4-0.55*survivors))))+(1-weight)*(-60*(2/(1+math.pow(math.e,5.2-0.73*rnd))-3))
             timer = int(round(timer,-1))
 
         await edit_message(self.messageEditor,message + LANG[self.chatID]['countdownToPhase1']%(timer))
-        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
-        return
 
+        #TESTING POWER-UP EVENT
+        if survivors == 2:
+            #Generate random countdown to power-up event
+            actualTimer = max(5, int(math.pow(time.time(),int(time.time() % 7)) % timer))
+            self.countdownEvent = self.scheduler.event_later(actualTimer, ('_power_up', {'seconds': timer-actualTimer}))
+        else:
+            self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
+        return
 
 #############################################
 ######  Notify peeps in  waiting list  ######
@@ -368,3 +375,19 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         #Those without will be PMed
         self.queued = {'username':'','noUsername':[]}
         return
+
+##########################
+##### POWER-UP EVENT #####
+##########################
+
+    async def on__power_up(self,event):
+        timer = event['_power_up']['seconds']
+        #Generate random power up
+        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['powerUp']['DmgX']%(3))
+        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['powerUp']['Health']%(3))
+        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['powerUp']['LoD']%(3))
+        if sent:
+            self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
+        #Send query
+        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
+        
