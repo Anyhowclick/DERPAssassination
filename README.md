@@ -2,7 +2,7 @@
 
 This game was first conceptualised in October 2016. It has been a solo project up till now. After half a year of development, I considered switching to Node.js / Golang, but decided to stick to Python still. For now, the code that I've written may not be pretty, so I'm planning to rewrite a fair chunk of it, this time taking into consideration future expansions.
 
-For now, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
+ For now, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
 
 - Admin.py
   - Basic spam detection, and contains the function to check whether someone is an admin of a group
@@ -33,7 +33,7 @@ For now, I hope what's explained below will make my code easier to read, and if 
 - Shield.py
   - Shield object for an agent. *Newest feature*
 
-##Changelog 28/4/17 ##
+## Changelog 28/4/17 ##
 - Decreased Harambe's health from 150hp to 130hp
 - Saitami's ability powered up by Anna = instant KO
 - New hero: Jigglet!
