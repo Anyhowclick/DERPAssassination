@@ -1,6 +1,8 @@
 import telepot
-ALL_LANGS = ['EN',]#'IN',ZH']
+from collections import OrderedDict
 
+ALL_LANGS = ['EN',]#'IN',ZH']
+    
 LANGEMOTES = {
     'EN': '\U0001F1EC\U0001F1E7',
     #'ZH': '\U0001F1E8\U0001F1F3',
@@ -12,10 +14,9 @@ setLang = 'Choose your preferred language:'
 EN = {
     'about':
         "<b>About the game</b>\n"\
-        "This game was inspired by Spyfall, Overwatch and Werewolf, combining elements from the 3. "\
-        "It also references material from personal experiences over the years.\n\n"\
+        "This game was inspired by Spyfall, Overwatch and Werewolf, combining elements from the 3.\n\n"\
         "<b>About the developer</b>\n"\
-        "You may contact me at @Anyhowclick, but kindly refrain from spamming, much appreciated!",
+        "You may contact me at @Anyhowclick!",
 
     'abilityUsed':
         "<b>Ability used!</b>",
@@ -23,323 +24,109 @@ EN = {
     'abilityNotUsed':
         "<b>Ability not used!</b>",
 
-    'acknowledgement':
-        "Got it.",
-
     'agentDescription':
-        {   #Offense class
-            "Dracule":"<b>Name:</b> Dracule\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Recovers a portion of his health when attacking. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+            "<b>Name:</b> %s\n"\
+            "<b>Class:</b> %s\n"\
+            "<b>Health:</b> <code>%d</code>\n"\
+            "<b>Damage:</b> <code>%d</code>\n"\
+            "<b>Ability:</b> %s\n"\
+            "<b>Ability cooldown:</b> %s",
 
-            "Grim":"<b>Name:</b> Grim\n<b>Health:</b> 100\n<b>Damage:</b> 22\n"\
-            "<b>Ability:</b> Attacks up to 3 agents, dealing 25 damage per target. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Jordan":"<b>Name:</b> Jordan\n<b>Health:</b> 100\n<b>Damage:</b> 22\n"\
-            "<b>Ability:</b> Combines and splits health equally with another agent. \n"\
-            "<b>Ability cooldown:</b> 5 turns",
-
-            "Novah":"<b>Name:</b> Novah\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Sacrifices some hp to deal extra damage. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
-
-            "Saitami":"<b>Name:</b> Saitami\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Drops an agent's health to 1hp.\n"\
-            "<b>Ability cooldown:</b> 4 turns",
-
-            "Sonhae":"<b>Name:</b> Sonhae\n<b>Health:</b> 85\n<b>Damage:</b> 30\n"\
-            "<b>Ability:</b> Throws C4 explosives at an opponent to deal 40 damage.\n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Taiji":"<b>Name:</b> Taiji\n<b>Health:</b> 100\n<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Deflects all attacks back to attackers, except for some abilities.\n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            #Tank class
-            "Aspida":"<b>Name:</b> Asipda\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Provides a shield barrier (lasts 1 turn) to 1 agent. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Hamia":"<b>Name:</b> Hamia\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Increases damage reduction of 1 agent by 50%. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
-
-            "Harambe":"<b>Name:</b> Harambe\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Bites the bullet for an agent! All damage meant for the agent will be directed"\
-            "to Harambe instead. Furthermore, he recovers 25% of all damage taken this turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Impilo":"<b>Name:</b> Impilo\n<b>Health:</b> 130\n<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Recovers 20 hp or 25% of remaining health, whever is higher."\
-            "In addition, he has increased damage reduction.\n"\
-            "<b>Ability cooldown:</b> 4 turns",
-
-
-            #Healer class
-            "Elias":"<b>Name:</b> Elias\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
+    'agentDescriptionHealer':
+            "<b>Name:</b> %s\n"\
+            "<b>Class:</b> %s\n"\
+            "<b>Health:</b> <code>%d</code>\n"\
+            "<b>Damage:</b> <code>%d</code>\n"\
+            "<b>Heal Amount:</b> <code>%d</code>\n"\
+            "Note that self-heal is only 50%% effective, and healers can choose only to either damage "\
             "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Reveal which team an agent is from!\n"\
-            "<b>Ability cooldown:</b> 2 turns",
+            "<b>Ability:</b> %s\n"\
+            "<b>Ability cooldown:</b> %s",
 
-            "Grace":"<b>Name:</b> Grace\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
-            "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Resurrects a dead agent with half of their base health. \n"\
-            "<b>Ability cooldown:</b> 5 turns",
+    'agents': [
+        #For the agents button, and when allocated
+        #Offense class
+        #Format is agent: [name,class,hp,dmg,ultCD,desc,ultCD]
+        ('#baa', ['Dracule','\U0001F981 Offense',100,25,'2 turns',
+                  "Recover a portion of your health when attacking."]),
 
-            "Prim":"<b>Name:</b> Prim\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
-            "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Makes an agent's ability available for use for him/her next turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
+        ('#bab', ['Grim','\U0001F981 Offense',100,22,'3 turns',
+                  "Attack up to 3 agents, dealing 25 damage per target."]),
 
-            "Ralpha":"<b>Name:</b> Ralpha\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
-            "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Heal an agent to 80% of his base health (70% if used on self).\n"\
-            "<b>Ability cooldown:</b> 4 turns",
+        ('#bac', ['Jordan','\U0001F981 Offense',100,22,'5 turns',
+                  "Combine your health with your target and split it equally!"]),
 
-            "Sanar":"<b>Name:</b> Sanar\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
-            "or heal agents, not both, in the same turn.\n"\
-            "<b>Ability:</b> Heals up to 3 agents for 20 hp each (50% effective on self still). \n"\
-            "<b>Ability cooldown:</b> 3 turns",
+        ('#bad', ['Novah', '\U0001F981 Offense',100,22,'5 turns',
+                  "Sacrifice some hp to deal extra damage."]),
+    
+        ('#bae', ['Saitami','\U0001F981 Offense',100,25,'4 turns',
+                  "Leave your target with 1 hp remaining (fatal if powered up!)."]),
+    
+        ('#baf', ['Sonhae','\U0001F981 Offense',85,30,'3 turns',
+                  "Throw C4 explosives at an opponent to deal great damage!"]),
 
-            "Yunos":"<b>Name:</b> Yunos\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that self-heal is only 50% effective, and healers can choose only to either damage "\
-            "or heal agents, not both in the same turn.\n"\
-            "<b>Ability:</b> Provides energy shields for up to 3 agents. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
+        ('#bag', ['Taiji','\U0001F981 Offense',100,25,'3 turns',
+                  "Deflect all damage targeted at you back to attackers for 1 turn (excludes some abilities)."]),
 
-            #Support class
-            "Anna":"<b>Name:</b> Anna\n<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Powers up an agent (Target agent will have increased damage, heal amount (if applicable), "\
-            "and abilities powered up (if possible), for 1 turn. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+        #Tank class
+        ('#bba', ['Aspida','\U0001F98D Tank',130,20,'3 turns',
+                  "Provide a shield (lasting 1 turn) to 1 agent"]),
 
-            "Jigglet":"<b>Name:</b> Jigglet\n<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Lulls an agent to sleep, rendering that agent useless for 1 turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
+        ('#bbb', ['Hamia','\U0001F98D Tank',130,20,'2 turns',
+                  "Increase damage reduction of 1 agent by 50%."]),
 
-            "Munie":"<b>Name:</b> Munie\n<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Causes an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
-            "<b>Ability cooldown:</b> 3 turns",
+        ('#bbc', ['Harambe','\U0001F98D Tank',130,20,'3 turns',
+                  "Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
+                  "to you instead. Furthermore, you will recover 25%% of all damage taken this turn."]),
 
-            "Puppenspieler":"<b>Name:</b> Puppenspieler\n<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Controls an agent for 1 turn. That agent's ability may be used as well (if available).\n"\
-            "<b>Ability cooldown:</b> 4 turns",
+        ('#bbd', ['Impilo','\U0001F98D Tank',130,20,'4 turns',
+                  "Recover 20 hp or 20% of remaining health, whichever is higher. "\
+                  "You also have increased damage reduction for 1 turn.",]),
+    
+        #Healer class
+        #Note: They have an additional attribute (healAmt), so....
+        #Format is agent: [name,class,hp,dmg,heal,ultCD,desc,ultCD]
+        ('#bca', ['Elias','\U0001F54A Healer',90,17,10,'2 turns',
+                  "Reveal which team an agent is from!"]),
 
-            "Simo":"<b>Name:</b> Simo\n<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Fires a shield-piercing bullet, breaking the shield of an agent (and so deals extra damage). "\
-            "If the agent is not shielded, then the bullet does slightly lower damage.\n"\
-            "<b>Ability cooldown:</b> 2 turns",
+    #'grace': ['Grace','\U0001F54A Healer',90,17,10,7,
+    #          "Resurrect a dead agent with half of their base health."],
+        ('#bcb', ['Prim','\U0001F54A Healer',90,17,10,'3 turns',
+                  "Cause an agent's ability to be available for use for him/her next turn."]),
 
-            "Wanda":"<b>Name:</b> Wanda\n<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
-            "he/she will be unable to heal others.\n"\
-            "<b>Ability cooldown:</b> Depends on target chosen. 3 turns for non-healers, 4 for healers.",
-        },
+        ('#bcc', ['Ralpha','\U0001F54A Healer',90,17,10,'4 turns',
+                  "Heal an agent to 80% of his base health (70% if used on yourself)."]),
 
-    'agentDescriptionFirstPerson':
-        {   #Offense class
-            "Dracule": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Recover a portion of your health when attacking. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+        ('#bcd', ['Sanar','\U0001F54A Healer',90,17,10,'3 turns',
+                  "Heal up to 3 agents (50% effectiveness on healing yourself still applies)."]),
 
-            "Grim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 22\n"\
-            "<b>Ability:</b> Attack up to 3 agents, dealing 25 damage per target. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
+    #'yunos': ['Yunos','\U0001F54A Healer',90,17,10,3,
+    #          "Give energy shields to a maximum of 3 agents."],
+    
+        #Support class
+        ('#bda', ['Anna','\U0001F436 Support',100,20,'2 turns',
+                  "Power up an agent (Target agent will have increased damage, heal amount (if applicable), "\
+                  "and abilities powered up (if possible), for 1 turn."]),
 
-            "Jordan": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 22\n"\
-            "<b>Ability:</b> Combine your health with your target and split it equally!\n"\
-            "<b>Ability cooldown:</b> 5 turns.",
+        ('#bdb', ['Jigglet','\U0001F436 Support',100,20,'3 turns',
+                  "Lull an agent to sleep, rendering that agent useless for 1 turn."]),
 
-            "Novah": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Sacrifice some of your health to deal extra damage. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
+        ('#bdc', ['Munie','\U0001F436 Support',100,20,'3 turns',
+                  "Cause an agent to be invulnerable to taking damage and negative effects for 1 turn."]),
+    
+    #'puppenspieler': ['Puppenspieler','\U0001F436 Support',100,20,4,
+    #                  "Control an agent for 1 turn. That agent's ability may be used as well (if available)."],
+    
+    #'simo': ['Simo','\U0001F436 Support',100,20,2,
+    #         "Fire a shield-piercing bullet, breaking the shield of an agent (and so deals extra damage). "\
+    #         "If the agent is not shielded, then the bullet does slightly lower damage."],
 
-            "Saitami": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Leave your target with 1hp remaining.\n"\
-            "<b>Ability cooldown:</b> 4 turns",
-
-            "Sonhae": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 85\n"\
-            "<b>Damage:</b> 30\n"\
-            "<b>Ability:</b> Throw C4 explosives at an opponent to deal 40 damage.\n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Taiji": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 25\n"\
-            "<b>Ability:</b> Deflect all damage targeted at you back to attackers for 1 turn (excludes some abilities).\n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            #Tank class
-            "Aspida": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 130\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Provide a shield (lasting 1 turn) to 1 agent. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Hamia": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 130\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Increase damage reduction of 1 agent by 50%%. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
-
-            "Harambe": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 130\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Bite the bullet for an agent for 1 turn! All damage meant for the agent will be directed"\
-            "to you instead. Furthermore, you will recover 25%% of all damage taken this turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Impilo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 130\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Recover 20 hp or 20%% of remaining health, whichever is higher. You also have increased damage reduction for 1 turn.\n"\
-            "<b>Ability cooldown:</b> 4 turns",
-
-
-            #Healer class
-            "Elias": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that healing yourself is an option, but is only 50%% effective. "\
-            "Also, you can choose only to either damage or heal agents, "\
-            "not both in the same turn.\n"\
-            "<b>Ability:</b> Reveal which team an agent is from!\n"\
-            "<b>Ability cooldown:</b> 2 turns",
-
-            "Grace": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that healing yourself is an option, but is only 50%% effective. "\
-            "Also, you can choose only to either damage or heal agents, "\
-            "not both in the same turn.\n"\
-            "<b>Ability:</b> Resurrect a dead agent with half of their base health. \n"\
-            "<b>Ability cooldown:</b> 5 turns",
-
-            "Prim": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that healing yourself is an option, but is only 50%% effective. "\
-            "Also, you can choose only to either damage or heal agents, "\
-            "not both in the same turn.\n"\
-            "<b>Ability:</b> Cause an agent's ability to be available for use for him/her next turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Ralpha": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that healing yourself is an option, but is only 50%% effective. "\
-            "Also, you can choose only to either damage or heal agents, "\
-            "not both in the same turn.\n"\
-            "<b>Ability:</b> Heal an agent to 80%% of his base health (70%% if used on yourself).\n"\
-            "<b>Ability cooldown:</b> 4 turns",
-
-            "Sanar": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that healing yourself is an option, but is only 50%% effective. "\
-            "Also, you can choose only to either damage or heal agents, "\
-            "not both in the same turn.\n"\
-            "<b>Ability:</b> Heal up to 3 agents, 20 hp for each agent (50%% effectiveness on healing yourself still applies). \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Yunos": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 90\n"\
-            "<b>Damage:</b> 17\n"\
-            "<b>Heal Amount:</b> 10\n"\
-            "Note that healing yourself is an option, but is only 50%% effective. "\
-            "Also, you can choose only to either damage or heal agents, "\
-            "not both in the same turn.\n"\
-            "<b>Ability:</b> Give energy shields to a maximum of 3 agents. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            #Support class
-            "Anna": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Power up an agent (Target agent will have increased damage, heal amount (if applicable), "\
-            "and abilities powered up (if possible), for 1 turn. \n"\
-            "<b>Ability cooldown:</b> 2 turns",
-
-            "Jigglet": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Lull an agent to sleep, rendering that agent useless for 1 turn. \n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Munie": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Cause an agent to be invulnerable to taking damage and negative effects for 1 turn.\n"\
-            "<b>Ability cooldown:</b> 3 turns",
-
-            "Puppenspieler": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Control an agent for 1 turn. That agent's ability may be used as well (if available).\n"\
-            "<b>Ability cooldown:</b> 4 turns",
-
-            "Simo": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Fire a shield-piercing bullet, breaking the shield of an agent (and so deals extra damage). "\
-            "If the agent is not shielded, then the bullet does slightly lower damage.\n"\
-            "<b>Ability cooldown:</b> 2 turns",
-
-            "Wanda": "You are <b>%s!</b> Your stats and ability are listed below: \n"\
-            "<b>Health:</b> 100\n"\
-            "<b>Damage:</b> 20\n"\
-            "<b>Ability:</b> Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
-            "he/she will be unable to heal others.\n"\
-            "<b>Ability cooldown:</b> Depends on target chosen. 3 turns for non-healers, 4 for healers.",
-        },
-
-    'agentNames':
-        ["Anna","Aspida","Dracule","Elias","Grim",
-         "Harambe","Hamia","Impilo","Jigglet","Jordan","Munie",
-         "Novah","Prim","Ralpha","Saitami",
-         "Sanar","Sonhae","Taiji","Wanda",
-         ],
-
+    #Special case for Wanda, because her ult is variable
+        ('#bdd', ['Wanda','\U0001F436 Support',100,20,'Depends on target chosen. 3 turns for non-healers, 4 for healers.',
+                  "Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
+                  "he/she will be unable to heal others."]),
+        ],
+    
     'allotSuccess':
         "Roles and teams have been allocated! Who's who:\n",
 
@@ -362,7 +149,7 @@ EN = {
             'heal': "%s has %d hp after \U0001F489 from %s!\n",
             'hurt': "%s \U0001F52A %s!\n",
             'intro': "<b>\U00002694 ROUND %d \U00002694</b>\n",
-            'invuln': "%s was attacked, but is invulnerable!\n",
+            'invuln': "%s was attacked by %s, but is invulnerable!\n",
             'KO': "<b>You have been assassinated \U0001F480!!</b>",
             'protect': "%s's attack diverts to %s!\n",
             'res': "You have been <b>raised from the dead \U0001F3FB!</b> Get back into the fight \U0001F3FB!!",
@@ -420,7 +207,14 @@ EN = {
             'ultInvuln': "%s tried to use his/her ability on %s, but %s is invulnerable!\n",
 
         },
-
+    'config':
+        {'back': "\U0001F519",
+         'done': "See you soon!",
+         'exit': "Exit \U000023CF",
+         'intro': "What would you like to change for group <b>%s</b>?",
+         'lang':'\U0001F30D Language',
+         },
+    
     'countdownNoRemind': "<b>%d</b> seconds left to join the game!",
 
     'countdownRemind':
@@ -441,8 +235,10 @@ EN = {
         "\nGame will start in 5s! Agents, prepare for battle!\n",
 
     'donate':
-        "Thank you for supporting the development of this game. You may "\
-        "donate through paypal via this link: paypal.me/Anyhowclick \n"\
+        "Thank you for supporting the development of this game. Below are the following ways you can donate.\n"\
+        "1. Paypal via this link: paypal.me/Anyhowclick \n"\
+        "2. Ethereum address: <code>0xb4c82ff1a2b63cd1585c7b849604ad40a6d3ab35</code> \n"\
+        "3. Litecoin address: <code>LcpU4jwZN5oLsC3p9EPekkcxyRYJpiBFUw</code> \n"\
         "It's fine if you don't, just enjoy the game!",
 
     'existingGame':
@@ -461,21 +257,17 @@ EN = {
         },
 
     'failStart':
-        {'lackppl':"Can't start the game due to lack of players!",},
+        {'lackppl':"Not enough players, can't start the game!",},
 
     'failTalk':
-        "%s failed to start / join a game! Would you kindly start a private chat with me first? "\
-        "Tap/click: @DERPAssassinBot, then press /start in the private chat, <b>not in the group chat.</b> Set "\
-        "your preferred language as well!",
+        "Talk with me privately first, %s! Tap/click: @DERPAssassinBot",
 
     'findOutChar':
-        "Which character would you like to know more about?",
-
-    'findOutMoreChar':
-        "\n\nWould you like to find out about other agents?",
-
-    'future':
-        "Refer to @DerpAssUpdates for server downtimes and upcoming features!",
+        "Choose your agent.\n"\
+        "\U0001F981 Offense agents have higher damage.\n"\
+        "\U0001F98D Tanks have higher health.\n"\
+        "\U0001F54A Healers can heal others.\n"\
+        "\U0001F436 Support agents' abilities aid teammates.\n",
 
     'gifs': #File_ids of gifs stored on telegram servers
         {'drawVidID': "BQADBQADGAADtFzTEYTmkivEF03PAg",
@@ -488,6 +280,9 @@ EN = {
 
     'groupsMemberCount':
         "<b>%s members</b>\n\n",
+
+    'info':
+        "What would you like to know?",
 
     'initialise':
         "Initialising...",
@@ -505,7 +300,7 @@ EN = {
         {'Max':
              "<b>%s</b> has joined the game. Player limit reached! \n",
          'notMax':
-             "<b>%s</b> has joined the game. There are currently <b>%d</b> players. "\
+             "<b>%s</b> has joined the game. Currently <b>%d</b> players.\n"\
              "<b>%d</b> players minimum, <b>%d</b> maximum",
          },
 
@@ -522,19 +317,34 @@ EN = {
     'leaveGame1': "The game stopped as <b>%s</b> left.\n",
 
     'lonely':
-        "Can't play this game by yourself! (well it could in the future, but anyway...) "\
-        "Find some friends to play with!",
+        "Find some friends to play with, by joining any of the groups found in the menu!",
 
     'maintenance':
-        {'OK': "Shutting down...",
-         'shutdown': "The bot is <b>closed for maintenance.</b> Refer to @DerpAssUpdates for "\
+        {'shutdown': "The bot is <b>closed for maintenance.</b> Refer to @DerpAssUpdates for "\
                      "the latest information!\n\n",
+         'status': "Bot status: %s",
          },
 
+    'menu':
+        {'about':'\U00002139 About',
+         'agents':'\U0001F63C Agents',
+         'back': '\U0001F519',
+         'lang':'\U0001F30D Language',
+         'donate':'\U0001F4B5 Donate',
+         'groups':'\U0001F465 Groups',
+         'info': '\U00002753 How to play',
+         'modes': 'Game modes \U0001F3AE',
+         'rate': '\U00002B50 Rate',
+         'rules': '\U0001F4C3 Rules',
+         'soon': 'Coming soon!',
+         'stats': '\U0001F3C5 Stats',
+         'support': '\U0001F6A8 Help',
+         'upgrades': '\U0001F199 Upgrades',
+         },
+    
     'newGame':
-        "\nA new game has been started by %s! Use /join@DERPAssassinBot to join the game, and ensure "\
-        "that you have started a private chat with me (click/tap: @DERPAssassinBot), then press /start in the private chat, "\
-        "so I can interact with you throughout the game.\n\n"
+        "\n%s started a new game! /join@DERPAssassinBot to join.\n"\
+        "Talk to me first, if you haven't! Click/tap: @DERPAssassinBot.\n"\
         "<b>%d</b> players minimum, <b>%d</b> maximum\n",
 
     'newGameToUser':
@@ -555,6 +365,12 @@ EN = {
     'none':
         "I'm done choosing!",
 
+    'notGroup':
+        "This command is only enabled in group chats.",
+    
+    'notGroupAdmin':
+        "Only group admins are enabled to run this command.",
+    
     'notPrivateChat':
         "This command is only enabled in private chats.",
 
@@ -565,18 +381,29 @@ EN = {
     'powerUp':
         {
             'DmgX':
-                "\U0001F347: \U0001F53C (up to 2x) or \U0001F53D (possibly to 0) damage.\n"\
-                "<b>%s</b> \U0001F347's available. Who wants to eat it?\n\n",
+                {'bad':
+                    "\U0001F5E1 \U0001F53D by <b>%d %%</b>!",
+                'desc':
+                     "\U0001F347: \U0001F53C (up to 2x) or \U0001F53D (possibly to 0) damage.\n"\
+                     "<b>%s</b> \U0001F347's available. Who wants to eat it?\n\n",
+                 'good':
+                     "\U0001F5E1 \U0001F53C by <b>%d %%</b>!",
+                },
+            
             'Health':
-                "\U0001F34E: \U0001F53C or \U0001F53D <b>20</b> hp.\n"\
-                "<b>%s</b> \U0001F34E's available. Who wants to eat it?\n\n",
+                {'bad':
+                    "\U0001F53D <b>%d</b> \U00002764!",
+                'desc':
+                    "\U0001F34E: \U0001F53C or \U0001F53D <b>20</b> hp.\n"\
+                    "<b>%s</b> \U0001F34E's available. Who wants to eat it?\n\n",
+                 'good':
+                     "\U0001F53C <b>%d</b> \U00002764!",
+                },
+            
             'LoD':
                 "\U0001F351: Restores health to full \U0001F607, or brings death \U00002620.\n"\
                 "<b>%s</b> \U0001F351's available. Who wants to eat it?\n\n",
         },
-
-    'privateChat':
-        "This command is only enabled in group chats.",
 
     'query':
         {'canUlt': "Your ability is available! Would you like to use it?",
@@ -611,104 +438,23 @@ EN = {
 
     'rate':
         'You may leave a review for this bot <a href="https://telegram.me/storebot?start=derpassassinbot">here</a>! '\
-        'Thank you for doing so! \U0001F60A ',
-
-    'rulesGroup':
-        "Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.\n"\
-        "The assignment of DERP agents and VIP agents is as follows:\n"\
-        "3-4 players: 1 each\n"\
-        "5-6 players: 2 \U0001F530, 1 \U0001F31F\n"\
-        "7-9 players: 3 \U0001F530, 2 \U0001F31F\n"\
-        "10-11 players: 4 \U0001F530, 2 \U0001F31F\n"\
-        "12-14 players: 5 \U0001F530, 3 \U0001F31F\n"\
-        "15-16 players: 6 \U0001F530, 3 \U0001F31F\n"\
-        "17-19 players: 7 \U0001F530, 4 \U0001F31F\n"\
-        "20-21 players: 8 \U0001F530, 4 \U0001F31F\n"\
-        "22-24 players: 9 \U0001F530, 5 \U0001F31F\n"\
-        "25-26 players: 10 \U0001F530, 5 \U0001F31F\n"\
-        "27-29 players: 11 \U0001F530, 5 \U0001F31F\n"\
-        "30-31 players: 12 \U0001F530, 6 \U0001F31F\n"\
-        "32 players: 13 \U0001F530, 6 \U0001F31F",      
+        'Thank you for doing so! \U0001F60A ',      
     
-    'rulesPrivate':
-        "<b>Rules</b>:\nPlayers are split into 2 teams: \U0001F530DERP and \U0001F525PYRO. "\
-        "DERP's objective is to find and kill all VIPs \U0001F31F, while PYRO's objective is to "\
-        "protect their VIPs and eliminate all DERP agents. "\
-        "All agents are categorized into 4 classes: Offense, Tank, Healer and Support. "\
-        "Each class has its strength (dealing most damage, or has damage reduction etc.), "\
-        "and every agent has a unique ability. \n\n"\
-
-        "The assignment of DERP agents and VIP agents is as follows:\n"\
-        "3-4 players: 1 each\n"\
-        "5-6 players: 2 \U0001F530, 1 \U0001F31F\n"\
-        "7-9 players: 3 \U0001F530, 2 \U0001F31F\n"\
-        "10-11 players: 4 \U0001F530, 2 \U0001F31F\n"\
-        "12-14 players: 5 \U0001F530, 3 \U0001F31F\n"\
-        "15-16 players: 6 \U0001F530, 3 \U0001F31F\n"\
-        "17-19 players: 7 \U0001F530, 4 \U0001F31F\n"\
-        "20-21 players: 8 \U0001F530, 4 \U0001F31F\n"\
-        "22-24 players: 9 \U0001F530, 5 \U0001F31F\n"\
-        "25-26 players: 10 \U0001F530, 5 \U0001F31F\n"\
-        "27-29 players: 11 \U0001F530, 5 \U0001F31F\n"\
-        "30-31 players: 12 \U0001F530, 6 \U0001F31F\n"\
-        "32 players: 13 \U0001F530, 6 \U0001F31F\n"\
-        "Each VIP will be made known to 1 other PYRO agent, and <b>each DERP agent knows who other DERP agents are.</b> "\
-        "So PYRO agents (and VIPs) have to figure out who to trust, while DERP agents try to blend in. This is where "\
-        "deception can come into play.\n\n"\
-
-        "Each round is split into 2 phases: 1) the action phase and 2) the discussion phase.\n"\
-        "\n<b>Action phase</b>\nAll players are given 60 or 90 seconds (depending on no. of players alive) "\
-        "to carry out their actions. Players can choose to attack \U0001F44A another player, "\
-        "or use their ability \U0001F4AA if it is available. For players who fail to select any option "\
-        "(for a variety of reasons), "\
-        "their characters would auto-attack themselves (so that they eventually die). "\
-        "The usage of abilities take precedence over normal attacks. "\
-        "Except for certain abilities, everything is processed on a "\
-        "first-send-first serve basis. It is therefore a case of fastest fingers first!\n"
-
-        "\n<b>Discussion phase</b>\nA message collating all usage of abilities and attacks will "\
-        "be sent to the group chat. Players are then given 90-150 seconds "\
-        "to read the message, accuse and convince other agents of the team they belong to, and formulate "\
-        "strategies for the next round. \n\n"
-
-        "The game ends when either all DERP or PYRO agents are dead, or when all VIPs have been "\
-        "assassinated. The game will "\
-        "automatically end after 25 rounds, where the team with the most health declared the winner. Since "\
-        "each round lasts 150-210 seconds, a game is expected to take 15-30 mins, but can stretch to a maximum "\
-        "of 87.5 mins.\n\n"\
-        "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.",
+    'rules':
+        {'sent':"Check below!",
+         'fileID':"AgADBQADxacxGxZ3-VSOUGZoMvVlvL8byjIABLilrrw2eJwN9L4DAAEC",
+         },
 
     'spam':
-        {
-         1: "I won't respond for 10 seconds because you have been "\
-             "a little agressive with interacting with me. This is an anti-spam preventive measure. Sorry about that! \U0001F605",
-         2: "I won't respond for 1 minute because you've again been a little too hyperactive for me. "\
-            "Sorry about that, but I seek your understanding that this is an anti-spam measure, and I have a lot of other people to talk to as well! \U0001F604",
-         3: "I won't respond for 15 minutes because of I've been overwhelmed by you. Sorry about that, but try to tone down a little yeah? \U0001F604",
-         4: "Hey. You've been warned. I won't respond for 1 hour. Tone down or else... \U0001F621",
-         5: "I'm done being Mr.NiceGuy. I won't reply to your commands for 1 day.",
-         6: "Really? Haven't learnt your lesson eh? You will be ignored for 1 week.",
-         7: "Congratulations on making it this far. I never thought anyone would ever reach this stage. You are the kind of person I'm trying to prevent. Goodbye for a long time!",
-        },
+        {1:"I won't respond for %.1f minutes (unless you're in a game). This is an anti-spam preventive measure. Sorry about that! \U0001F605",
+         2:"\U0001F910",
+         },
+
     
     'start':
         "Hi there! Add me into group chats and use /newgame@DERPAssassinBot to start a new game with your friends! "\
-        "Make sure that all players must first have a private chat with the bot first before joining, "\
-        "so that I can PM classified information to each player.\n"\
-        "Use /rules to find out how this game is played.\n"\
-        "/agents will give more info about each agent's ability and stats.\n"\
-        "/story gives the lore of the game.\n"\
-        "/group shows you existing groups which you may join! Have lots of fun!",
-
-    'story':
-        "Long ago, the world \U0001F30E	lived together in harmony. Then, everything changed "\
-        "when the evil organisation known as \U0001F525PYRO attacked! They were hellbent "\
-        "on seeing the world burn\U0001F525\U0001F525\U0001F525. Only the "\
-        "Division for Enforcing Realistic Peace (D.E.R.P)\U0001F530 can stop them. "\
-        "Thus, D.E.R.P agents have been sent to infiltrate "\
-        "the secret base \U0001F3EF of PYRO and assassinate \U0001F3F9 its leaders. However, word has it "\
-        "that some agents have defected to the fiery side. So, will PYRO prevail and "\
-        "leave the world in ashes, or will D.E.R.P save the world from catastrophe?",
+        "All players must first talk to me privately, so I can talk back to them!\n"\
+        "Explore the menu below to learn more about the game, or join a group to quickly get started!",
 
     'support':
         "If you have any feedback or suggestions / discovered bugs in the game / would like to join me "\
@@ -1383,18 +1129,8 @@ IN = {
         "of 87.5 mins.\n\n"\
         "<b>TLDR version:</b> Team DERP tries to find and assassinate VIPs, team PYRO tries to defend them and assassinate team DERP.",
 
-    'spam':
-        {
-         1: "I won't respond for 10 seconds because you have been "\
-             "a little agressive with interacting with me. This is an anti-spam preventive measure. Sorry about that! \U0001F605",
-         2: "I won't respond for 1 minute because you've again been a little too hyperactive for me. "\
-            "Sorry about that, but I seek your understanding that this is an anti-spam measure, and I have a lot of other people to talk to as well! \U0001F604",
-         3: "I won't respond for 15 minutes because of I've been overwhelmed by you. Sorry about that, but try to tone down a little yeah? \U0001F604",
-         4: "Hey. You've been warned. I won't respond for 1 hour. Tone down or else... \U0001F621",
-         5: "I'm done being Mr.NiceGuy. I won't reply to your commands for 1 day.",
-         6: "Really? Haven't learnt your lesson eh? You will be ignored for 1 week.",
-         7: "Congratulations on making it this far. I never thought anyone would ever reach this stage. You are the kind of person I'm trying to prevent. Goodbye for a long time!",
-        },
+    'spam': "I won't respond to slash commands for %d minutes. This is an anti-spam preventive measure. Sorry about that! \U0001F605",
+    
     'start':
         "Hi there! Add me into group chats and use /newgame@DERPAssassinBot to start a new game with your friends! "\
         "Make sure that all players must first have a private chat with the bot first before joining, "\

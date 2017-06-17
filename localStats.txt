@@ -1,0 +1,1 @@
+{"28173774": {"mostPplHealed": 0, "ffaWins": 0, "gold": 0, "mostPplKilled": 0, "lang": "EN", "normalGamesSurvived": 0, "normalGamesPlayed": 0, "ffaGamesPlayed": 0, "mostHealedAmt": 0, "mostDmgNormal": 0, "diamond": 0, "firstName": "Clicky", "drawsNormal": 0, "pyroNormalWins": 0, "username": "Anyhowclick", "derpNormalWins": 0, "mostDmgFFA": 0}}

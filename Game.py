@@ -7,7 +7,7 @@ import time
 from telepot.namedtuple import *
 from Heroes import *
 from Messages import send_message, edit_message
-from Database import DB, LANG
+from DatabaseStats import DBP, LANG
 '''
 no. of VIPs and DERP agents are determined as such:
 --VIPs and DERP agents--

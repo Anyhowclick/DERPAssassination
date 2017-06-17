@@ -1,36 +1,13 @@
 #Each hero might have extra attributes for ulti
 from AgentClasses import *
-from Messages import send_message
-from Database import DB, LANG
+from Messages import *
+from DatabaseStats import DBP, LANG
 from Shield import Shield
+from collections import OrderedDict
 import random
 
-#Generate a list of 1 instance of each character
-#Compulsory contains all agents that will definitely be included every game
-def allAgents(playerCount):
-    compulsory = {'Elias':Elias}
-    result = {#'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
-              #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
-              #'Jordan':Jordan, 'Jigglet':Jigglet,
-                'Sonhae':Sonhae, 'Jigglet':Jigglet,
-              #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
-              #'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
-              #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
-              #'Aspida':Aspida,
-            }
-    #Exclude Elias
-    if playerCount <= 4:
-        return result
-
-    #Making sure Elias (and potentially other agents in the future) is included otherwise
-    for i in range(0,playerCount-len(compulsory)):
-        key = list(result.keys())
-        for j in range(0,random.randint(1,10)):
-            random.shuffle(key)
-        key = random.choice(key)
-        compulsory[key] = result[key]
-        del result[key]
-    return compulsory
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 #########################################
 ############# OFFENSE CLASS #############

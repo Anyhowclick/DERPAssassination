@@ -296,10 +296,10 @@ async def handle(msg):
         print('Out of steps')
 
 
-TOKEN = sys.argv[1]
-USER_ID = int(sys.argv[2])
+#TOKEN = sys.argv[1]
+#USER_ID = int(sys.argv[2])
 
-bot = telepot.aio.Bot(TOKEN)
+bot = telepot.aio.Bot('389415780:AAHTqKs_Ry8sAjqeCr_jFd8tw2m2bt0NQZk')
 loop = asyncio.get_event_loop()
 
 loop.run_until_complete(test_webhook_getupdates_exclusive())
