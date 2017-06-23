@@ -1,1 +1,1 @@
-{"-198106155": {"title": "Beta Testing", "gamesCompleted": 0, "lang": "EN", "powerUps": true, "gamesPlayed": 0}}
+{"-198106155": {"gamesCompleted": 0, "title": "Beta Testing", "gamesPlayed": 0, "powerUps": true, "lang": "EN"}}

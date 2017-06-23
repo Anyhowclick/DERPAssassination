@@ -1,12 +1,15 @@
 import asyncio
 import aiohttp
 import telepot
+import Globals
+Globals.init()
 from telepot.aio.delegate import *
 from Admin import toggle_maintenance
 from ChatManager import chatManager
 from CallbackHandler import CallbackHandler
-from DatabaseStats import load_database, update_dict
+from DatabaseStats import load_database, update_dict, auto_save_update
 from GameHandler import gameHandler
+
 '''
 chatManager handles all '/' non-game related commands
 (also ensures /newgame and /join are used in appopriate chats).
@@ -34,6 +37,7 @@ DERPAssBot = telepot.aio.DelegatorBot(TOKEN, [
 loop = asyncio.get_event_loop()
 loop.create_task(DERPAssBot.message_loop())
 loop.create_task(update_dict())
+loop.create_task(auto_save_update())
 load_database()
 toggle_maintenance()
 print('LEGGO!!')

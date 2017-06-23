@@ -1,31 +1,42 @@
 import simplejson as json
-GLOBALSTATS = {
+GLOBAL_STATS = {
     "derpWins":0,
     "pyroWins":0,
     "drawsNormal":0,
+    "ffaGames":0,
     "players":0,
     "groups":0,
-      
-    "survivorsTotal":0,
-    "killedTotal":0,
     
-    #firstName, username, survival / death rate
-    "bestSurvivor":["Donny","",0],
-    "bestMinion":["Donny","",0],
+    #firstName, survival / death rate
+    "normalSurvivor":{
+        "name":"name",
+        "rate":0}, #Best survival rate in normal mode
+    
+    "ffaKing":{
+        "name":"name",
+        "rate":0}, #Most FFA Wins
 
-    "mostDmgAmtNormal":["name",0],
-    "mostDmgFFA":["name",0],
-    "mostHealedAmt":["name",0],
-    "mostShieldAmt":["name",0],
+    "mostDmgNormal":{
+        "name":"name",
+        "rate":0},
+    
+    "mostDmgFFA":{
+        "name":"name",
+        "rate":0},
+    
+    "mostHealedAmt": {
+        "name":"name",
+        "rate":0},
       
-    "mostPplResurrected":["name",0],
-    "mostPplHealed":["name",0],
-    "mostPplKilled":["name",0],
-    "mostPowUps":["name",0],
+    "mostPplHealed":{
+        "name":"name",
+        "rate":0},
+    
+    "mostPplKilled":{
+        "name":"name",
+        "rate":0},
 
-    #stored as [no. of games, game length]
-    "aveNormGameLength":[0,0],
-    "aveFfaGameLenggth":[0,0]
+    "lastUpdated":0,
     }
 
 GRPID = {
@@ -37,5 +48,30 @@ GRPID = {
   }
 }
 
+LOCALID = {
+    "localID": {
+        "firstName":'firstName',
+        "username":'username',
+        "lang":"EN",
+
+        "gold":0,
+        "diamond":0,
+      
+        "mostPplHealed": 0,
+        "mostPplKilled": 0,
+        "mostHealedAmt": 0,
+        "mostDmgNormal" :0,
+        "mostDmgFFA": 0,
+
+        "normalGamesPlayed": 0,
+        "normalGamesSurvived": 0,
+        "pyroNormalWins": 0,
+        "drawsNormal": 0,
+        "derpNormalWins": 0,
+        "ffaWins": 0,
+        "ffaGamesPlayed": 0,
+        }
+    }
+
 with open('globalStats.txt','w') as outfile:
-        json.dump(GLOBALSTATS,outfile)
+        json.dump(GLOBAL_STATS,outfile)

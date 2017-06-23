@@ -24,6 +24,10 @@ EN = {
     'abilityNotUsed':
         "<b>Ability not used!</b>",
 
+    'acknowledgement': "Ok.",
+
+    'agentDesc': "You are <b>%s</b>!\n",
+    
     'agentDescription':
             "<b>Name:</b> %s\n"\
             "<b>Class:</b> %s\n"\
@@ -43,7 +47,7 @@ EN = {
             "<b>Ability:</b> %s\n"\
             "<b>Ability cooldown:</b> %s",
 
-    'agents': [
+    'agents': OrderedDict([
         #For the agents button, and when allocated
         #Offense class
         #Format is agent: [name,class,hp,dmg,ultCD,desc,ultCD]
@@ -125,7 +129,7 @@ EN = {
         ('#bdd', ['Wanda','\U0001F436 Support',100,20,'Depends on target chosen. 3 turns for non-healers, 4 for healers.',
                   "Prevent an agent from being healed for 1 turn. In addition, if the agent is a healer, "\
                   "he/she will be unable to heal others."]),
-        ],
+        ]),
     
     'allotSuccess':
         "Roles and teams have been allocated! Who's who:\n",
@@ -329,11 +333,13 @@ EN = {
         {'about':'\U00002139 About',
          'agents':'\U0001F63C Agents',
          'back': '\U0001F519',
-         'lang':'\U0001F30D Language',
          'donate':'\U0001F4B5 Donate',
+         'global':'\U0001F30F Global',
          'groups':'\U0001F465 Groups',
          'info': '\U00002753 How to play',
+         'lang':'\U0001F30D Language',
          'modes': 'Game modes \U0001F3AE',
+         'personal': '\U0001F464 Personal',
          'rate': '\U00002B50 Rate',
          'rules': '\U0001F4C3 Rules',
          'soon': 'Coming soon!',
@@ -375,8 +381,7 @@ EN = {
         "This command is only enabled in private chats.",
 
     'okStart':
-        "Game is starting... Please wait while I assign roles, "\
-        "teams and VIPs.",
+        "Beginning assignment of roles and agents...",
 
     'powerUp':
         {
@@ -450,6 +455,39 @@ EN = {
          2:"\U0001F910",
          },
 
+    'stats':
+        {
+            'des':
+                "\nNo. of active games: <code>{}</code>\n"\
+                "No. of active players: <code>{}</code>\n\n",
+            
+            'global':
+                "Total no. of players: <code>{d[players]}</code>\n"\
+                "Total no. of groups: <code>{d[groups]}</code>\n"\
+                "Games played \U0001F579: <code>{p[0]}</code>\n"\
+                "Games won as \U0001F530 DERP: <code>{d[derpWins]}</code> <code>({p[1]:.2f})%</code>\n"\
+                "Draws: <code>{d[drawsNormal]}</code> <code>({p[2]:.2f})%</code>\n"\
+                "Games won as \U0001F525 PYRO: <code>{d[pyroWins]}</code> <code>({p[3]:.2f})%</code>\n"\
+                "Best survivor: <b>{d[normalSurvivor][name]}</b> <code>{d[normalSurvivor][rate]}%</code>\n"\
+                "Highest damage dealer: <b>{d[mostDmgNormal][name]}</b> <code>{d[mostDmgNormal][rate]}</code> \U00002694\n"\
+                "Best healing dealer:  <b>{d[mostHealedAmt][name]}</b> <code>{d[mostHealedAmt][rate]}</code> \U0001F489\n"\
+                "Best assassin \U0001F575\U0001F3FD: <b>{d[mostPplKilled][name]}</b> <code>{d[mostPplKilled][rate]}</code> agents\n"\
+                "Best medic \U0001F47C\U0001F3FB: <b>{d[mostPplHealed][name]}</b> <code>{d[mostPplHealed][rate]}</code> agents\n"\
+                "Last updated: <code>{d[lastUpdated]} GMT +8</code>\n",
+            
+            'local':
+                "Games played \U0001F579: <code>{d[normalGamesPlayed]}</code>\n"\
+                "Games won as \U0001F530 DERP: <code>{d[derpNormalWins]}</code> <code>({p[0]:.2f})%</code>\n"\
+                "Draws: <code>{d[drawsNormal]}</code> <code>({p[1]:.2f})%</code>\n"\
+                "Games won as \U0001F525 PYRO: <code>{d[pyroNormalWins]}</code> <code>({p[2]:.2f})%</code>\n"\
+                "Games survived : <code>{d[normalGamesSurvived]}</code> <code>({p[3]:.2f})%</code>\n"\
+                "People killed \U0001F480: <code>{d[mostPplKilled]}</code>\n"\
+                "People healed \U0001F47C\U0001F3FB: <code>{d[mostPplHealed]}</code>\n"\
+                "Highest damage \U00002694: <code>{d[mostDmgNormal]}</code>\n"\
+                "Highest heal amount \U0001F48A: <code>{d[mostHealedAmt]}</code>\n",
+            
+            'query':"Which stats would you like to see?",
+        },
     
     'start':
         "Hi there! Add me into group chats and use /newgame@DERPAssassinBot to start a new game with your friends! "\

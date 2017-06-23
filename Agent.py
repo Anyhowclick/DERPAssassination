@@ -1,30 +1,27 @@
-import DatabaseStats
-LOCALID = DatabaseStats.LOCALID
-STATS = DatabaseStats.STATS
-
 #defining character class
 class Agent(object):
 
 #### Constructor #####
-    def __init__(self, agentName, userID, username, firstName, Messages,
+    def __init__(self, agentCode, userID, username, firstName, Messages,
                  baseHealth=None, baseDmg=None, baseUltCD=None,
                  alive=True,health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=False, attackAfterUlt=True,
                  canBeHealed=True, canBeShielded=True,
                  asleep=False, invuln=False, controlled=False, shield=None, dmgReduction=None, protector=None,
                  ):
-        self.agentName = agentName #Name of agent assigned Eg. Sonhae, Impilo
+        self.agentName = Messages['agents'][agentCode][0]#Name of agent assigned, obtain from Messages.py Eg. Sonhae, Impilo
+        self.agentCode = agentCode #Special code to identify the agent in Messages.py Eg. #baa, #bab etc.
         self.userID = userID #telegram user ID
         self.username = username #telegram username
         self.firstName = firstName #telegram user first name
         self.editor = None #to be initialised if there's a callback query
         self.Messages = Messages #this is the language database for the group chat
-        self.stats = STATS #Load up stats
-
-        #Update stats Eg. username, First name
-        self.stats['firstName'] = firstName
-        self.stats['username'] = username
-        
+        self.stats = {
+            "pplHealed":0,
+            "pplKilled":0,
+            "healAmt":0,
+            "dmg":0,
+            }
         
         #Base values for health = 100, damage = 15 and ulti cooldown = 3
         self.baseHealth = baseHealth if baseHealth else 100

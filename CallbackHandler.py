@@ -6,9 +6,9 @@ from telepot.namedtuple import *
 from Messages import ALL_LANGS, setLang, send_message, edit_message, EN
 from KeyboardQuery import *
 from DatabaseStats import save_lang
-import DatabaseStats
+import Globals
 from Admin import check_admin, check_spam, get_maintenance, get_grp_info
-
+        
 # Function to group elements together by iterating through sequence
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
@@ -25,15 +25,10 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         super().__init__(*args, **kwargs)
         
     async def on_callback_query(self, msg):
-        LOCALID = DatabaseStats.LOCALID
-        GRPID = DatabaseStats.GRPID
-        LANG = DatabaseStats.LANG
-        DBP = DatabaseStats.DBP
-        DBG = DatabaseStats.DBG
         queryID, ID, queryData = telepot.glance(msg, flavor='callback_query')
 
         try:
-            Messages = LANG[ID]
+            Messages = Globals.LANG[ID]
         except KeyError:
             Messages = EN #Set default to English
             
@@ -47,19 +42,20 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         ##################################
         elif '{' in queryData:
             #Retreive stored hero and game object in userID from DB
-            agent,game = DB[ID]
+            agent,game = Globals.DBP[ID]
             #Time given in message is the time the message was sent, which is more or less the same for all
             #so have to use own time
             date = int(time.time())
             
-            if queryData == '{ULTYES}':
+            if queryData == '{|ULTYES|}':
                 await edit_message(agent.editor,Messages['abilityUsed'],parse_mode='HTML',reply_markup=None)
-                queryData = queryData[:-1] + '|'+ str(date) + '|}' #so structure becomes {ULTYES|date|}
+                queryData = queryData[:-1] + str(date) + '|}' #so structure becomes {|ULTYES|date|}
                 
             #If callback data is just an option to call another query
             elif queryData ==  '{ULTNO}':
                 await edit_message(agent.editor,Messages['abilityNotUsed'],parse_mode='HTML',reply_markup=None)
 
+            #Person decides to stop using ult
             elif queryData == '{NONE}':
                 await edit_message(agent.editor,Messages['acknowledgement'],parse_mode='HTML',reply_markup=None)
                 self.close()
@@ -70,12 +66,12 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                     await agent.editor.editMessageReplyMarkup(reply_markup=None)
                 except AttributeError:
                     pass
-            else: #callback data has the data structure: agentName{|targetAgentName|option|}
-                await edit_message(agent.editor,Messages['choiceAccept']%(queryData.split('|')[1]),
+            else: #callback data has the data structure: {|choice|targetAgentID|}
+                await edit_message(agent.editor,Messages['choiceAccept']%(game.agents[int(queryData.split('|')[2])].agentName),
                                                    reply_markup=None,
                                                    parse_mode='HTML')
-                queryData = queryData[:-1] + str(date) + '|}' #so structure becomes agentName{|targetAgentName|option|date|}
-                
+                queryData = queryData[:-1] + str(date) + '|}' #so structure becomes {|choice|targetAgentID|date|}
+
             await agent.process_query(game,queryData) #send to agent object for processing
             self.close()
 
@@ -102,7 +98,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
             return
         
         ##########
-        ###INFO###
+        ###Info###
         ##########
         elif queryData == '#a0':
             markup = generate_info_keyboard(Messages,queryData)
@@ -131,23 +127,84 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
 
         elif '#b' in queryData:
             markup = generate_agent_keyboard(Messages,queryData)
-            message = OrderedDict(Messages['agents'])[queryData]
-            
-            #Handling healer class, because got extra attribute
-            if '#bc' in queryData:
-                message=Messages['agentDescriptionHealer']%(
-                    message[0],message[1],message[2],message[3],message[4],message[6],message[5]
-                    )
-            else:
-                message = Messages['agentDescription']%(
-                    message[0],message[1],message[2],message[3],message[5],message[4]
-                    )
+            message = generate_agent_info(Messages,queryData) #queryData = agentCode, function found in KeyboardQuery
             await edit_message(self.editor,message,reply_markup=markup,parse_mode='HTML')
             self.close()
             return
 
+        ###########
+        ###Stats###
+        ###########
+        elif queryData == '#c0':
+            markup = generate_stats_keyboard(Messages)
+            await edit_message(self.editor,Messages['stats']['query'],reply_markup=markup,parse_mode='HTML')
+            self.close()
+            return
+
+        elif '#c' in queryData:
+            markup = generate_back_keyboard(Messages,queryData)
+            if ID == 28173774:
+                #get local stats
+                message = Messages['stats']['local']
+                d = Globals.LOCALID[ID]
+                if d['normalGamesPlayed']:
+                    p = (d['derpNormalWins']/d['normalGamesPlayed'],
+                         d['drawsNormal']/d['normalGamesPlayed'],
+                         d['pyroNormalWins']/d['normalGamesPlayed'],
+                         d['normalGamesSurvived']/d['normalGamesPlayed']
+                         )
+                else:
+                    p = (0,0,0,0)
+                message = message.format(d=d,p=p)
+                
+                #Get no. of groups and players playing
+                activeGrps, activePlayers = 0,0
+                for grp in Globals.DBG:
+                    if Globals.DBG[grp]:
+                        activeGrps += 1
+                for player in Globals.DBP:
+                    if Globals.DBP[player]:
+                        activePlayers += 1
+                message += Messages['stats']['des'].format(activeGrps,activePlayers)
+                
+                #Finally, get global stats
+                d = Globals.GLOBAL_STATS
+                totalGames = d['derpWins'] + d['pyroWins'] + d['drawsNormal']
+                if totalGames == 0:
+                    p = (0,0,0,0)
+                else:
+                    p = (totalGames,d['derpWins']/totalGames,d['pyroWins']/totalGames,d['drawsNormal'/totalGames])
+                message += Messages['stats']['global'].format(d=d,p=p)
+                await edit_message(self.editor,message,reply_markup=markup,parse_mode='HTML')
+                self.close()
+                return
+            if queryData == '#ca': #Local stats
+                #get local stats
+                d = Globals.LOCALID[ID]
+                if d['normalGamesPlayed']:
+                    p = (d['derpNormalWins']/d['normalGamesPlayed'],
+                         d['drawsNormal']/d['normalGamesPlayed'],
+                         d['pyroNormalWins']/d['normalGamesPlayed'],
+                         d['normalGamesSurvived']/d['normalGamesPlayed']
+                         )
+                else:
+                    p = (0,0,0,0)
+                await edit_message(self.editor,Messages['stats']['local'].format(d=d,p=p),reply_markup=markup,parse_mode='HTML')
+                self.close()
+                return
+            else: #Global stats
+                d = Globals.GLOBAL_STATS
+                totalGames = d['derpWins'] + d['pyroWins'] + d['drawsNormal']
+                if totalGames == 0:
+                    p = (0,0,0,0)
+                else:
+                    p = (totalGames,d['derpWins']/totalGames,d['pyroWins']/totalGames,d['drawsNormal'/totalGames])
+                await edit_message(self.editor,Messages['stats']['global'].format(d=d,p=p),reply_markup=markup,parse_mode='HTML')
+                self.close()
+                return
+        
         ############
-        ###CONFIG###
+        ###Config###
         ############
         #Separate keyboards so that I know whether to save language for the person, or for the group
         if queryData == '#d0' or '#d1' in queryData:
@@ -163,7 +220,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         #SET / CHANGE LANGUAGE for personal
         elif '#da' in queryData: #Eg. #da0EN
             await save_lang(ID,queryData[-2:])
-            Messages = LANG[ID]
+            Messages = Globals.LANG[ID]
             markup = generate_menu_keyboard(Messages,-1)
             await edit_message(self.editor,Messages['start'],reply_markup=markup,parse_mode='HTML')
             self.close()
@@ -173,9 +230,9 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         elif '#db' in queryData: #Eg. db|-12345678|IN
             queryData = queryData.split('|')
             await save_lang(queryData[1],queryData[2])
-            Messages = LANG[ID]
+            Messages = Globals.LANG[ID]
             markup = generate_config_keyboard(Messages,'#-1',queryData[1])
-            await edit_message(self.editor,Messages['config']['intro']%(GRPID[int(queryData[1])]['title']),reply_markup=markup,parse_mode='HTML')
+            await edit_message(self.editor,Messages['config']['intro']%(Globals.GRPID[int(queryData[1])]['title']),reply_markup=markup,parse_mode='HTML')
             self.close()
             return
         
@@ -196,7 +253,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
             for item in grps:
                 result = item[1]
                 message += result['link'] + result['title'] + '</a>\n'
-                message += LANG[ID]['groupsMemberCount']%(result['members'])
+                message += Globals.LANG[ID]['groupsMemberCount']%(result['members'])
             await edit_message(self.editor,message,reply_markup = markup)
             self.close()
             return

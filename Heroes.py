@@ -1,81 +1,49 @@
 #Each hero might have extra attributes for ulti
 from AgentClasses import *
 from Messages import *
-from DatabaseStats import DBP, LANG
 from Shield import Shield
-from collections import OrderedDict
 import random
+import Globals
 
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+#Generate a list of 1 instance of each character
+#Compulsory contains all agents that will definitely be included every game
+def one_agent_instance(playerCount):
+    compulsory = {'Elias':Elias}
+    result = {#'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
+              #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
+              #'Jordan':Jordan, 'Jigglet':Jigglet,
+                'Sonhae':Sonhae, 'Jigglet':Jigglet,
+              #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
+              #'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
+              #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
+              #'Aspida':Aspida,
+            }
+    #Exclude Elias
+    if playerCount <= 4:
+        return result
+
+    #Making sure Elias (and potentially other agents in the future) is included otherwise
+    for i in range(0,playerCount-len(compulsory)):
+        key = list(result.keys())
+        key = random.choice(key)
+        compulsory[key] = result[key]
+        del result[key]
+    return compulsory
 
 #########################################
 ############# OFFENSE CLASS #############
 #########################################
 
-######################
-####### SONHAE #######
-######################
-
-class Sonhae(Offense):
-    def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Sonhae', userID, username, firstName, Messages,
-                         baseUltCD=3,attackAfterUlt=False,
-                         baseHealth=85, baseDmg=30, baseUltDmg=40)
-
-    def ult(self,enemy):
-        result = super().ult()
-        if result:
-            return result
-        #Pagoe uses sticky bomb (message for this)
-        return self.attack(enemy,self.ultDmg,msg=self.Messages['combat']['ult']['Sonhae']%(self.get_idty(),enemy.get_idty()))
-        
-    ################
-    ## SEND QUERY ##
-    ################
-    #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
-
-    ###################
-    ## PROCESS QUERY ##
-    ###################
-    #refer to flowchart for greater clarity
-    async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
-        
-    
-#####################
-####### TAIJI #######
-#####################
-
-class Taiji(Offense):
-    def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Taiji', userID, username, firstName, Messages,
-                         baseUltCD=3,buffUlt=False)
-        
-    def ult(self,target): #target is self
-        result = super().ult()
-        if result:
-            return result
-        return self.Messages['combat']['ult']['Taiji']%(self.get_idty())
-
-    def attacked(self,enemy,dmg,msg=''):
-        if self.ultUsed and self != enemy:
-            self.protector = enemy
-            msg += self.Messages['combat']['deflect']%(self.get_idty(),enemy.get_idty())
-        return super().attacked(enemy,dmg,msg)
-
-
-
-            
 #####################
 ###### DRACULE ######
 #####################
 
 class Dracule(Offense):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Dracule', userID, username, firstName, Messages)
+        super().__init__('#baa', userID, username, firstName, Messages)
         
     def ult(self,target): #target is self
         result = super().ult()
@@ -95,17 +63,90 @@ class Dracule(Offense):
             self.add_health(recoveredHp) 
             return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)
         return msg
-        
 
 
+##################
+###### GRIM ######
+##################
+            
+class Grim(Offense):
+    def __init__(self, userID, username, firstName, Messages):
+        super().__init__('#bab', userID, username, firstName, Messages,
+                         baseDmg=22, baseUltCD=3, baseUltDmg=25, attackAfterUlt=False)
+        self.selected = []
+
+    def reset_next_round(self):
+        self.selected = []
+        super().reset_next_round()
         
+    def ult(self,enemy):
+        result = super().ult()
+        if result:
+            return result
+        return self.attack(enemy,dmg=self.ultDmg,msg=self.Messages['combat']['ult']['Grim']%(self.get_idty(),enemy.get_idty()))
+
+    ################
+    ## SEND QUERY ##
+    ################
+    #refer to flowchart for greater clarity
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'multi',gameMode)
+        return
+    
+    ###################
+    ## PROCESS QUERY ##
+    ###################
+    async def process_query(self,game,queryData):
+        await process_query(self,game,queryData,('multi',3))
+        return
+
+####################
+###### JORDAN ######
+####################
+            
+class Jordan(Offense):
+    def __init__(self, userID, username, firstName, Messages):
+        self.selected = None #Will be an agent
+        super().__init__('#bac', userID, username, firstName, Messages,
+                         baseDmg=22, baseUltCD=5)
+
+    def ult(self,target):
+        result = super().ult()
+        if result:
+            return result
+        if target.invuln:
+            return self.Messages['combat']['ultInvuln']%(self.get_idty(),target.get_idty(),target.get_idty())
+        #Use on self
+        elif self == target:
+            return self.Messages['combat']['ult']['JordanSelf']%(self.get_idty())
+        #Split health 50-50 (ratio might change in the future)
+        self.health = (self.health + target.health) / 2
+        target.health = self.health
+        return self.Messages['combat']['ult']['Jordan']%(self.get_idty(),target.get_idty(),self.health)
+        
+        
+    ################
+    ## SEND QUERY ##
+    ################
+    #refer to flowchart for greater clarity
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
+    
+    ###################
+    ## PROCESS QUERY ##
+    ###################
+    async def process_query(self,game,queryData):
+        await process_query(self,game,queryData,'single')
+        return
+
 ###################
 ###### NOVAH ######
 ###################
 
 class Novah(Offense):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Novah', userID, username, firstName, Messages)
+        super().__init__('bad', userID, username, firstName, Messages)
 
     def ult(self,target): #target is self
         if self.asleep:
@@ -121,15 +162,14 @@ class Novah(Offense):
             self.add_dmg(10)
             return self.drop_health(5, self.Messages['combat']['ult']['NovahOK']%(self.get_idty()))
 
-
-
+        
 #####################
 ###### SAITAMI ######
 #####################
             
 class Saitami(Offense):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Saitami', userID, username, firstName, Messages,
+        super().__init__('#bae', userID, username, firstName, Messages,
                          baseUltCD=4, attackAfterUlt=False)
         self.poweredUp = False
 
@@ -158,89 +198,72 @@ class Saitami(Offense):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
 
 
-##################
-###### GRIM ######
-##################
-            
-class Grim(Offense):
-    def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Grim', userID, username, firstName, Messages,
-                         baseDmg=22, baseUltCD=3, baseUltDmg=25, attackAfterUlt=False)
-        self.selected = []
-
-    def reset_next_round(self):
-        self.selected = []
-        super().reset_next_round()
         
+######################
+####### SONHAE #######
+######################
+
+class Sonhae(Offense):
+    def __init__(self, userID, username, firstName, Messages):
+        super().__init__('#baf', userID, username, firstName, Messages,
+                         baseUltCD=3,attackAfterUlt=False,
+                         baseHealth=85, baseDmg=30, baseUltDmg=40)
+
     def ult(self,enemy):
         result = super().ult()
         if result:
             return result
-        return self.attack(enemy,dmg=self.ultDmg,msg=self.Messages['combat']['ult']['Grim']%(self.get_idty(),enemy.get_idty()))
-
+        #Pagoe uses sticky bomb (message for this)
+        return self.attack(enemy,self.ultDmg,msg=self.Messages['combat']['ult']['Sonhae']%(self.get_idty(),enemy.get_idty()))
+        
     ################
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'multi')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
     async def process_query(self,game,queryData):
-        await process_query_multi(self,game,queryData,3)
+        await process_query(self,game,queryData,'single')
+        return
+        
+    
+#####################
+####### TAIJI #######
+#####################
 
-
-####################
-###### JORDAN ######
-####################
-            
-class Jordan(Offense):
+class Taiji(Offense):
     def __init__(self, userID, username, firstName, Messages):
-        self.selected = None #Will be an agent
-        super().__init__('Jordan', userID, username, firstName, Messages,
-                         baseDmg=22, baseUltCD=5)
-
-    def ult(self,target):
+        super().__init__('bag', userID, username, firstName, Messages,
+                         baseUltCD=3,buffUlt=False)
+        
+    def ult(self,target): #target is self
         result = super().ult()
         if result:
             return result
-        if target.invuln:
-            return self.Messages['combat']['ultInvuln']%(self.get_idty(),target.get_idty(),target.get_idty())
-        #Use on self
-        elif self == target:
-            return self.Messages['combat']['ult']['JordanSelf']%(self.get_idty())
-        #Split health 50-50 (ratio might change in the future)
-        self.health = (self.health + target.health) / 2
-        target.health = self.health
-        return self.Messages['combat']['ult']['Jordan']%(self.get_idty(),target.get_idty(),self.health)
-        
-        
-    ################
-    ## SEND QUERY ##
-    ################
-    #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+        return self.Messages['combat']['ult']['Taiji']%(self.get_idty())
 
-    ###################
-    ## PROCESS QUERY ##
-    ###################
-    #refer to flowchart for greater clarity
-    async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+    def attacked(self,enemy,dmg,msg=''):
+        if self.ultUsed and self != enemy:
+            self.protector = enemy
+            msg += self.Messages['combat']['deflect']%(self.get_idty(),enemy.get_idty())
+        return super().attacked(enemy,dmg,msg)
 
 
 ######################################
@@ -253,7 +276,7 @@ class Jordan(Offense):
 
 class Aspida(Tank):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Aspida', userID, username, firstName, Messages,
+        super().__init__('#bba', userID, username, firstName, Messages,
                          buffUlt=True,baseUltCD=3)
         self.shieldAmt = 40
         
@@ -272,15 +295,16 @@ class Aspida(Tank):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
 
         
 ###################
@@ -289,7 +313,7 @@ class Aspida(Tank):
 
 class Hamia(Tank):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Hamia', userID, username, firstName, Messages,
+        super().__init__('#bbb', userID, username, firstName, Messages,
                          buffUlt=True,baseUltCD=2)
         self.baseUltDmgReduction = 0.5
         self.ultDmgReduction = self.baseUltDmgReduction
@@ -312,15 +336,16 @@ class Hamia(Tank):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
 
         
 #####################
@@ -329,7 +354,7 @@ class Hamia(Tank):
 
 class Harambe(Tank):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Harambe', userID, username, firstName, Messages,
+        super().__init__('#bbc', userID, username, firstName, Messages,
                          baseHealth=130)
 
     def ult(self,target):
@@ -356,15 +381,16 @@ class Harambe(Tank):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
 
 
 
@@ -374,7 +400,7 @@ class Harambe(Tank):
 
 class Impilo(Tank):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Impilo', userID, username, firstName, Messages,
+        super().__init__('#bbd', userID, username, firstName, Messages,
                          buffUlt=True,baseUltCD=4)
 
         self.baseUltDmgReduction,self.baseUltHp = 0.05,20
@@ -412,7 +438,7 @@ class Impilo(Tank):
 
 class Elias(Healer):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Elias', userID, username, firstName, Messages,
+        super().__init__('#bca', userID, username, firstName, Messages,
                          baseUltCD=2,attackAfterUlt=True)
 
     def ult(self,target):
@@ -426,7 +452,7 @@ class Elias(Healer):
         return self.Messages['combat']['ult']['Elias']%(self.get_idty(),target.get_idty())
 
     async def reveal(self,target,game):
-        Messages = LANG[self.userID]
+        Messages = Globals.LANG[self.userID]
         if target.invuln:
             msg = Messages['combat']['ult']['revealFail']%(target.get_idty())
         else:
@@ -447,15 +473,16 @@ class Elias(Healer):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
         
     
 ####################
@@ -464,7 +491,7 @@ class Elias(Healer):
 
 class Ralpha(Healer):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Ralpha', userID, username, firstName, Messages,
+        super().__init__('#bcc', userID, username, firstName, Messages,
                          baseUltCD=4)
 
     def ult(self,target):
@@ -499,15 +526,16 @@ class Ralpha(Healer):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
         
 
 ###################
@@ -516,7 +544,7 @@ class Ralpha(Healer):
         
 class Sanar(Healer):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Sanar', userID, username, firstName, Messages,
+        super().__init__('#bcd', userID, username, firstName, Messages,
                          buffUlt=True)
         self.selected = []
         self.ultBaseHealAmt = 20
@@ -543,14 +571,16 @@ class Sanar(Healer):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'multi')
-
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'multi',gameMode)
+        return
+    
     ###################
     ## PROCESS QUERY ##
     ###################
     async def process_query(self,game,queryData):
-        await process_query_multi(self,game,queryData,3)
+        await process_query(self,game,queryData,('multi',3))
+        return
 
 ##################
 ###### PRIM ######
@@ -558,7 +588,7 @@ class Sanar(Healer):
 
 class Prim(Healer):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Prim', userID, username, firstName, Messages, attackAfterUlt=True,
+        super().__init__('#bcb', userID, username, firstName, Messages, attackAfterUlt=True,
                          baseUltCD=3)
 
     def ult(self,target):
@@ -575,62 +605,28 @@ class Prim(Healer):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
-
+        await process_query(self,game,queryData,'single')
+        return
         
         
 #########################################
 ############# SUPPORT CLASS #############
 #########################################
 
-###################
-###### MUNIE ######
-###################
-class Munie(Support):
-    def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Munie', userID, username, firstName, Messages,
-                         baseUltCD=3)
-
-    def ult(self,ally):
-        result = super().ult()
-        if result:
-            return result
-        ally.invuln = True
-        if ally == self:
-            return self.Messages['combat']['ult']['MunieSelf']%(self.get_idty())
-        return self.Messages['combat']['ult']['Munie']%(self.get_idty(),ally.get_idty())
-        
-
-
-    ################
-    ## SEND QUERY ##
-    ################
-    #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
-
-    ###################
-    ## PROCESS QUERY ##
-    ###################
-    #refer to flowchart for greater clarity
-    async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
-
-        
 ##################
 ###### ANNA ######
 ##################
 class Anna(Support):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Anna', userID, username, firstName, Messages,
+        super().__init__('#bda', userID, username, firstName, Messages,
                          baseUltCD=2)
 
     def ult(self,ally):
@@ -670,15 +666,86 @@ class Anna(Support):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
+
+
+#####################
+###### JIGGLET ######
+#####################
+class Jigglet(Support):
+    def __init__(self, userID, username, firstName, Messages):
+        super().__init__('#bdb', userID, username, firstName, Messages,
+                         baseUltCD=3)
+
+    def ult(self,target):
+        result = super().ult()
+        if result:
+            return result
+        if target.invuln:
+            return self.Messages['combat']['ultInvuln']%(self.get_idty(),target.get_idty(),target.get_idty())
+        #Target goes to sleep!
+        target.asleep = True
+        if target == self:
+            return self.Messages['combat']['ult']['JiggletSelf']%(self.get_idty())
+        return self.Messages['combat']['ult']['Jigglet']%(self.get_idty(),target.get_idty())
+
+    ################
+    ## SEND QUERY ##
+    ################
+    #refer to flowchart for greater clarity
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
+
+    ###################
+    ## PROCESS QUERY ##
+    ###################
+    async def process_query(self,game,queryData):
+        await process_query(self,game,queryData,'single')
+        return
+
+        
+###################
+###### MUNIE ######
+###################
+class Munie(Support):
+    def __init__(self, userID, username, firstName, Messages):
+        super().__init__('#bdc', userID, username, firstName, Messages,
+                         baseUltCD=3)
+
+    def ult(self,ally):
+        result = super().ult()
+        if result:
+            return result
+        ally.invuln = True
+        if ally == self:
+            return self.Messages['combat']['ult']['MunieSelf']%(self.get_idty())
+        return self.Messages['combat']['ult']['Munie']%(self.get_idty(),ally.get_idty())
+    
+
+    ################
+    ## SEND QUERY ##
+    ################
+    #refer to flowchart for greater clarity
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
+
+    ###################
+    ## PROCESS QUERY ##
+    ###################
+    async def process_query(self,game,queryData):
+        await process_query(self,game,queryData,'single')
+        return
 
 
 ###################
@@ -686,7 +753,7 @@ class Anna(Support):
 ###################
 class Wanda(Support):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Wanda', userID, username, firstName, Messages,
+        super().__init__('#bdd', userID, username, firstName, Messages,
                          baseUltCD=3)
 
     def ult(self,target):
@@ -712,49 +779,15 @@ class Wanda(Support):
     ## SEND QUERY ##
     ################
     #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
+    async def send_query(self,bot,data,players,gameMode):
+        await send_query(self,bot,data,players,'single',gameMode)
+        return
 
     ###################
     ## PROCESS QUERY ##
     ###################
-    #refer to flowchart for greater clarity
     async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
-
-
-#####################
-###### JIGGLET ######
-#####################
-class Jigglet(Support):
-    def __init__(self, userID, username, firstName, Messages):
-        super().__init__('Jigglet', userID, username, firstName, Messages,
-                         baseUltCD=3)
-
-    def ult(self,target):
-        result = super().ult()
-        if result:
-            return result
-        if target.invuln:
-            return self.Messages['combat']['ultInvuln']%(self.get_idty(),target.get_idty(),target.get_idty())
-        #Target goes to sleep!
-        target.asleep = True
-        if target == self:
-            return self.Messages['combat']['ult']['JiggletSelf']%(self.get_idty())
-        return self.Messages['combat']['ult']['Jigglet']%(self.get_idty(),target.get_idty())
-
-    ################
-    ## SEND QUERY ##
-    ################
-    #refer to flowchart for greater clarity
-    async def send_query(self,bot,data,players):
-        await send_query(self,bot,data,players,'single')
-
-    ###################
-    ## PROCESS QUERY ##
-    ###################
-    #refer to flowchart for greater clarity
-    async def process_query(self,game,queryData):
-        await process_query_single(self,game,queryData)
+        await process_query(self,game,queryData,'single')
+        return
         
 # TO-DO: SIMO MUST HAVE addUltDmg method, Aspida and Yunos to have shield methods

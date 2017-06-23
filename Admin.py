@@ -4,10 +4,9 @@ import telepot
 import telepot.aio
 import time
 from Messages import send_message, EN
-from DatabaseStats import LANG,SPAM
+import Globals
 
 PENALTY = {0:0,1:10,2:60,3:300,4:600,5:900,6:1800,7:3600,8:43200,9:86400,10:259200,11:999999999999} #Penalty time to ignore in seconds
-MAINTENANCE = True
 GRPS = [('-198106155','<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'), #FOR TESTING
         ('-1001101622786','<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'),
         ('-1001090679151','<a href="https://t.me/joinchat/AAAAAEECcW8ICTmNpWQgVQ">'),
@@ -34,24 +33,23 @@ async def check_spam(handler,msg):
     #strike: The no. of violations of the threshold, ie. how many times the person spammed...
     #blockedStatus: 1 if blocked, 0 otherwise
     #blockedTime: The start time of person's penalty
-    global SPAM
     try:
-        person = SPAM[userID] #If person already in DB, then load preferences
+        person = Globals.SPAM[userID] #If person already in DB, then load preferences
         #First check if person is to be ignored
         if person[3]:
             timeDiff = person[4] #retrieve the 'past' penalty
             timeDiff = time.time()-timeDiff #get difference
             if timeDiff >= PENALTY[person[2]]:
-                SPAM[userID] = (round(time.time(),3),person[1],person[2],0,0) #can listen to person again for queries
+                Globals.SPAM[userID] = (round(time.time(),3),person[1],person[2],0,0) #can listen to person again for queries
                 return False
             else:
                 #Continue to ignore person
                 return True
 
         try:
-            LANG[userID]
+            Globals.LANG[userID]
         except KeyError:
-            LANG[userID] = EN
+            Globals.LANG[userID] = EN
 
         #Check if person is spamming
         timeDiff = round(time.time() - person[0],3) #Calculate current timeDiff
@@ -60,16 +58,16 @@ async def check_spam(handler,msg):
         threshold = get_threshold(strike)
         if average > threshold: #VIOLATE THRESHOLD
             strike = min(strike+1,8)
-            await send_message(handler.bot,userID,LANG[userID]['spam'][1]%(PENALTY[strike]/60),parse_mode='HTML')
-            #Store back into SPAM database
-            SPAM[userID] = (round(time.time(),3),average,strike,1,round(time.time(),3))
+            await send_message(handler.bot,userID,Globals.LANG[userID]['spam'][1]%(PENALTY[strike]/60),parse_mode='HTML')
+            #Store back into Globals.SPAM database
+            Globals.SPAM[userID] = (round(time.time(),3),average,strike,1,round(time.time(),3))
             return True
-        SPAM[userID] = (round(time.time(),3),0,strike,0,0)
+        Globals.SPAM[userID] = (round(time.time(),3),0,strike,0,0)
         return False
 
-    #Person not in SPAM database
+    #Person not in Globals.SPAM database
     except KeyError:
-        SPAM[userID] = (round(time.time(),3),0,0,0,0)
+        Globals.SPAM[userID] = (round(time.time(),3),0,0,0,0)
         return False
     
 async def auto_update(bot):
@@ -108,13 +106,11 @@ async def check_admin(bot,chatID,userID): #Check if user is admin based on userI
 
 #Maintenance variable to determine if bot is to be repaired
 def toggle_maintenance():
-    global MAINTENANCE
-    MAINTENANCE = not MAINTENANCE
+    Globals.MAINTENANCE = not Globals.MAINTENANCE
     return
 
 def get_maintenance():
-    global MAINTENANCE
-    return MAINTENANCE
+    return Globals.MAINTENANCE
 
 #Returns a list of groups with info below
 #Each item in grps is a tuple as follows: (grpID,{'memberCount':members,'title':GrpTitle,'link':inviteLink})

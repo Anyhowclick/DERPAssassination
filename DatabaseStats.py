@@ -2,33 +2,23 @@ from Messages import ZH, IN, EN, send_message
 import simplejson as json
 import time
 import asyncio
-DBP, DBG, LANG, LOCALID, GRPID, GLOBAL_STATS, SPAM = {},{},{},{},{},{},{}
-QUEUE = asyncio.Queue() #Item placed is of format: (dictionary,key,value)
-MIN_PLAYERS = 2
-MAX_PLAYERS = 20
-lastUpdate = 0
+import Globals
 '''
-DBP will be used to store queries and info from PERSONS
-DBG will be used to store group game instances
-LOCALID and GRPID stores personal and group statistics respectively
-GLOBAL_STATS stores global statistics
-LANG will store languages used by people / group (object)
-QUEUE is a global queue to handle writing into different python dicts (thread safety)
-Refer to StatsFormat for the type of statistics stored for GLOBALSTATS
-The rest are sort of stated below.
+Used to store and update stats
 '''
 
 async def update_dict():
     while True:
-        dicty,key,value = await QUEUE.get()
-        dicty[key] = value
-
-STATS = {
-    "pplHealed":0,
-    "pplKilled":0,
-    "healAmt":0,
-    "dmg":0,
-    }
+        dicty,key,value = await Globals.QUEUE.get()
+        if dicty is Globals.DBG:
+            try:
+                lst = dicty[key]
+                lst.append(value)
+                dicty[key] = lst
+            except KeyError:
+                dicty[key] = value
+        else:
+            dicty[key] = value
         
 #Initialise stats for new person
 async def add_new_person(ID,msg):
@@ -64,10 +54,8 @@ async def add_new_person(ID,msg):
         "ffaGamesPlayed": 0,
         }
     
-    global LOCALID
-    await QUEUE.put((LOCALID,ID,toStore))
+    await Globals.QUEUE.put((Globals.LOCALID,ID,toStore))
     Messages = await save_lang(ID,'EN') #Set default to English
-    autosave()
     return Messages
 
 #Initialise stats for new group
@@ -80,59 +68,116 @@ async def add_new_group(ID,msg):
         "lang":"EN",
         }
     
-    await QUEUE.put((GRPID,ID,toStore))
+    await Globals.QUEUE.put((Globals.GRPID,ID,toStore))
     Messages = await save_lang(ID,'EN')
-    autosave()
     return Messages
 
-#Save statistics every 5 mins
-def autosave():
-    global lastUpdate
-    if time.time() - lastUpdate >= 300:
+#Save statistics and update global stats every 10 mins
+async def auto_save_update():
+    while True:
         save_database()
-        lastUpdate = time.time()
+        print('Database saved.')
+        await update_global_stats()
+        print('Global stats updated.')
+        await asyncio.sleep(600)
+
+def update_stat(person,key,variable):
+    if person[key] > variable['rate']:
+        variable = {'name':person['firstName'],'rate':person[key]}
+    return variable
+
+
+    
+#Compute and update global statistics. Mode is to load up the relevant stats
+async def update_global_stats():
+    #Update total no. of ppl and no. of groups
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"players",len(Globals.LOCALID)))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"groups",len(Globals.GRPID)))
+        #Load up current stats
+    normalSurvivor = Globals.GLOBAL_STATS['normalSurvivor']
+    ffaKing = Globals.GLOBAL_STATS['ffaKing']
+    mostDmgNormal = Globals.GLOBAL_STATS['mostDmgNormal']
+    mostDmgFFA = Globals.GLOBAL_STATS['mostDmgFFA']
+    mostHealedAmt = Globals.GLOBAL_STATS['mostHealedAmt']
+    mostPplHealed = Globals.GLOBAL_STATS['mostPplHealed']
+    mostPplKilled = Globals.GLOBAL_STATS['mostPplKilled']
+        
+    #Compute individual stats, update accordingly
+    for person in list(Globals.LOCALID.values()):
+        #Compute / update survival rate
+        try:
+            survivalRate = person['normalGamesSurvived'] / person['normalGamesPlayed'] #Round to 3dp
+        except ZeroDivisionError:
+            survivalRate = 0
+        survivalRate = round(survivalRate,3)
+        if survivalRate > normalSurvivor['rate']:
+            normalSurvivor = {'name':person['firstName'],'rate':survivalRate}
+
+        #Compute / update FFAKing (most no. of FFA Wins) 
+        ffaKing = update_stat(person,'ffaWins',ffaKing)
+        
+        #Stats below are in a single game
+        #Compute / update mostDmgNormal
+        mostDmgNormal = update_stat(person,'mostDmgNormal',mostDmgNormal)
+        #Compute / update mostDmgFFA
+        mostDmgFFA = update_stat(person,'mostDmgFFA',mostDmgFFA)
+        #Compute / update mostHealedAmt
+        mostHealedAmt = update_stat(person,'mostHealedAmt',mostHealedAmt)
+
+        #Stats below are accumulative
+        #Compute / update most people healed
+        mostPplHealed = update_stat(person,'mostPplHealed',mostPplHealed)
+        #Compute / update mostDmgNormal
+        mostPplKilled = update_stat(person,'mostPplKilled',mostPplKilled)
+            
+    #Finally, update in Global stats
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"normalSurvivor",normalSurvivor))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"ffaKing",ffaKing))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostDmgNormal",mostDmgNormal))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostDmgFFA",mostDmgFFA))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostHealedAmt",mostHealedAmt))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostPplHealed",mostPplHealed))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostPplKilled",mostPplKilled))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"lastUpdated",time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())))
     return
 
 #To load the files
 def load_database():
-    global LOCALID, GRPID, GLOBAL_STATS,LANG
-    LOCALID = json.loads(open('localStats.txt').read())
+    Globals.LOCALID = json.loads(open('localStats.txt').read())
     #Convert all string keys to int
-    LOCALID = {int(k):v for k,v in LOCALID.items()}
-    GRPID = json.loads(open('grpStats.txt').read())
+    Globals.LOCALID = {int(k):v for k,v in Globals.LOCALID.items()}
+    Globals.GRPID = json.loads(open('grpStats.txt').read())
     #Convert all string keys to int
-    GRPID = {int(k):v for k,v in GRPID.items()}
-    GLOBAL_STATS = json.loads(open('globalStats.txt').read())
+    Globals.GRPID = {int(k):v for k,v in Globals.GRPID.items()}
+    Globals.GLOBAL_STATS = json.loads(open('globalStats.txt').read())
     #Codes are gotten from ISO standard
     langs = {'ZH':ZH,'IN':IN,'EN':EN}
-    for person in list(LOCALID.keys()):
+    for person in list(Globals.LOCALID.keys()):
         #This doesn't require use of global queue, because it only runs after bot is restarted
-        LANG[person] = langs[LOCALID[person]['lang']]
+        Globals.LANG[person] = langs[Globals.LOCALID[person]['lang']]
     print('Database loaded!')
     return
 
 #Save the data!
 def save_database():
     with open('localStats.txt','w') as outfile:
-        json.dump(LOCALID,outfile)
+        json.dump(Globals.LOCALID,outfile)
     with open('grpStats.txt','w') as outfile:
-        json.dump(GRPID,outfile)
+        json.dump(Globals.GRPID,outfile)
     with open('globalStats.txt','w') as outfile:
-        json.dump(GLOBAL_STATS,outfile)
+        json.dump(Globals.GLOBAL_STATS,outfile)
     return
 
 async def save_lang(ID,choice):
-    global LOCALID, GRPID
     ID = int(ID)
-    #Save preference in LANG database
+    #Save preference in Globals.LANG database
     langs = {'ZH':ZH,'IN':IN,'EN':EN}
     #Not using global queue, because... it caused problems (KeyErrors, due to CallbackHandlers?)
-    LANG[ID] = langs[choice]
+    Globals.LANG[ID] = langs[choice]
     await asyncio.sleep(0.1)
     #To save lang codes in resp IDs
     if ID < 0:
-        await QUEUE.put((GRPID[ID],'lang',choice))
+        await Globals.QUEUE.put((Globals.GRPID[ID],'lang',choice))
     else:
-        await QUEUE.put((LOCALID[ID],'lang',choice))
-    autosave()
-    return LANG[ID]
+        await Globals.QUEUE.put((Globals.LOCALID[ID],'lang',choice))
+    return Globals.LANG[ID]

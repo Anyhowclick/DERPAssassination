@@ -4,10 +4,11 @@ import telepot.aio
 import telepot.aio.helper
 import random
 import time
+import Globals
 from telepot.namedtuple import *
-from Heroes import *
+from Heroes import one_agent_instance
+from KeyboardQuery import generate_agent_info
 from Messages import send_message, edit_message
-from DatabaseStats import DBP, LANG
 '''
 no. of VIPs and DERP agents are determined as such:
 --VIPs and DERP agents--
@@ -28,6 +29,7 @@ Numbers below are no. of DERP agents, brackets = no. of VIPs
 30-31 players: 12 (6)
 32 players: 13 (6)
 '''
+
 
 #Sorting order for queries
 ORDER = {'ult':0, 'attack':1, 'heal':1}
@@ -97,7 +99,7 @@ async def proc_query(game,query):
         target = game.get_dead_all()[target]
         agent.ult(target)
         #Send message to target informing him of being resurrected
-        await send_message(game.bot,target.userID,LANG[target.userID]['combat']['res'],parse_mode='HTML')
+        await send_message(game.bot,target.userID,Globals.LANG[target.userID]['combat']['res'],parse_mode='HTML')
         return agent.ult(target)
     elif agent not in survivors or target not in survivors: #Agent or target has died, don't do anything
         return ''
@@ -117,35 +119,37 @@ async def proc_query(game,query):
 
     #Check if agent or target died, send dieded messages
     if not agent.alive:
-        await send_message(game.bot,agent.userID,LANG[agent.userID]['combat']['KO'],parse_mode='HTML')
+        await send_message(game.bot,agent.userID,Globals.LANG[agent.userID]['combat']['KO'],parse_mode='HTML')
     elif not target.alive:
-        await send_message(game.bot,target.userID,LANG[target.userID]['combat']['KO'],parse_mode='HTML')
+        await send_message(game.bot,target.userID,Globals.LANG[target.userID]['combat']['KO'],parse_mode='HTML')
 
     #Finally, return result
     return msg
 
-class Game(object):
-    def __init__(self, bot, chatID, players, messageEditor):
+class normalGame(object):
+    def __init__(self, bot, chatID, playerCount, messageEditor):
         self.bot = bot
         self.chatID = chatID
-        self.Messages = LANG[chatID]
+        self.Messages = Globals.LANG[chatID]
         self.messageEditor = messageEditor #edit the previous message (Game is starting...), & others where applicable
-        self.message = None #Old message where new text is to be appended to it
+        self.message = '' #Old message where new text is to be appended to it
         self.agents = {}
         self.round = 0 # Denotes current round
-        playerCount = len(players)
+        self.playerCount = playerCount
+        self.gameMode = 1
+        
         #determine no. of VIPs and DERP agents to have (DERP is 1.5 or 2x more than VIPs!)
-        if playerCount <= 4:
+        if self.playerCount <= 4:
             DERPCount = 1
         else:
             #observe that we can to determine the no. of DERP via a 2-piece function.
             #If no. of players modulo 5 = 0 or 1, it will be 1 function, otherwise it will another function
             #DERPCount will be abused to save space
-            DERPCount = (playerCount%5)
+            DERPCount = (self.playerCount%5)
             if DERPCount <= 1:
-                DERPCount = 2*(playerCount//5)
+                DERPCount = 2*(self.playerCount//5)
             else:
-                DERPCount = 1 + 2*(playerCount//5)
+                DERPCount = 1 + 2*(self.playerCount//5)
 
         self.DERPCount = DERPCount
         self.VIPCount = int(round((DERPCount/2)+0.1, 0))
@@ -154,52 +158,52 @@ class Game(object):
         #######################################################
         ### Assigning and PM-ing roles and teams to players ###
         #######################################################
-    async def allocate(self,players,playerCount,game):
-        DERPCount = game.DERPCount
-        VIPCount = game.VIPCount
-        #allAgents in Heroes.py will filter special heroes based on no. of players
-        AGENTS = allAgents(playerCount)
+    async def allocate(self,players):
+        
+        #filter special heroes based on no. of players
+        AGENTS = one_agent_instance(self.playerCount)
 
-        for count in range(1,playerCount+1):
-            player = random_select(players)
-            agent = random_select(AGENTS) #returns Hero object
-            playerID = player['id'] #same as uerID
-            try: #see if user has a username
+        for count in range(1,self.playerCount+1):
+            player = random_select(players) #randomly select a player
+            agent = random_select(AGENTS) #randomly select a hero
+            playerID = player['id'] #same as userID
+            try: #see if user has a username. It's also in case the user updates his username, so update our DB
                 username = player['username']
             except KeyError:
                 username = None
-            #As usual, define Messages variable
-            Messages = LANG[playerID]
-            player = agent(playerID,username,player['first_name'],self.Messages) #assign player to hero
-            self.agents[player.agentName] = player #save agent into game object
-            DB[playerID]=(player,game) # add hero object to database,
-            # so that callback queries can be sent to it by CallbackHandler for processing
 
+            player = agent(playerID,username,player['first_name'],self.Messages) #assign player to hero
+            self.agents[playerID] = player #save agent into game object, using player's ID as the key
+            await Globals.QUEUE.put((Globals.DBP,playerID,(player,self))) # add hero object to database,
+            # so that callback queries can be sent to it by CallbackHandler for processing
             # Also, game object is added for retrieving important info by CallbackHandler
-            self.message = Messages['agentDescriptionFirstPerson'][player.agentName]%(player.agentName) #PM player role
-            sent = await send_message(self.bot,playerID,self.message)
+
+            Messages = Globals.LANG[playerID]
+            message = Messages['agentDesc']%(player.agentName)
+            message += generate_agent_info(Messages,player.agentCode) #PM player role, function found in KeyboardQuery.py
+            sent = await send_message(self.bot,playerID,message)
             player.editor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent)) #editor will be used to append team message later on
 
             #Assigning teams
-            if count <= DERPCount: #first assign DERP agents
+            if count <= self.DERPCount: #first assign DERP agents
                 player.team = 'DERP'
                 #Message will be sent at a later stage
 
-            elif (playerCount-count) >= VIPCount: #followed by PYRO agents
+            elif (self.playerCount-count) >= self.VIPCount: #followed by PYRO agents
                 player.team = 'PYRO'
-                self.message += Messages['teamPYRO']
-                await edit_message(player.editor,self.message)
+                message += Messages['teamPYRO']
+                await edit_message(player.editor,message)
 
             else: #finally VIPs
                 player.team = 'PYROVIP'
-                self.message += Messages['VIPself']
-                await edit_message(player.editor,self.message)
-                if playerCount > 4: #Exclude games with 3-4 people: no need for people to be informed
+                message += Messages['VIPself']
+                await edit_message(player.editor,message)
+                if self.playerCount > 4: #Exclude games with 3-4 people: no need for people to be informed
                     randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
                     while randomPlayer.userID == player.userID: #ensure that someone other than the VIP himself is selected
                         randomPlayer = random.choice(list(self.get_alive_PYROteam().values()))
                     #PM the chosen player
-                    await send_message(self.bot,randomPlayer.userID,LANG[randomPlayer.userID]['VIP']%(player.agentName,player.firstName),parse_mode='HTML')
+                    await send_message(self.bot,randomPlayer.userID,Globals.LANG[randomPlayer.userID]['VIP']%(player.agentName,player.firstName),parse_mode='HTML')
 
             #Finally, reset agent editor
             player.editor = None
@@ -221,7 +225,7 @@ class Game(object):
             self.message += Messages['summary']['agentStart']%(agent.get_clickable_name(),agentName)
         self.message += Messages['delay']
         await edit_message(self.messageEditor,self.message)
-        time.sleep(5)
+        await asyncio.sleep(5)
         self.message = None #reset variable
         return
 
@@ -234,7 +238,7 @@ class Game(object):
         players = self.get_alive_all()
         for agent in players.values():
             agent.minus_CD()
-            await agent.send_query(self.bot,'startQuery',list(players.values()))
+            await agent.send_query(self.bot,'start',list(players.values()),self.gameMode)
         return
 
     #To close all unanswered queries, then sort queries, process them and print 1 huge message in group chat
@@ -246,7 +250,7 @@ class Game(object):
         for agent in agents:
             try:
                 await agent.editor.editMessageReplyMarkup(reply_markup=None)
-                await edit_message(agent.editor,LANG[agent.userID]['timeUp'])
+                await edit_message(agent.editor,Globals.LANG[agent.userID]['timeUp'])
             except telepot.exception.TelegramError:
                 continue
 
@@ -436,7 +440,7 @@ class Game(object):
             except AttributeError:
                 pass
             #Tell player game has been killed
-            await send_message(self.bot,agent.userID,LANG[agent.userID]['killGameAgents'],reply_markup=None)
+            await send_message(self.bot,agent.userID,Globals.LANG[agent.userID]['killGameAgents'],reply_markup=None)
         #Clear all agents
         self.agents = None
         return

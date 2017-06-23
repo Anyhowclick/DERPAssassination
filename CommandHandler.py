@@ -1,13 +1,14 @@
 import asyncio
 import pprint
 import telepot
+import Globals
 from telepot.aio.delegate import *
 from telepot.aio.routing import *
 from telepot.namedtuple import *
 from Messages import EN, setLang, send_message
 from KeyboardQuery import *
 from Admin import check_admin, check_spam, get_maintenance, toggle_maintenance
-from DatabaseStats import *
+from DatabaseStats import add_new_person, save_lang
 
 ######################################################################################
 ####################### TO OBTAIN FILE ID AFTER UPLOAD ###############################
@@ -70,8 +71,8 @@ class CommandHandler(object):
             return
         #Check if user has set language, other defaut to english
         try:
-            LOCALID[ID]
-            Messages = LANG[ID]
+            Globals.LOCALID[ID]
+            Messages = Globals.LANG[ID]
         except KeyError:
             Messages = await add_new_person(ID,msg)
         if get_maintenance(): #if maintenance, send bot down msg
@@ -89,6 +90,12 @@ class CommandHandler(object):
                 await send_message(self.bot.bot,ID,Messages['notGroupAdmin'])
             else:
                 #Check if basic group stats have been recorded, otherwise add them into database
+                try:
+                    Globals.GRPID[msg['chat']['id']] 
+                    await Globals.QUEUE.put((Globals.GRPID,msg['chat']['id'],'title',msg['chat']['title'])) #Update group chat title
+                except KeyError:
+                    Messages = await add_new_group(msg['chat']['id'],msg)
+
                 markup = generate_config_keyboard(Messages,'#-1',msg['chat']['id'])
                 await send_message(self.bot.bot,ID,Messages['config']['intro']%(msg['chat']['title']),reply_markup=markup)
         #Finally, shutdown
@@ -113,7 +120,7 @@ class CommandHandler(object):
         #Note that if message is in group chat, GameHandler will handle
         if msg['chat']['type'] == 'private':
             try:
-                Messages = LANG[ID]
+                Messages = Globals.LANG[ID]
             except KeyError:
                 Messages = EN
             await send_message(self.bot.bot,ID,Messages['notGroup'])
@@ -126,8 +133,8 @@ class CommandHandler(object):
         if await check_spam(self.bot,msg):
             return
         try:
-            LOCALID[ID]
-            Messages = LANG[ID]
+            Globals.LOCALID[ID]
+            Messages = Globals.LANG[ID]
         except KeyError:
             Messages = await add_new_person(ID,msg)
             
@@ -150,9 +157,9 @@ class CommandHandler(object):
             return
         
         if msg['chat']['type'] == 'private':
-            if ID not in LANG: #default language will be english
+            if ID not in Globals.LANG: #default language will be english
                 await save_lang(ID,'EN')
-            await send_message(self.bot.bot,ID,LANG[ID]['lonely'])
+            await send_message(self.bot.bot,ID,Globals.LANG[ID]['lonely'])
 
         elif self.verify(msg, name):
             self.bot.close()
@@ -171,7 +178,7 @@ class CommandHandler(object):
         ID = self.get_ID(msg)
         if self.verify(msg, name):
             try:
-                LOCALID[ID]
+                Globals.LOCALID[ID]
                 #Route to menu immediately
                 await self.on_menu(msg, name)
             #Otherwise ask for language preference

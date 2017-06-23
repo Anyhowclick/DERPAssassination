@@ -6,10 +6,10 @@ import math
 import time
 from telepot.exception import *
 from telepot.namedtuple import *
-from Game import Game
+from Game import normalGame
 from Messages import send_message, edit_message, EN
-from DatabaseStats import *
-import DatabaseStats
+from DatabaseStats import add_new_person, add_new_group
+import Globals
 from Admin import check_admin, get_maintenance
 '''
 gameHandler will handle all game-related commands, such
@@ -21,15 +21,16 @@ python scripts. Whatever text messages are to be printed will be
 imported from Messages
 '''
 
+#Initialisation of variables
 MINPLAYERS = 2 #FOR TESTING
 #MINPLAYERS = 3 #FOR IMPLEMENTATION
 MAXPLAYERS = 20
-QUEUE = DatabaseStats.QUEUE
 
 class gameHandler(telepot.aio.helper.ChatHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.gameRunning = False #Whether a game is running or not. Have issues with using self.game, hence need for boolean
+        self.gameMode = 0 #Game mode chosen. 0 = None, 1 = Normal, 2 = FFA, 3 = ...
+        self.gameRunning = False #Whether there is an instance of the game runnning. There are issues with using self.game to determine.
         self.game = None #Game object
         self.players = {} #Users who joined the game (unassigned agents)
         self.messageEditor = None #Message editor
@@ -37,7 +38,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         self.queued = {} #Users who want to be notified when the game ends
         #Catching countdown events
         self.router.routing_table['_countdown_game_start'] = self.on__countdown_game_start
-        self.router.routing_table['_countdown_game_next_round'] = self.on__countdown_game_next_round
+        self.router.routing_table['_countdown_normal_discussion'] = self.on__countdown_normal_discussion
         self.router.routing_table['_countdown_collate_result'] = self.on__countdown_collate_result
         self.router.routing_table['_power_up'] = self.on__power_up
 
@@ -47,50 +48,42 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 
 #If message is not text, ignore
         if contentType != 'text':
-            self.bot.close()
             return
 
 #Formatting the message coming in
         command = msg['text'].strip().lower()
         #Check if command meant for the bot
         if '@derpassassinbot' not in command and '@cpdppybetabot' not in command:
-            self.bot.close()
             return
         command = command.split('@')[0]
 
         #First, ignore /config, because it's handled by CommandHandler
         if command == '/config':
-            self.bot.close()
             return
-
-#Initialisation of variables
-        GRPID = DatabaseStats.GRPID
-        LOCALID = DatabaseStats.LOCALID
-        DBP = DatabaseStats.DBP
-        DBG = DatabaseStats.DBG
             
         if chatType == 'group' or 'supergroup':
             #Check for new user / group
             #Note that Messages will be defined
             try:
-                GRPID[chatID]
-                Messages = LANG[chatID]
+                Globals.GRPID[chatID]
+                Messages = Globals.LANG[chatID]
             except KeyError:
                 Messages = await add_new_group(chatID,msg)
-
+                
             try:
-                LOCALID[userID]
+                Globals.LOCALID[userID]
             except KeyError:
                 await add_new_person(userID,msg)
 
-######################
-#####  /newgame  #####
-######################
+#########################
+#####  /normalgame  #####
+#########################
 
 #TO-DO: Update person's username / first_name
 #Handle /newgame command (command used in private chat handled by CommandHandler)
             if command == '/normalgame':
-                await self._initGame(chatID,userID,msg,0) #Initialise whatever needs to be initialised
+                self.gameMode = 1
+                await self.init_game(chatID,userID,msg) #Initialise whatever needs to be initialised
 
 
 #####################
@@ -100,7 +93,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 #TO-DO: Update person's username / first_name
 #Handle /join command (command used in private chat handled by CommandHandler)
             elif command == '/join':
-                await self._joinGame(chatID,userID,msg)
+                await self.join_game(chatID,userID,msg)
 
 #########################
 ######  /killgame  ######
@@ -108,7 +101,6 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 
             elif command == '/killgame': #First need to check if user is admin
                 if not await check_admin(self.bot,chatID,userID): #Function returns true if admin, false otherwise
-                    self.bot.close()
                     return
 
                 #Reset players
@@ -126,7 +118,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                     self.gameRunning = False
 
                 await send_message(self.bot,chatID,Messages['killGame'])
-                self.bot.close()
+                self.close()
                 return
 
 #########################
@@ -136,7 +128,6 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             elif command == '/nextgame':
                 if get_maintenance(): #If bot closing for maintenance
                     await send_message(self.bot,chatID,Messages['maintenance']['shutdown'])
-                    self.bot.close()
                     return
 
                 elif not self.queued:  #If there's no waiting list, initialise one
@@ -145,20 +136,17 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                 try:
                     username = msg['from']['username']
                     if username in self.queued['username']: #If person already in waiting list, ignore command
-                        self.bot.close()
                         return
                     self.queued['username'] += '@' + username + ' '
                 except KeyError:
                     if userID in self.queued['noUsername']: #Again, if person already in waiting list, ignore command
-                        self.bot.close()
                         return
                     self.queued['noUsername'].append(userID)
                 #PM user he was successfully added to waiting list
                 if self.chatTitle:
-                    await send_message(self.bot,userID,LANG[userID]['nextGameNotify']%(self.chatTitle))
+                    await send_message(self.bot,userID,Globals.LANG[userID]['nextGameNotify']%(self.chatTitle))
                 else: #Chat title has not been obtained yet, so just send generic message
-                    await send_message(self.bot,userID,LANG[userID]['nextGameNotifyNoTitle'])
-                self.bot.close()
+                    await send_message(self.bot,userID,Globals.LANG[userID]['nextGameNotifyNoTitle'])
                 return
 
 #########################
@@ -168,48 +156,44 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             #If the person wants to leave the game
             elif command == '/leave':
                 #Not in joining phase or person not a player, just ignore
-                if (not self.players) or (userID not in self.players):
-                    self.bot.close()
+                if not self.players:
                     return
+                elif userID not in self.players:
+                    return
+                await Globals.QUEUE.put((Globals.DBP,userID,None)) #Set to None, so the player can join other games!
                 #Handle boundary case of just 1 person
-                elif len(self.players) == 1:
+                if len(self.players) == 1:
                     self.scheduler.cancel(self.countdownEvent) #cancel event
                     self.players = {}
                     await edit_message(self.messageEditor,Messages['leaveGame1']%(msg['from']['first_name']))
-                    self.bot.close()
                     return
                 else:
                     self.players.pop(userID,None)
                     await edit_message(self.messageEditor,
                                        Messages['leaveGame']%(msg['from']['first_name']) + Messages['joinGame']['notMax']%(msg['from']['first_name'],len(self.players),MINPLAYERS,MAXPLAYERS),
                                        parse_mode='HTML')
-                    self.bot.close()
                     return
 
 
 ##############################
 ######  GAME FUNCTIONS  ######
 ##############################
-    async def _initGame(self,chatID,userID,msg,code):
+    async def init_game(self,chatID,userID,msg):
         self.chatID = chatID
         self.chatTitle = msg['chat']['title']
-        Messages = LANG[chatID]
+        Messages = Globals.LANG[chatID]
         firstName = msg['from']['first_name']
-        #code is to determine which game mode to start
-        #0 = normal, 1 = FFA, 2 = ...
         
         #First check if bot is closing for maintenance...
         if get_maintenance():
             await send_message(self.bot,chatID,Messages['maintenance']['shutdown'])
-            self.bot.close()
             return
 
         #Check if player is already in a game in another group chat
         try:
-            stuff = DBP[userID] #Once person successfully joins game, will add into DBP
+            stuff = Globals.DBP[userID] #Once person successfully joins game, will add into Globals.DBP
             if stuff:
-                await send_message(self.bot,userID,LANG[userID]['isInGame'])
-                self.bot.close()
+                await send_message(self.bot,userID,Globals.LANG[userID]['isInGame'])
                 return
         except KeyError:
             pass
@@ -217,19 +201,17 @@ class gameHandler(telepot.aio.helper.ChatHandler):
     #Then check for an ongoing game
         if self.gameRunning:
             await send_message(self.bot,chatID,Messages['existingGame'])
-            self.bot.close()
             return
         
     #Game hasn't started, but someone initiated one, then help the person join
         elif self.players:
-            await self._joinGame(chatID,userID,msg)
+            await self.join_game(chatID,userID,msg)
 
         #Check if bot can talk to user
         elif await self.can_talk(1,userID,firstName):
             self.players[userID] = msg['from'] #Add user info. Not using global queue, because groups tend to be relatively small. RELATIVE.
-            #Storing into GLOBAL databases DBP and DBG, so gotta use global queue
-            await QUEUE.put((DBG,chatID,[])) #to collate queries from users for processing. Uses list.
-            await QUEUE.put((DBP,userID,(None,None))) #has data structure: (heroObject, gameObject). Just a 2-value tuple, not a tuple of tuple
+            #Storing into GLOBAL databases Globals.DBP and Globals.DBG, so gotta use global queue
+            await Globals.QUEUE.put((Globals.DBP,userID,(None,None))) #has data structure: (heroObject, gameObject). Just a 2-value tuple, not a tuple of tuple
             #Notify_waiting_list will do the sending of the message
             sent = await self.notify_waiting_list(chatID,Messages['newGame']%(msg['from']['first_name'],MINPLAYERS,MAXPLAYERS)+Messages['countdownNoRemind']%(60))
             self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent)) #So that above message can be edited if the person leaves
@@ -237,18 +219,28 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             self.countdownEvent = self.scheduler.event_later(40, ('_countdown_game_start', {'seconds': 40}))
 
 
-    async def _joinGame(self,chatID,userID,msg):
-        Messages = LANG[chatID]
+    async def join_game(self,chatID,userID,msg):
+        Messages = Globals.LANG[chatID]
         firstName = msg['from']['first_name']
-        #Check if user has already joined a game, or this game
-        if userID in DB:
-            await send_message(self.bot,userID,LANG[userID]['isInGame'])
+        #Check if user has already joined a game, or this game. Similar to code in init_game above
+        try:
+            stuff = Globals.DBP[userID]
+            if stuff:
+                await send_message(self.bot,userID,Globals.LANG[userID]['isInGame'])
+                return
+        except KeyError:
+            pass
+
+        #Check if any game is running
+        if self.gameRunning:
+            await send_message(self.bot,chatID,Messages['existingGame'])
             return
         
-        #Check if a game has been initiated, assuming a game isn't running already
+        #Then check if a game has been initiated. If no one started one, we help them start!
         elif not self.players:
-            #Then we help to start a new game!
-            await self._initGame(chatID,userID,msg)
+            #Start a new NORMAL game for them!
+            self.gameMode = 1
+            await self.init_game(chatID,userID,msg)
             return
 
         #Check if bot can talk to user
@@ -257,11 +249,15 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             if self.countdownEvent: #Cancel countdown if any
                 self.scheduler.cancel(self.countdownEvent)
                 self.countdownEvent = None
+
+            #Check if max limit has been breached
             if playerCount >= MAXPLAYERS:
-                await send_message(self.bot,userID,LANG[userID]['max'])
+                await send_message(self.bot,userID,Globals.LANG[userID]['max'])
                 return
+            
             self.players[userID] = msg['from'] #Add user info to players
-            DB[userID] = () #Add user info to Database
+            await Globals.QUEUE.put((Globals.DBP,userID,(None,None))) #has data structure: (heroObject, gameObject). Just a 2-value tuple, not a tuple of tuple
+            
             if playerCount == (MAXPLAYERS - 1): #Last player to be allowed to join, start the game!
                 await send_message(self.bot,chatID,Messages['joinGame']['Max']%(msg['from']['first_name']),parse_mode='HTML')
                 await self.game_start() #Start the game!
@@ -282,16 +278,16 @@ class gameHandler(telepot.aio.helper.ChatHandler):
     async def on__countdown_game_start(self,event):
         timer = event['_countdown_game_start']['seconds']
         if timer == 40: #60 to 20s
-            sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['countdownRemind']%(20),parse_mode='HTML')
+            sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['countdownRemind']%(20),parse_mode='HTML')
             if sent:
                 self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
             self.countdownEvent = self.scheduler.event_later(20, ('_countdown_game_start', {'seconds': 20}))
         else:
             if len(self.players) < MINPLAYERS: #Prevent the game from starting
-                await edit_message(self.messageEditor,LANG[self.chatID]['failStart']['lackppl'])
+                await edit_message(self.messageEditor,Globals.LANG[self.chatID]['failStart']['lackppl'])
                 self.countdownEvent = None
-                for player in self.players:
-                    DB.pop(player,None)
+                for player in list(self.players.keys()):
+                    await Globals.QUEUE.put((Globals.DBP,player,None))
                 self.players = {}
                 return
             #Start the game!
@@ -300,14 +296,14 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 #Function to attempt talking to a user, failure will prevent user from starting or joining a game
     async def can_talk(self,start,userID,username):
         #variable start is boolean. 1 = initiate, 0 = join
-        message = LANG[userID]['newGameToUser'] if start else LANG[userID]['joinToUser']
+        message = Globals.LANG[userID]['newGameToUser'] if start else Globals.LANG[userID]['joinToUser']
         try:
             await self.bot.sendMessage(userID,message)
         except telepot.exception.BotWasBlockedError:
-            await send_message(self.bot,self.chatID,LANG[self.chatID]['failTalk']%(username))
+            await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['failTalk']%(username))
             return False
         except telepot.exception.TelegramError:
-            await send_message(self.bot,self.chatID,LANG[self.chatID]['failTalk']%(username))
+            await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['failTalk']%(username))
             return False
         else:
             return True
@@ -317,19 +313,30 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 ######  Game start  ######
 ##########################
     async def game_start(self):
-        if self.game:
+        if self.gameRunning: #Double-checking for instance of game running
             return
-        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['okStart'])
+        else:
+            self.gameRunning = True #Prevent people from starting a new game
+        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['okStart'])
         if sent:
             self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
-        self.game = Game(self.bot,self.chatID,self.players,self.messageEditor)
-        await self.game.allocate(self.players,len(self.players),self.game)
-        self.countdownEvent = self.scheduler.event_later(1, ('_countdown_game_next_round', {'seconds': 1}))
-
-##########################
-######  Next Round  ######
-##########################
-    async def on__countdown_game_next_round(self,event):
+            
+        #Reset notification list
+        self.reset_waiting_list()
+        #To collate quereies from users for processing. Uses list.
+        await Globals.QUEUE.put((Globals.DBG,self.chatID,[]))
+        #Add and save stat for creation of game!
+        await Globals.QUEUE.put((Globals.GRPID[self.chatID],'gamesPlayed',Globals.GRPID[self.chatID]['gamesPlayed']+1))
+        if self.gameMode == 1: #NORMAL GAME
+            self.game = normalGame(self.bot,self.chatID,len(self.players),self.messageEditor)
+            await self.game.allocate(self.players)    
+            self.countdownEvent = self.scheduler.event_later(1, ('_countdown_normal_discussion', {'seconds': 1}))
+            return
+        
+########################################
+######  Next Round (NORMAL GAME)  ######
+########################################
+    async def on__countdown_normal_discussion(self,event):
         #To send and receive callback queries regarding user actions (Phase 1)
         await self.game.next_round()
         #Schedule timer for Phase 2
@@ -341,7 +348,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             #timer = 40 #FOR IMPLEMENTATION
         else:
             timer = 55
-        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['countdownToPhase2']%(timer+20))
+        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['countdownToPhase2']%(timer+20))
         if sent:
             self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
         self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_collate_result', {'seconds': timer}))
@@ -353,7 +360,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
     async def on__countdown_collate_result(self,event):
         timer = event['_countdown_collate_result']['seconds']
         if timer != 20: #Send reminder to inform people they have 20s left to make choices!
-            await edit_message(self.messageEditor,LANG[self.chatID]['countdownChoice']%(20))
+            await edit_message(self.messageEditor,Globals.LANG[self.chatID]['countdownChoice']%(20))
             self.countdownEvent = self.scheduler.event_later(20, ('_countdown_collate_result', {'seconds': 20}))
             return
 
@@ -377,7 +384,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             timer = weight*(60*(1 + 1/(0.5+math.pow(math.e,4-0.55*survivors))))+(1-weight)*(-60*(2/(1+math.pow(math.e,5.2-0.73*rnd))-3))
             timer = int(round(timer,-1))
 
-        await edit_message(self.messageEditor,message + LANG[self.chatID]['countdownToPhase1']%(timer))
+        await edit_message(self.messageEditor,message + Globals.LANG[self.chatID]['countdownToPhase1']%(timer))
         self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
         return
         #TESTING POWER-UP EVENT
@@ -398,17 +405,16 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             return await send_message(self.bot,chatID,message)
         #First send message to people with no usernames that a new game has started
         for userID in self.queued['noUsername']:
-            await send_message(self.bot,userID,LANG[userID]['nextGameNoUsername']%(self.chatTitle))
+            await send_message(self.bot,userID,Globals.LANG[userID]['nextGameNoUsername']%(self.chatTitle))
         #Send message in group chat to notify those with usernames that a new game has started
         message = self.queued['username'] + message
-        self.reset_waiting_list(chatID)
         return await send_message(self.bot,chatID,message)
 
 ##################################
 ######  Reset waiting list  ######
 ##################################
 
-    def reset_waiting_list(self,chatID):
+    def reset_waiting_list(self):
         #For users with usernames, just append usernames to message to be sent in group chat
         #Those without will be PMed
         self.queued = {'username':'','noUsername':[]}
@@ -421,9 +427,9 @@ class gameHandler(telepot.aio.helper.ChatHandler):
     async def on__power_up(self,event):
         timer = event['_power_up']['seconds']
         #Generate random power up
-        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['powerUp']['DmgX']%(3))
-        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['powerUp']['Health']%(3))
-        sent = await send_message(self.bot,self.chatID,LANG[self.chatID]['powerUp']['LoD']%(3))
+        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['powerUp']['DmgX']%(3))
+        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['powerUp']['Health']%(3))
+        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['powerUp']['LoD']%(3))
         if sent:
             self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
         #Send query
