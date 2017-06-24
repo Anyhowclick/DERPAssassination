@@ -124,7 +124,7 @@ async def update_global_stats():
         mostDmgNormal = update_stat(person,'mostDmgNormal',mostDmgNormal)
         #Compute / update mostDmgFFA
         mostDmgFFA = update_stat(person,'mostDmgFFA',mostDmgFFA)
-        #Compute / update mostHealedAmt
+        #Compute / update mostHealAmt
         mostHealAmt = update_stat(person,'mostHealAmt',mostHealAmt)
 
         #Stats below are accumulative

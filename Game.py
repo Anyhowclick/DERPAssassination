@@ -46,7 +46,7 @@ LIMITS = {'Grim':3,'Sanar':3}
 #Randomly selects from a dictionary, deletes selected entry from it and returns the selection
 def random_select(dicty):
     key = list(dicty.keys())
-    for i in range(0,random.randint(1,10)):
+    for i in range(0,int(time.time()%10)):
         random.shuffle(key)
     key = random.choice(key)
     result = dicty[key]
@@ -470,26 +470,32 @@ class normalGame(Game):
             #Add survivor stat
             if agent.alive:
                 stats['normalGamesSurvived'] += 1
-                
-            #PYRO wins
+
+            #PYRO wins, update global stats accordingly
             if win == -1 and (agent.team == 'PYRO' or agent.team == 'PYROVIP'):
                 stats['pyroNormalWins'] += 1
+                await Globals.QUEUE.put((Globals.GLOBAL_STATS,'pyroWins',Globals.GLOBAL_STATS['pyroWins']+1))
+                
 
-            #DERP wins
+            #DERP wins, update global stats accordingly
             elif win == 1 and agent.team == 'DERP':
                 stats['derpNormalWins'] += 1
+                await Globals.QUEUE.put((Globals.GLOBAL_STATS,'derpWins',Globals.GLOBAL_STATS['derpWins']+1))
 
-            else:
+            else: #update global stats accordingly
                 stats['drawsNormal'] += 1
-
+                await Globals.QUEUE.put((Globals.GLOBAL_STATS,'drawsNormal',Globals.GLOBAL_STATS['drawsNormal']+1))
+                
             #Update in database
-            await Globals.QUEUE.put((GLOBAL.LOCALID,agent.userID,stats))
+            await Globals.QUEUE.put((Globals.LOCALID,agent.userID,stats))
 
     #Send stats
     async def send_stats(self):
         for agent in list(self.agents.values()):
             await send_message(self.bot,agent.userID,
-                               Globals.LANG[agent.userID]['stats']['normal'].format(d=agent.stats),
+                               Globals.LANG[agent.userID]['stats']['normal'].format(
+                                   d=agent.stats,
+                                   tup=(len(agent.stats['pplKilled']),len(agent.stats['pplHealed']))),
                                reply_markup=None)
         return
 

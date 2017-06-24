@@ -149,10 +149,10 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 message = Messages['stats']['local']
                 d = Globals.LOCALID[ID]
                 if d['normalGamesPlayed']:
-                    p = (d['derpNormalWins']/d['normalGamesPlayed'],
-                         d['drawsNormal']/d['normalGamesPlayed'],
-                         d['pyroNormalWins']/d['normalGamesPlayed'],
-                         d['normalGamesSurvived']/d['normalGamesPlayed']
+                    p = (d['derpNormalWins']/d['normalGamesPlayed']*100,
+                         d['drawsNormal']/d['normalGamesPlayed']*100,
+                         d['pyroNormalWins']/d['normalGamesPlayed']*100,
+                         d['normalGamesSurvived']/d['normalGamesPlayed']*100
                          )
                 else:
                     p = (0,0,0,0)
@@ -174,7 +174,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 if totalGames == 0:
                     p = (0,0,0,0)
                 else:
-                    p = (totalGames,d['derpWins']/totalGames,d['pyroWins']/totalGames,d['drawsNormal'/totalGames])
+                    p = (totalGames,d['derpWins']/totalGames*100,d['pyroWins']/totalGames*100,d['drawsNormal']/totalGames*100)
                 message += Messages['stats']['global'].format(d=d,p=p)
                 await edit_message(self.editor,message,reply_markup=markup,parse_mode='HTML')
                 self.close()
@@ -183,10 +183,10 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 #get local stats
                 d = Globals.LOCALID[ID]
                 if d['normalGamesPlayed']:
-                    p = (d['derpNormalWins']/d['normalGamesPlayed'],
-                         d['drawsNormal']/d['normalGamesPlayed'],
-                         d['pyroNormalWins']/d['normalGamesPlayed'],
-                         d['normalGamesSurvived']/d['normalGamesPlayed']
+                    p = (d['derpNormalWins']/d['normalGamesPlayed']*100,
+                         d['drawsNormal']/d['normalGamesPlayed']*100,
+                         d['pyroNormalWins']/d['normalGamesPlayed']*100,
+                         d['normalGamesSurvived']/d['normalGamesPlayed']*100
                          )
                 else:
                     p = (0,0,0,0)
@@ -199,7 +199,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 if totalGames == 0:
                     p = (0,0,0,0)
                 else:
-                    p = (totalGames,d['derpWins']/totalGames,d['pyroWins']/totalGames,d['drawsNormal'/totalGames])
+                    p = (totalGames,d['derpWins']/totalGames*100,d['pyroWins']/totalGames*100,d['drawsNormal']/totalGames*100)
                 await edit_message(self.editor,Messages['stats']['global'].format(d=d,p=p),reply_markup=markup,parse_mode='HTML')
                 self.close()
                 return

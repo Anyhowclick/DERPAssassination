@@ -470,7 +470,7 @@ EN = {
                 "Games won as \U0001F525 PYRO: <code>{d[pyroWins]}</code> <code>({p[3]:.2f})%</code>\n"\
                 "Best survivor: <b>{d[normalSurvivor][name]}</b> <code>{d[normalSurvivor][rate]}%</code>\n"\
                 "Highest damage dealer: <b>{d[mostDmgNormal][name]}</b> <code>{d[mostDmgNormal][rate]}</code> \U00002694\n"\
-                "Best healing dealer:  <b>{d[mostHealedAmt][name]}</b> <code>{d[mostHealedAmt][rate]}</code> \U0001F489\n"\
+                "Best healing dealer:  <b>{d[mostHealAmt][name]}</b> <code>{d[mostHealAmt][rate]}</code> \U0001F489\n"\
                 "Best assassin \U0001F575\U0001F3FD: <b>{d[mostPplKilled][name]}</b> <code>{d[mostPplKilled][rate]}</code> agents\n"\
                 "Best medic \U0001F47C\U0001F3FB: <b>{d[mostPplHealed][name]}</b> <code>{d[mostPplHealed][rate]}</code> agents\n"\
                 "Last updated: <code>{d[lastUpdated]} GMT +8</code>\n",
@@ -484,11 +484,11 @@ EN = {
                 "People killed \U0001F480: <code>{d[mostPplKilled]}</code>\n"\
                 "People healed \U0001F47C\U0001F3FB: <code>{d[mostPplHealed]}</code>\n"\
                 "Highest damage \U00002694: <code>{d[mostDmgNormal]}</code>\n"\
-                "Highest heal amount \U0001F48A: <code>{d[mostHealedAmt]}</code>\n",
+                "Highest heal amount \U0001F48A: <code>{d[mostHealAmt]}</code>\n",
 
             'normal':
-                "Agents healed \U0001F47C\U0001F3FB: {d[pplHealed]}\n"\
-                "Agents killed \U0001F480: <code>{d[pplKilled]}</code>\n"\
+                "Agents healed \U0001F47C\U0001F3FB: {tup[0]}\n"\
+                "Agents killed \U0001F480: <code>{tup[1]}</code>\n"\
                 "Healing \U0001F48A done: <code>{d[healAmt]}</code>\n"\
                 "Damage \U00002694 done: <code>{d[dmg]}</code>",
             
