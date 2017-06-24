@@ -342,10 +342,10 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         #Schedule timer for Phase 2
         survivors = len(self.game.get_alive_all())
         if survivors == 2:
-            timer = 25
-        elif survivors <= 6:
             timer = 5 #FOR TESTING
-            #timer = 40 #FOR IMPLEMENTATION
+            #timer = 25 #FOR IMPLEMENTATION
+        elif survivors <= 6:
+            timer = 40 
         else:
             timer = 55
         sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['countdownToPhase2']%(timer+20))
@@ -385,7 +385,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
             timer = int(round(timer,-1))
 
         await edit_message(self.messageEditor,message + Globals.LANG[self.chatID]['countdownToPhase1']%(timer))
-        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
+        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
         return
         #TESTING POWER-UP EVENT
         #if survivors == 2:

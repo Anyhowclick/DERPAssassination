@@ -66,6 +66,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                     await agent.editor.editMessageReplyMarkup(reply_markup=None)
                 except AttributeError:
                     pass
+                
             else: #callback data has the data structure: {|choice|targetAgentID|}
                 await edit_message(agent.editor,Messages['choiceAccept']%(game.agents[int(queryData.split('|')[2])].agentName),
                                                    reply_markup=None,

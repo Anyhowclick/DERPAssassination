@@ -485,6 +485,12 @@ EN = {
                 "People healed \U0001F47C\U0001F3FB: <code>{d[mostPplHealed]}</code>\n"\
                 "Highest damage \U00002694: <code>{d[mostDmgNormal]}</code>\n"\
                 "Highest heal amount \U0001F48A: <code>{d[mostHealedAmt]}</code>\n",
+
+            'normal':
+                "Agents healed \U0001F47C\U0001F3FB: {d[pplHealed]}\n"\
+                "Agents killed \U0001F480: <code>{d[pplKilled]}</code>\n"\
+                "Healing \U0001F48A done: <code>{d[healAmt]}</code>\n"\
+                "Damage \U00002694 done: <code>{d[dmg]}</code>",
             
             'query':"Which stats would you like to see?",
         },

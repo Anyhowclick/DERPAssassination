@@ -12,14 +12,13 @@ def chunker(seq, size):
 #Compulsory contains all agents that will definitely be included every game
 def one_agent_instance(playerCount):
     compulsory = {'Elias':Elias}
-    result = {#'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
-              #'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
-              #'Jordan':Jordan, 'Jigglet':Jigglet,
-                'Sonhae':Sonhae, 'Jigglet':Jigglet,
-              #'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
-              #'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
-              #'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
-              #'Aspida':Aspida,
+    result = {'Sonhae':Sonhae, #'Taiji':Taiji, 'Dracule':Dracule,
+              'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
+              'Jordan':Jordan, 'Jigglet':Jigglet,
+              'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,
+              'Prim':Prim, 'Ralpha':Ralpha,'Sanar':Sanar,
+              'Anna':Anna, 'Munie':Munie, 'Wanda':Wanda,
+              'Aspida':Aspida,
             }
     #Exclude Elias
     if playerCount <= 4:
@@ -51,16 +50,17 @@ class Dracule(Offense):
             return result
         return self.Messages['combat']['ult']['Dracule']%(self.get_idty())
 
-    def attack(self,enemy,msg=''):
-        #60% lifesteal
+    def attack(self,enemy,msg='',code=0):
+        #60% of base damage
         recoveredHp = 0.6*self.dmg
-        msg += super().attack(enemy)
+        msg += super().attack(enemy,msg=msg,code=code)
         while enemy.is_protected() and enemy.protector != enemy:
            enemy = enemy.protector
         if self.ultUsed and not self.canBeHealed:
             return msg + self.Messages['combat']['failHealSelf']%(self.get_idty())
         elif self.ultUsed and not enemy.invuln:
-            self.add_health(recoveredHp) 
+            self.add_health(recoveredHp)
+            self.add_stats_heal(recoveredHp)
             return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)
         return msg
 
@@ -83,7 +83,7 @@ class Grim(Offense):
         result = super().ult()
         if result:
             return result
-        return self.attack(enemy,dmg=self.ultDmg,msg=self.Messages['combat']['ult']['Grim']%(self.get_idty(),enemy.get_idty()))
+        return self.attack(enemy,dmg=self.ultDmg,msg=self.Messages['combat']['ult']['Grim']%(self.get_idty(),enemy.get_idty()),code=1)
 
     ################
     ## SEND QUERY ##
@@ -146,7 +146,7 @@ class Jordan(Offense):
 
 class Novah(Offense):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('bad', userID, username, firstName, Messages)
+        super().__init__('#bad', userID, username, firstName, Messages)
 
     def ult(self,target): #target is self
         if self.asleep:
@@ -181,7 +181,8 @@ class Saitami(Offense):
             enemy = enemy.protector
         if enemy.invuln:
             return self.Messages['combat']['ultInvuln']%(self.get_idty(),enemy.get_idty(),enemy.get_idty())
-        if self.poweredUp:
+        if self.poweredUp: #Instant-KO
+            self.add_stats_killed(enemy)
             return self.Messages['combat']['ult']['SaitamiPower']%(self.get_idty(),enemy.get_idty()) + enemy.die()
         else:
             enemy.health = 1
@@ -226,7 +227,7 @@ class Sonhae(Offense):
         if result:
             return result
         #Pagoe uses sticky bomb (message for this)
-        return self.attack(enemy,self.ultDmg,msg=self.Messages['combat']['ult']['Sonhae']%(self.get_idty(),enemy.get_idty()))
+        return self.attack(enemy,dmg=self.ultDmg,msg=self.Messages['combat']['ult']['Sonhae']%(self.get_idty(),enemy.get_idty()),code=1)
         
     ################
     ## SEND QUERY ##
@@ -250,7 +251,7 @@ class Sonhae(Offense):
 
 class Taiji(Offense):
     def __init__(self, userID, username, firstName, Messages):
-        super().__init__('bag', userID, username, firstName, Messages,
+        super().__init__('#bag', userID, username, firstName, Messages,
                          baseUltCD=3,buffUlt=False)
         
     def ult(self,target): #target is self
@@ -259,11 +260,11 @@ class Taiji(Offense):
             return result
         return self.Messages['combat']['ult']['Taiji']%(self.get_idty())
 
-    def attacked(self,enemy,dmg,msg=''):
+    def attacked(self,enemy,dmg,msg='',code=0):
         if self.ultUsed and self != enemy:
             self.protector = enemy
             msg += self.Messages['combat']['deflect']%(self.get_idty(),enemy.get_idty())
-        return super().attacked(enemy,dmg,msg)
+        return super().attacked(enemy,dmg=dmg,msg=msg,code=code)
 
 
 ######################################
@@ -364,9 +365,9 @@ class Harambe(Tank):
         target.protector = self
         return self.Messages['combat']['ult']['Harambe']%(self.get_idty(),target.get_idty())
     
-    def attacked(self,enemy,dmg,msg=''):
+    def attacked(self,enemy,dmg,msg='',code=0):
         if not self.ultUsed:
-            return super().attacked(enemy,dmg,msg)
+            return super().attacked(enemy,dmg=dmg,msg=msg,code=code)
         recoveredHp = self.health
         msg = super().attacked(enemy,dmg,msg)
         recoveredHp = 0.25*(recoveredHp-self.health)
@@ -375,6 +376,7 @@ class Harambe(Tank):
         elif recoveredHp <= 0:
             return msg
         self.add_health(recoveredHp)
+        self.add_stats_heal(recoveredHp)
         return msg + self.Messages['combat']['recover']%(self.get_idty(),recoveredHp)
     
     ################
@@ -425,6 +427,7 @@ class Impilo(Tank):
         if not self.canBeHealed:
             return self.Messages['combat']['ImpiloFailHeal']%(self.get_idty())
         self.add_health(recoveredHp) #Recover 25% of remaining health or ult hp (20++), whichever is higher
+        self.add_stats_heal(recoveredHp)
         return self.Messages['combat']['ult']['Impilo']%(self.get_idty(),recoveredHp)
 
 
@@ -502,9 +505,10 @@ class Ralpha(Healer):
         target.reset_health()
         #Reset to 70% of base health if self
         if self == target:
-            target.drop_health(0.3*self.health)
+            self.drop_health(0.3*self.health)
             #Target's health increased compared to last time
-            if target.health >= beforeHealth:
+            if self.health >= beforeHealth:
+                self.add_stats_heal(self.health - beforeHealth)
                 return self.Messages['combat']['ult']['RalphaSelf']%(self.get_idty())
             #Otherwise reset back to before ability was used
             else:
@@ -516,6 +520,8 @@ class Ralpha(Healer):
             target.drop_health(0.2*self.health)
             #Target's health increased compared to last time
             if target.health >= beforeHealth:
+                self.add_stats_heal(target.health - beforeHealth)
+                self.add_stats_healed(target)
                 return self.Messages['combat']['ult']['Ralpha']%(self.get_idty(),target.get_idty())
             #Otherwise reset back to before ability was used
             else:

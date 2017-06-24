@@ -13,8 +13,11 @@ async def update_dict():
         if dicty is Globals.DBG:
             try:
                 lst = dicty[key]
-                lst.append(value)
-                dicty[key] = lst
+                if value:
+                    lst.append(value)
+                    dicty[key] = lst
+                else:
+                    dicty[key] = value
             except KeyError:
                 dicty[key] = value
         else:
@@ -41,7 +44,7 @@ async def add_new_person(ID,msg):
       
         "mostPplHealed": 0,
         "mostPplKilled": 0,
-        "mostHealedAmt": 0,
+        "mostHealAmt": 0,
         "mostDmgNormal" :0,
         "mostDmgFFA": 0,
 
@@ -98,7 +101,7 @@ async def update_global_stats():
     ffaKing = Globals.GLOBAL_STATS['ffaKing']
     mostDmgNormal = Globals.GLOBAL_STATS['mostDmgNormal']
     mostDmgFFA = Globals.GLOBAL_STATS['mostDmgFFA']
-    mostHealedAmt = Globals.GLOBAL_STATS['mostHealedAmt']
+    mostHealAmt = Globals.GLOBAL_STATS['mostHealAmt']
     mostPplHealed = Globals.GLOBAL_STATS['mostPplHealed']
     mostPplKilled = Globals.GLOBAL_STATS['mostPplKilled']
         
@@ -122,7 +125,7 @@ async def update_global_stats():
         #Compute / update mostDmgFFA
         mostDmgFFA = update_stat(person,'mostDmgFFA',mostDmgFFA)
         #Compute / update mostHealedAmt
-        mostHealedAmt = update_stat(person,'mostHealedAmt',mostHealedAmt)
+        mostHealAmt = update_stat(person,'mostHealAmt',mostHealAmt)
 
         #Stats below are accumulative
         #Compute / update most people healed
@@ -135,7 +138,7 @@ async def update_global_stats():
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"ffaKing",ffaKing))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostDmgNormal",mostDmgNormal))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostDmgFFA",mostDmgFFA))
-    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostHealedAmt",mostHealedAmt))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostHealAmt",mostHealAmt))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostPplHealed",mostPplHealed))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostPplKilled",mostPplKilled))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"lastUpdated",time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())))

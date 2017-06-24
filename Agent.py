@@ -1,3 +1,5 @@
+import Globals
+
 #defining character class
 class Agent(object):
 
@@ -17,8 +19,8 @@ class Agent(object):
         self.editor = None #to be initialised if there's a callback query
         self.Messages = Messages #this is the language database for the group chat
         self.stats = {
-            "pplHealed":0,
-            "pplKilled":0,
+            "pplHealed":{}, #Unique ppl healed.
+            "pplKilled":{}, #Unique ppl killed.
             "healAmt":0,
             "dmg":0,
             }
@@ -128,7 +130,7 @@ class Agent(object):
     def drop_health(self,hp,enemy,msg=str('')):
         self.health = max(self.health-hp, 0)
         if (not self.health):
-            enemy.add_stats_killed() #stats method found below
+            enemy.add_stats_killed(self) #stats method found below
             return msg + self.die()
         return msg
         
@@ -179,7 +181,6 @@ class Agent(object):
         self.ultCD = cd
 
     ##### COMBAT #####
-
     def attack(self,enemy,dmg=None,msg='',code=0):
         #Refer to master code cheatsheet
         #0 = default, 1 = exclude attk, 2 = exclude invuln....
@@ -198,7 +199,7 @@ class Agent(object):
             protector = self.protector
             #message that damage is taken by protector
             msg = msg + self.Messages['combat']['protect']%(enemy.get_idty(),protector.get_idty())
-            return protector.attacked(enemy,dmg,msg)
+            return protector.attacked(enemy,dmg,msg,code)
         
         elif self.is_shielded():
             if dmg > self.shield.amt:
@@ -234,15 +235,19 @@ class Agent(object):
             self.reset_ult_CD()
             return None
 
-##### STATS #####
+##### STATS #####        
     def add_stats_dmg(self,amt):
         self.stats['dmg'] += amt
 
     def add_stats_heal(self,amt):
         self.stats['healAmt'] += amt
 
-    def add_stats_killed(self):
-        self.stats['killed'] += 1
+    def add_stats_killed(self,enemy):
+        if enemy is self:
+            return
+        self.stats['pplKilled'][enemy.userID] = 1 #Value here doesnt matter
 
-    def add_stats_healed(self):
-        self.stats['pplHealed'] += 1
+    def add_stats_healed(self,ally):
+        if ally is self:
+            return
+        self.stats['pplHealed'][ally.userID] = 1 #Value here doesnt matter

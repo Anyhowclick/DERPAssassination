@@ -24,7 +24,7 @@ GLOBAL_STATS = {
         "name":"name",
         "rate":0},
     
-    "mostHealedAmt": {
+    "mostHealAmt": {
         "name":"name",
         "rate":0},
       
@@ -59,7 +59,7 @@ LOCALID = {
       
         "mostPplHealed": 0,
         "mostPplKilled": 0,
-        "mostHealedAmt": 0,
+        "mostHealAmt": 0,
         "mostDmgNormal" :0,
         "mostDmgFFA": 0,
 

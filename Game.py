@@ -6,7 +6,7 @@ import random
 import time
 import Globals
 from telepot.namedtuple import *
-from Heroes import one_agent_instance
+from Heroes import *
 from KeyboardQuery import generate_agent_info
 from Messages import send_message, edit_message
 '''
@@ -53,59 +53,18 @@ def random_select(dicty):
     del dicty[key]
     return result
 
-#Function to handle cases where more queries than allowed are received, due to pressing the callback button multiple times (my hypothesis)
-#(Eg. Grim attacking more than 3 unique ppl, when it should be 3 max)
-#Reminder that each query is a tuple of form: (date,agent,target,option)
-#Because we want to avoid mutating the list while iterating through it,
-#it's better to store the results in a separate list and return this separate list instead
-def remove_extras(queries):
-    #First, because the date is unique, the good thing is we don't need it anymore
-    #So will remove and replace with arbitary number 1
-    #This is to allow me to use set() to remove duplicates!
-    tmp = []
-    for query in queries:
-        tmp.append((1,query[1],query[2],query[3]))
-
-    tmp = list(set(tmp))
-    #make a duplicate of the LIMITS defined above in globals
-    limit = LIMITS.copy()
-                   
-    #create a new list to be returned
-    result = []
-    for query in tmp:
-        #if query is from multiple selection agent as described above)
-        if query[1] in limit:
-            #Check if limit exceeded
-            if limit[query[1]] > 0:
-                #include in result
-                result.append(query)
-                #Subtract 1
-                limit[query[1]] -= 1
-            #Otherwise don't include (dont need to do anything)
-        #Otherwise leave it alone
-        else:
-            result.append(query)
-    return result
-    
-
 #Processing query
 #Returns a message to be sent to group chat
-#Each query is a tuple: (date,agent,target,option)
+#Each query is a tuple: (index,agentID,targetID,option)
+#Index is redundant already, because the queries should already be sorted
 async def proc_query(game,query):
-    agent, target, option = query[1], query[2], query[3]
-    survivors = game.get_alive_all()
-    if agent == 'Grace' and agent in survivors and option == 'ult': #Handling exception for Grace ult
-        agent = survivors[agent]
-        target = game.get_dead_all()[target]
-        agent.ult(target)
+    agent, target, option = game.agents[query[1]], game.agents[query[2]], query[3]
+    if agent.agentName == 'Grace' and agent.alive and option == 'ult': #Handling exception for Grace ult
         #Send message to target informing him of being resurrected
         await send_message(game.bot,target.userID,Globals.LANG[target.userID]['combat']['res'],parse_mode='HTML')
         return agent.ult(target)
-    elif agent not in survivors or target not in survivors: #Agent or target has died, don't do anything
+    elif (not agent.alive) or (not target.alive): #Agent or target has died, don't do anything
         return ''
-
-    #Retrieve objects
-    agent,target = survivors[agent], survivors[target]
 
     #Apply option
     if option == 'ult':
@@ -126,16 +85,57 @@ async def proc_query(game,query):
     #Finally, return result
     return msg
 
-class normalGame(object):
+class Game(object):
     def __init__(self, bot, chatID, playerCount, messageEditor):
         self.bot = bot
         self.chatID = chatID
         self.Messages = Globals.LANG[chatID]
-        self.messageEditor = messageEditor #edit the previous message (Game is starting...), & others where applicable
         self.message = '' #Old message where new text is to be appended to it
+        self.messageEditor = messageEditor #edit the previous message (Game is starting...), & others where applicable
         self.agents = {}
         self.round = 0 # Denotes current round
         self.playerCount = playerCount
+
+    #Function to handle cases where more queries than allowed are received, due to pressing the callback button multiple times (my hypothesis)
+    #(Eg. Grim attacking more than 3 unique ppl, when it should be 3 max)
+    #Reminder that each query is a tuple of form: (option,agent,target,date)
+    #Because we want to avoid mutating the list while iterating through it,
+    #it's better to store the results in a separate list and return this separate list instead
+    def remove_extras(self,queries):
+        #First, because the date is unique, the good thing is we don't need it anymore
+        #So will remove and replace with arbitary number 1
+        #This is to allow me to use set() to remove duplicates!
+        tmp = []
+        for query in queries:
+            tmp.append((1,query[1],query[2],query[0]))
+
+        tmp = list(set(tmp))
+        #make a duplicate of the LIMITS defined above in globals
+        limit = LIMITS.copy()
+                   
+        #create a new list to be returned
+        result = []
+        for query in tmp:
+            #if query is from multiple selection agent as described above)
+            agentName = self.agents[query[1]].agentName
+            try:
+                limit[agentName]
+                #Check if limit exceeded
+                if limit[agentName] > 0:
+                    #include in result
+                    result.append(query)
+                    #Subtract 1 from limit
+                    limit[agentName] -= 1
+                #Otherwise don't include (dont need to do anything)
+        
+            except KeyError:
+                #Otherwise leave it alone
+                result.append(query)
+        return result
+        
+class normalGame(Game):
+    def __init__(self, bot, chatID, playerCount, messageEditor):
+        super().__init__(bot, chatID, playerCount, messageEditor)
         self.gameMode = 1
         
         #determine no. of VIPs and DERP agents to have (DERP is 1.5 or 2x more than VIPs!)
@@ -219,10 +219,9 @@ class normalGame(object):
             await send_message(self.bot,agent.userID,self.message)
 
         #Finally, announce player assignment to group chat
-        players = self.get_alive_all()
         self.message = Messages['allotSuccess']
-        for agentName,agent in players.items():
-            self.message += Messages['summary']['agentStart']%(agent.get_clickable_name(),agentName)
+        for agent in list(self.get_alive_all().values()):
+            self.message += Messages['summary']['agentStart']%(agent.get_clickable_name(),agent.agentName)
         self.message += Messages['delay']
         await edit_message(self.messageEditor,self.message)
         await asyncio.sleep(5)
@@ -256,16 +255,17 @@ class normalGame(object):
 
         #Set Messages variable, obtain queries
         Messages = self.Messages
-        queries = DB[self.chatID]
+        queries = Globals.DBG[self.chatID]
         
         #Clear the queries!
-        DB[self.chatID] = []
-        #Each query is a tuple: (date,agent,target,option)
-        queries.sort(key = lambda x: (ORDER[x[3]],x[0]))
+        await Globals.QUEUE.put((Globals.DBG,self.chatID,[]))
+        
+        #Each query is a tuple: (option,agentID,targetAgentID,date)
+        queries.sort(key = lambda x: (ORDER[x[0]],x[3]))
         #Split the list into abilities and others
         imptQueries = []
         while queries:
-            if queries[0][3] == 'ult':
+            if queries[0][0] == 'ult':
                 imptQueries.append(queries[0])
                 del queries[0]
             else:
@@ -275,7 +275,7 @@ class normalGame(object):
         order = {}
         for idx,query in reversed(list(enumerate(imptQueries))):
             #apply customised sort for ults
-            idx += AGENTULTS[query[1]]
+            idx += AGENTULTS[self.agents[query[1]].agentName]
             order[query[1]] = idx
         imptQueries.sort(key = lambda x: (order[x[1]]))
 
@@ -284,7 +284,7 @@ class normalGame(object):
 
         #Handle cases where more queries than allowed are received (Eg. Grim attacking more than 3 ppl, when it should be 3 max)
         #Also remove duplicate queries
-        imptQueries = remove_extras(imptQueries)
+        imptQueries = self.remove_extras(imptQueries)
         
         #Getting AFK players
         AFK = list(self.get_alive_all().keys())
@@ -293,9 +293,9 @@ class normalGame(object):
                 AFK.remove(query[1])
 
         #Add in self auto-attack queries
-        for agent in AFK:
-            imptQueries.append((1000,agent,agent,'attack'))
-
+        for agentID in AFK:
+            imptQueries.append((1000,agentID,agentID,'attack'))
+        
         #Process queries!!
         message = Messages['combat']['intro']%(self.round)
         for query in imptQueries:
@@ -340,25 +340,29 @@ class normalGame(object):
         #Check if game should end
         if not self.get_alive_all() or (not self.get_alive_DERP() and not self.get_alive_PYROVIP()):
             #Send message that game ends in a draw since either everyone is dead, or all DERP agents and VIPs die in the same turn
-            await self.bot.sendChatAction(self.chatID,action='upload_video')
-            await self.bot.sendDocument(self.chatID,Messages['gifs']['drawVidID'])
+            #await self.bot.sendChatAction(self.chatID,action='upload_video') #FOR IMPLEMENTATION
+            #await self.bot.sendDocument(self.chatID,Messages['gifs']['drawVidID']) #FOR IMPLEMENTATION
             self.message += Messages['endGame']['draw']
             await edit_message(self.messageEditor,self.message)
+            await self.update_stats(0)
             return (True,self.messageEditor,self.message)
+        
         elif not self.get_alive_DERP():
             #Send message that Team PYRO won as all DERP agents have been killed!
             await self.bot.sendChatAction(self.chatID,action='upload_video')
-            await self.bot.sendDocument(self.chatID,Messages['gifs']['PYROVidID'])
-            self.message += Messages['endGame']['DERP.KO']
+            #await self.bot.sendDocument(self.chatID,Messages['gifs']['PYROVidID']) #FOR IMPLEMENTATION
+            #self.message += Messages['endGame']['DERP.KO'] #FOR IMPLEMENTATION
             await edit_message(self.messageEditor,self.message)
+            await self.update_stats(-1)
             return (True,self.messageEditor,self.message)
 
         elif not self.get_alive_PYROVIP():
             #Send message that Team DERP won as all VIP agents have been assassinated!
-            await self.bot.sendChatAction(self.chatID,action='upload_video')
-            await self.bot.sendDocument(self.chatID,Messages['gifs']['DERPVidID'])
+            #await self.bot.sendChatAction(self.chatID,action='upload_video') #FOR IMPLEMENTATION
+            #await self.bot.sendDocument(self.chatID,Messages['gifs']['DERPVidID']) #FOR IMPLEMENTATION
             self.message += Messages['endGame']['PYROVIP.KO']
             await edit_message(self.messageEditor,self.message)
+            await self.update_stats(1)
             return (True,self.messageEditor,self.message)
 
         elif self.round == 25:
@@ -382,36 +386,42 @@ class normalGame(object):
                 await self.bot.sendDocument(self.chatID,Messages['gifs']['DERPVidID'])
                 self.message += Messages['endGame']['DERPWin']
                 await edit_message(self.messageEditor,self.message)
+                await self.update_stats(1)
 
             elif PYROhealth > DERPhealth:
                 await self.bot.sendChatAction(self.chatID,action='upload_video')
                 await self.bot.sendDocument(self.chatID,Messages['gifs']['PYROVidID'])
                 self.message += Messages['endGame']['PYROWin']
                 await edit_message(self.messageEditor,self.message)
-
+                await self.update_stats(-1)
+                
             else: #In the highly unlikely event of a draw
                 await self.bot.sendChatAction(self.chatID,action='upload_video')
                 await self.bot.sendDocument(self.chatID,Messages['gifs']['drawVidID'])
                 self.message += Messages['endGame']['rareDraw']
                 await edit_message(self.messageEditor,self.message)
+                await self.update_stats(0)
             return (True,self.messageEditor,self.message)
         return (False,self.messageEditor,self.message)
 
     #To delete all entries in DB
     async def end_game(self):
-        #Announce who was in which team, at the same time, remove them from DB
+        #First send game stats to individual
+        await self.send_stats()
+        
+        #Announce who was in which team, at the same time, remove them from Globals.DBP
         #Start with team DERP
         agents = self.get_all_DERP()
         msg = self.Messages['summary']['endIntro'] + self.Messages['summary']['teamDERP']
         for agent in agents.values():
-            del DB[agent.userID]
+            await Globals.QUEUE.put((Globals.DBP,agent.userID,None))
             msg += self.Messages['summary']['agent']%(agent.get_full_idty())
 
         #Then team PYRO
         agents = self.get_all_PYROteam()
         msg += self.Messages['summary']['teamPYRO']
         for agent in agents.values():
-            del DB[agent.userID]
+            await Globals.QUEUE.put((Globals.DBP,agent.userID,None))
             if agent.team == 'PYROVIP':
                 msg += self.Messages['summary']['VIP']%(agent.get_full_idty())
             else:
@@ -420,8 +430,8 @@ class normalGame(object):
         #Send message
         await send_message(self.bot,self.chatID,msg)
 
-        #Finally delete in DB
-        del DB[self.chatID]
+        #Finally, set null value in DBG
+        await Globals.QUEUE.put((Globals.DBG,self.chatID,None))
 
     #In case of error, kill the game
     async def kill_game(self):
@@ -430,7 +440,7 @@ class normalGame(object):
         if not agents:
             return
         for agent in list(agents.values()):
-            DB.pop(agent.userID,None)
+            await Globals.QUEUE.put((Globals.DBP,agent.userID,None))
             print(str(agent.userID) + ' cleared!')
             try:
                 #Close any open queries
@@ -445,38 +455,73 @@ class normalGame(object):
         self.agents = None
         return
 
+    #Update stats
+    async def update_stats(self,win):
+        #PYRO: -1, draw = 0, DERP = 1
+        #First, update generic stats
+        for agent in list(self.agents.values()):
+            stats = Globals.LOCALID[agent.userID]
+            stats['normalGamesPlayed'] += 1
+            stats['mostPplHealed'] += len(agent.stats['pplHealed'])
+            stats['mostPplKilled'] += len(agent.stats['pplKilled'])
+            stats['mostHealAmt'] = max(stats['mostHealAmt'],agent.stats['healAmt'])
+            stats['mostDmgNormal'] = max(stats['mostDmgNormal'],agent.stats['dmg'])
+
+            #Add survivor stat
+            if agent.alive:
+                stats['normalGamesSurvived'] += 1
+                
+            #PYRO wins
+            if win == -1 and (agent.team == 'PYRO' or agent.team == 'PYROVIP'):
+                stats['pyroNormalWins'] += 1
+
+            #DERP wins
+            elif win == 1 and agent.team == 'DERP':
+                stats['derpNormalWins'] += 1
+
+            else:
+                stats['drawsNormal'] += 1
+
+            #Update in database
+            await Globals.QUEUE.put((GLOBAL.LOCALID,agent.userID,stats))
+
+    #Send stats
+    async def send_stats(self):
+        for agent in list(self.agents.values()):
+            await send_message(self.bot,agent.userID,
+                               Globals.LANG[agent.userID]['stats']['normal'].format(d=agent.stats),
+                               reply_markup=None)
+        return
 
 #Accessor methods
-#Each method returns a dictionary of agents with the key:value pair being agentName:agent
-    def get_all(self):
-        return self.agents
+#Each method returns a dictionary of agents with the key:value pair being agent.userID:agent
 
     def get_all_DERP(self):
         result = {}
         for agent in list(self.agents.values()):
             if agent.team == 'DERP' :
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_all_PYRO(self):
         result = {}
         for agent in list(self.agents.values()):
             if agent.team == 'PYRO' :
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_all_PYROteam(self):
         result = {}
         for agent in list(self.agents.values()):
             if agent.team in ('PYRO','PYROVIP') :
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_all_PYROVIP(self):
         result = {}
         for agent in list(self.agents.values()):
             if agent.team == 'PYROVIP' :
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
 
@@ -484,69 +529,69 @@ class normalGame(object):
         result = {}
         for agent in list(self.agents.values()):
             if agent.alive:
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_alive_DERP(self):
         result = {}
         for agent in list(self.agents.values()):
             if agent.alive and agent.team == 'DERP':
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_alive_PYRO(self): #Non-VIPs
         result = {}
         for agent in list(self.agents.values()):
             if agent.alive and agent.team == 'PYRO':
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_alive_PYROteam(self): #could use composition of the 2 other getter methods, but then there'll be 2 iterations when we can do it in 1
         result = {}
         for agent in list(self.agents.values()):
             if agent.alive and agent.team in ('PYRO','PYROVIP'):
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_alive_PYROVIP(self):
         result = {}
         for agent in list(self.agents.values()):
             if agent.alive and agent.team == 'PYROVIP':
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_dead_all(self):
         result = {}
         for agent in list(self.agents.values()):
             if not agent.alive:
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_dead_DERP(self):
         result = {}
         for agent in list(self.agents.values()):
             if not agent.alive and agent.team == 'DERP':
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_dead_PYRO(self):
         result = {}
         for agent in list(self.agents.values()):
             if not agent.alive and agent.team == 'PYRO':
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_dead_PYROteam(self):
         result = {}
         for agent in list(self.agents.values()):
             if not agent.alive and agent.team == ('PYRO','PYROVIP'):
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 
     def get_dead_PYROVIP(self):
         result = {}
         for agent in list(self.agents.values()):
             if not agent.alive and agent.team == 'PYROVIP':
-                result[agent.agentName] = agent
+                result[agent.userID] = agent
         return result
 

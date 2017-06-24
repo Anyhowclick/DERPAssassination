@@ -82,7 +82,7 @@ def generate_action_keyboard(Messages, choice, players, mode):
                 ]
 
     elif choice == 'ultOption': #See if person wants to use ult or not
-        return [[InlineKeyboardButton(text=Messages['yes'],callback_data="{ULTYES}"),
+        return [[InlineKeyboardButton(text=Messages['yes'],callback_data="{|ULTYES|}"),
                 InlineKeyboardButton(text=Messages['no'],callback_data="{ULTNO}")]
                 ]
 
