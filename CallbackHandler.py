@@ -3,7 +3,7 @@ import telepot
 import time
 from telepot.aio.routing import *
 from telepot.namedtuple import *
-from Messages import ALL_LANGS, setLang, send_message, edit_message, EN
+from Messages import ALL_LANGS, setLang, edit_message, EN
 from KeyboardQuery import *
 from DatabaseStats import save_lang
 import Globals
@@ -26,6 +26,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         
     async def on_callback_query(self, msg):
         queryID, ID, queryData = telepot.glance(msg, flavor='callback_query')
+        print(queryData)
 
         try:
             Messages = Globals.LANG[ID]
@@ -40,13 +41,41 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         ##################################
         ##### GAME-RELATED CALLBACKS #####
         ##################################
+        if '~' in queryData:
+            try:
+                agent,game = Globals.DBP[ID]
+                Messages = game.Messages
+                if queryData == '~POWUP~':
+                    game.powUp.add(agent)
+                    await game.bot.answerCallbackQuery(queryID, text=Messages['powerUp']['yes'], show_alert=True)
+                    await edit_message(game.messageEditor,
+                                       Messages['powerUp'][game.powerUp.name]['desc'].format(
+                                           game.powerUp.limit,len(game.powUp)),
+                                       reply_markup=generate_powerUp_keyboard(Messages) if game.powOn else None)
+                    self.close()
+                    return
+            
+                elif queryData == '~POWDOWN~':
+                    game.powUp.remove(agent)
+                    await game.bot.answerCallbackQuery(queryID, text=Messages['powerUp']['no'], show_alert=True)
+                    await edit_message(game.messageEditor,
+                                       Messages['powerUp'][game.powerUp.name]['desc'].format(
+                                           game.powerUp.limit,len(game.powUp)),
+                                       reply_markup=generate_powerUp_keyboard(Messages) if game.powOn else None)
+                    self.close()
+                    return
+
+            except KeyError:
+                self.close()
+                return
+            
         elif '{' in queryData:
             #Retreive stored hero and game object in userID from DB
             agent,game = Globals.DBP[ID]
             #Time given in message is the time the message was sent, which is more or less the same for all
             #so have to use own time
             date = int(time.time())
-            
+                                           
             if queryData == '{|ULTYES|}':
                 await edit_message(agent.editor,Messages['abilityUsed'],parse_mode='HTML',reply_markup=None)
                 queryData = queryData[:-1] + str(date) + '|}' #so structure becomes {|ULTYES|date|}
@@ -68,7 +97,13 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                     pass
                 
             else: #callback data has the data structure: {|choice|targetAgentID|}
-                await edit_message(agent.editor,Messages['choiceAccept']%(game.agents[int(queryData.split('|')[2])].agentName),
+                #Handle exception for multi-ult
+                agentID = queryData.split('|')
+                if len(agentID[2]) <= 2:
+                    agentID = int(agentID[3])
+                else:
+                    agentID = int(agentID[2])
+                await edit_message(agent.editor,Messages['choiceAccept']%(game.agents[agentID].agentName),
                                                    reply_markup=None,
                                                    parse_mode='HTML')
                 queryData = queryData[:-1] + str(date) + '|}' #so structure becomes {|choice|targetAgentID|date|}
@@ -87,7 +122,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         #########################
         ##### MENU CALLBACK #####
         #########################
-        print(queryData)
+        
         ##########
         ###BACK###
         ##########
@@ -199,7 +234,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 if totalGames == 0:
                     p = (0,0,0,0)
                 else:
-                    p = (totalGames,d['derpWins']/totalGames*100,d['pyroWins']/totalGames*100,d['drawsNormal']/totalGames*100)
+                    p = (totalGames,d['derpWins']/totalGames*100,d['drawsNormal']/totalGames*100,d['pyroWins']/totalGames*100)
                 await edit_message(self.editor,Messages['stats']['global'].format(d=d,p=p),reply_markup=markup,parse_mode='HTML')
                 self.close()
                 return

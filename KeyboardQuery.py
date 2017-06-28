@@ -41,6 +41,7 @@ STATS = [
     ('global','#cb'),
     ('back','#-1')
     ]
+
 #Return the corresponding key to the data
 def get_menu_key(data):
     for i in MENU:
@@ -94,6 +95,12 @@ def generate_action_keyboard(Messages, choice, players, mode):
         result.append([InlineKeyboardButton(text=agent.get_idty_query(),
                                             callback_data="{|"+choice+"|"+str(agent.userID)+"|}")])
     return result
+
+def generate_powerUp_keyboard(Messages):
+    return InlineKeyboardMarkup(inline_keyboard=
+                                [[InlineKeyboardButton(text=Messages['powerUp']['eat'],callback_data='~POWUP~'),
+                                  InlineKeyboardButton(text=Messages['powerUp']['noEat'],callback_data='~POWDOWN~')]
+                                  ])
 
 
 #Messages: The dictionary of messages in the person's language

@@ -84,19 +84,22 @@ async def auto_save_update():
         print('Global stats updated.')
         await asyncio.sleep(600)
 
+
 def update_stat(person,key,variable):
     if person[key] > variable['rate']:
         variable = {'name':person['firstName'],'rate':person[key]}
     return variable
 
 
-    
 #Compute and update global statistics. Mode is to load up the relevant stats
 async def update_global_stats():
     #Update total no. of ppl and no. of groups
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"players",len(Globals.LOCALID)))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"groups",len(Globals.GRPID)))
-        #Load up current stats
+    #Load up current stats
+    derpNormalWins = Globals.GLOBAL_STATS['derpNormalWins']
+    bestNormalAgent = Globals.GLOBAL_STATS['bestNormalAgent']
+    pyroNormalWins = Globals.GLOBAL_STATS['pyroNormalWins']
     normalSurvivor = Globals.GLOBAL_STATS['normalSurvivor']
     ffaKing = Globals.GLOBAL_STATS['ffaKing']
     mostDmgNormal = Globals.GLOBAL_STATS['mostDmgNormal']
@@ -107,18 +110,32 @@ async def update_global_stats():
         
     #Compute individual stats, update accordingly
     for person in list(Globals.LOCALID.values()):
-        #Compute / update survival rate
+        
+        #Compute / update survival rate and best agent (Best win ratio for normal games)
         try:
-            survivalRate = person['normalGamesSurvived'] / person['normalGamesPlayed'] #Round to 3dp
+            survivalRate = person['normalGamesSurvived'] / person['normalGamesPlayed'] * 100 #Round to 3dp
+            winRatio = (person['derpNormalWins'] + person['pyroNormalWins']) / person['normalGamesPlayed'] #Round to 3dp
         except ZeroDivisionError:
             survivalRate = 0
+            winRatio = 0
         survivalRate = round(survivalRate,3)
+        winRatio = round(winRatio,3)
         if survivalRate > normalSurvivor['rate']:
             normalSurvivor = {'name':person['firstName'],'rate':survivalRate}
 
+        if winRatio >  bestNormalAgent['rate']:
+            bestNormalAgent = {'name':person['firstName'],'rate':winRatio}
+            
         #Compute / update FFAKing (most no. of FFA Wins) 
         ffaKing = update_stat(person,'ffaWins',ffaKing)
-        
+
+        #Compute / update best DERP agent (most no. of DERP wins)
+        derpNormalWins = update_stat(person,'derpNormalWins',derpNormalWins)
+
+        #Compute / update best DERP agent (most no. of PYRO wins)
+        pyroNormalWins = update_stat(person,'pyroNormalWins',pyroNormalWins) 
+            
+
         #Stats below are in a single game
         #Compute / update mostDmgNormal
         mostDmgNormal = update_stat(person,'mostDmgNormal',mostDmgNormal)
@@ -135,6 +152,9 @@ async def update_global_stats():
             
     #Finally, update in Global stats
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"normalSurvivor",normalSurvivor))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"bestNormalAgent",bestNormalAgent))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"derpNormalWins",derpNormalWins))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"pyroNormalWins",pyroNormalWins))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"ffaKing",ffaKing))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostDmgNormal",mostDmgNormal))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostDmgFFA",mostDmgFFA))

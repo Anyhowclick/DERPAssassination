@@ -130,7 +130,7 @@ class CommandHandler(object):
 # Gives information about the agents. Command is only to be used in private chat
     async def on_menu(self, msg, name):
         ID = msg['from']['id']
-        if await check_spam(self.bot,msg):
+        if await check_spam(self.bot,msg) or (msg['chat']['type'] != 'private'):
             return
         try:
             Globals.LOCALID[ID]
@@ -176,6 +176,8 @@ class CommandHandler(object):
 # Default text user sees upon starting PM
     async def on_start(self, msg, name):
         ID = self.get_ID(msg)
+        if msg['chat']['type'] != 'private':
+            return
         if self.verify(msg, name):
             try:
                 Globals.LOCALID[ID]

@@ -4,6 +4,8 @@ import pprint
 from telepot.aio.routing import *
 from CommandHandler import CommandHandler
 from Admin import auto_update
+import Globals
+from DatabaseStats import add_new_group
 
 # ChatManager routes messages according to 1) message flavour 2) content type
 class chatManager(telepot.aio.helper.ChatHandler):
@@ -56,8 +58,16 @@ class chatManager(telepot.aio.helper.ChatHandler):
         return
     
     async def on_new_chat_title(self,msg,name):
+        ID = msg['chat']['id']
+        
+        try:
+            Globals.GRPID[ID]
+            await Globals.QUEUE.put(Globals.GRPID[ID],'title',msg['new_chat_title'])
+        except KeyError:
+            await add_new_group(ID,msg)
+        self.close()
         return
-
+    
     async def on_new_pinned_message(self,msg,name):
         return
 

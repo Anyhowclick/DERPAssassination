@@ -384,23 +384,30 @@ EN = {
         "Beginning assignment of roles and agents...",
 
     'powerUp':
-        {
+        {   
+            'eat': "\U0001F60B Eating",
+            'no': "You have decided not to eat the power-up. \U0001F910",
+            'noEat': "\U0001F910 Not eating",
+            'intro': "<b>Power-Up Available!</b>\n",
+            'yes': "You have decided to eat the power-up. \U0001F60B",
+            'zero': "No one wanted the power up.\n",
             'DmgX':
                 {'bad':
-                    "\U0001F5E1 \U0001F53D by <b>%d %%</b>!",
+                    "{names} \U0001F5E1 \U0001F53D by <b>{percent:.2f}%</b>!",
                 'desc':
-                     "\U0001F347: \U0001F53C (up to 2x) or \U0001F53D (possibly to 0) damage.\n"\
-                     "<b>%s</b> \U0001F347's available. Who wants to eat it?\n\n",
+                     "\U0001F347: \U0001F53C or \U0001F53D damage.\n"\
+                     "Recommended: <b>{}</b> agents\n"\
+                     "<b>{}</b> agents will be eating it.",
                  'good':
-                     "\U0001F5E1 \U0001F53C by <b>%d %%</b>!",
+                     "{names} \U0001F5E1 \U0001F53C by <b>{percent:.2f}%</b>!",
                 },
             
             'Health':
                 {'bad':
                     "\U0001F53D <b>%d</b> \U00002764!",
                 'desc':
-                    "\U0001F34E: \U0001F53C or \U0001F53D <b>20</b> hp.\n"\
-                    "<b>%s</b> \U0001F34E's available. Who wants to eat it?\n\n",
+                    "\U0001F34E: \U0001F53C or \U0001F53D hp.\n"\
+                    "{} agents will be eating it.",
                  'good':
                      "\U0001F53C <b>%d</b> \U00002764!",
                 },
@@ -468,6 +475,9 @@ EN = {
                 "Games won as \U0001F530 DERP: <code>{d[derpWins]}</code> <code>({p[1]:.2f})%</code>\n"\
                 "Draws: <code>{d[drawsNormal]}</code> <code>({p[2]:.2f})%</code>\n"\
                 "Games won as \U0001F525 PYRO: <code>{d[pyroWins]}</code> <code>({p[3]:.2f})%</code>\n"\
+                "Best agent \U0001F396: <b>{d[bestNormalAgent][name]}</b> <code>{d[bestNormalAgent][rate]:.3f}</code> wins per game\n"\
+                "Best \U0001F525 PYRO agent: <b>{d[pyroNormalWins][name]}</b> <code>{d[pyroNormalWins][rate]}</code> wins\n"\
+                "Best \U0001F530 DERP agent: <b>{d[derpNormalWins][name]}</b> <code>{d[derpNormalWins][rate]}</code> wins\n"\
                 "Best survivor: <b>{d[normalSurvivor][name]}</b> <code>{d[normalSurvivor][rate]}%</code>\n"\
                 "Highest damage dealer: <b>{d[mostDmgNormal][name]}</b> <code>{d[mostDmgNormal][rate]}</code> \U00002694\n"\
                 "Best healing dealer:  <b>{d[mostHealAmt][name]}</b> <code>{d[mostHealAmt][rate]}</code> \U0001F489\n"\

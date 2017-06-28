@@ -12,7 +12,7 @@ def chunker(seq, size):
 #Compulsory contains all agents that will definitely be included every game
 def one_agent_instance(playerCount):
     compulsory = {'Elias':Elias}
-    result = {'Sonhae':Sonhae, #'Taiji':Taiji, 'Dracule':Dracule,
+    result = {'Sonhae':Sonhae, 'Taiji':Taiji, 'Dracule':Dracule,
               'Novah':Novah, 'Saitami':Saitami, 'Grim':Grim,
               'Jordan':Jordan, 'Jigglet':Jigglet,
               'Harambe':Harambe, 'Hamia':Hamia, 'Impilo':Impilo,

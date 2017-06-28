@@ -4,13 +4,14 @@ import telepot.aio
 import telepot.aio.helper
 import math
 import time
+import Globals
 from telepot.exception import *
 from telepot.namedtuple import *
 from Game import normalGame
 from Messages import send_message, edit_message, EN
 from DatabaseStats import add_new_person, add_new_group
-import Globals
 from Admin import check_admin, get_maintenance
+
 '''
 gameHandler will handle all game-related commands, such
 as /newgame, /join, and facilitates the game in creating
@@ -41,7 +42,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         self.router.routing_table['_countdown_normal_discussion'] = self.on__countdown_normal_discussion
         self.router.routing_table['_countdown_collate_result'] = self.on__countdown_collate_result
         self.router.routing_table['_power_up'] = self.on__power_up
-
+        self.router.routing_table['_power_up_end'] = self.on__power_up_end
+        
     async def on_chat_message(self, msg):
         contentType, chatType, chatID = telepot.glance(msg)
         userID = msg['from']['id']
@@ -378,23 +380,26 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         #Otherwise, set timer according to customised math function
         rnd = self.game.round
         if survivors == 2:
-            timer = 30
+            timer = 45
         else:
             weight = 1/(1+0.001*math.pow(math.e,0.55*rnd))
             timer = weight*(60*(1 + 1/(0.5+math.pow(math.e,4-0.55*survivors))))+(1-weight)*(-60*(2/(1+math.pow(math.e,5.2-0.73*rnd))-3))
             timer = int(round(timer,-1))
 
+        
         await edit_message(self.messageEditor,message + Globals.LANG[self.chatID]['countdownToPhase1']%(timer))
-        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
+        #self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
+
+        ####################    
+        ###POWER-UP EVENT###
+        ####################
+        if survivors == 2:
+            timer = 0.5 * timer
+            #Schedule at halftime!
+            self.countdownEvent = self.scheduler.event_later(timer, ('_power_up', {'seconds': timer}))
+        else:
+            self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
         return
-        #TESTING POWER-UP EVENT
-        #if survivors == 2:
-            #Generate random countdown to power-up event
-            #actualTimer = max(5, int(math.pow(time.time(),int(time.time() % 7)) % timer))
-            #self.countdownEvent = self.scheduler.event_later(actualTimer, ('_power_up', {'seconds': timer-actualTimer}))
-        #else:
-            #self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
-        #return
 
 #############################################
 ######  Notify peeps in  waiting list  ######
@@ -426,12 +431,12 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 
     async def on__power_up(self,event):
         timer = event['_power_up']['seconds']
-        #Generate random power up
-        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['powerUp']['DmgX']%(3))
-        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['powerUp']['Health']%(3))
-        sent = await send_message(self.bot,self.chatID,Globals.LANG[self.chatID]['powerUp']['LoD']%(3))
-        if sent:
-            self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
-        #Send query
-        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_game_next_round', {'seconds': timer}))
-        
+        powTime = await self.game.power_up(timer)
+        self.countdownEvent = self.scheduler.event_later(powTime, ('_power_up_end', {'seconds': timer-powTime}))
+
+    async def on__power_up_end(self,event):
+        timer = event['_power_up_end']['seconds']
+        await self.game.power_up_end()
+        self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
+        #Turn back powerOn for next round
+        self.game.powOn = True

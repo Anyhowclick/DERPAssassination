@@ -7,7 +7,19 @@ GLOBAL_STATS = {
     "players":0,
     "groups":0,
     
-    #firstName, survival / death rate
+    #name is firstName
+    "bestNormalAgent":{ #Best win ratio for normal games
+        "name":"name",
+        "rate":0},
+    
+    "derpNormalWins":{ #Most no. of Derp wins
+        "name":"name",
+        "rate":0},
+
+    "pyroNormalWins":{ #Most no. of Pyro wins
+        "name":"name",
+        "rate":0},
+    
     "normalSurvivor":{
         "name":"name",
         "rate":0}, #Best survival rate in normal mode

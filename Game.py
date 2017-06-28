@@ -7,8 +7,10 @@ import time
 import Globals
 from telepot.namedtuple import *
 from Heroes import *
-from KeyboardQuery import generate_agent_info
+from KeyboardQuery import generate_agent_info, generate_powerUp_keyboard
 from Messages import send_message, edit_message
+from PowerUp import DmgX
+
 '''
 no. of VIPs and DERP agents are determined as such:
 --VIPs and DERP agents--
@@ -95,6 +97,9 @@ class Game(object):
         self.agents = {}
         self.round = 0 # Denotes current round
         self.playerCount = playerCount
+        self.powerUp = None
+        self.powUp = set()
+        self.powOn = True #Boolean to decide if callback query should close or not
 
     #Function to handle cases where more queries than allowed are received, due to pressing the callback button multiple times (my hypothesis)
     #(Eg. Grim attacking more than 3 unique ppl, when it should be 3 max)
@@ -132,7 +137,32 @@ class Game(object):
                 #Otherwise leave it alone
                 result.append(query)
         return result
-        
+
+    ######################
+    ### POWER-UP EVENT ###
+    ######################
+    #Generate a power-up, return time duration of event
+    async def power_up(self,timer):
+        self.powerUp = DmgX(self.Messages,len(self.get_alive_all())) #Generate random power up
+        message = self.Messages['powerUp']['intro']
+        message += self.Messages['powerUp'][self.powerUp.name]['desc'].format(self.powerUp.limit,0)
+        markup = generate_powerUp_keyboard(self.Messages)
+        sent = await send_message(self.bot,self.chatID,message,reply_markup=markup)
+        self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent))
+        return random.randint(9,int(timer-4)) # Return time for people to discuss if they wanna eat power up or not
+
+    async def power_up_end(self):
+        # Time to close the query!
+        self.powOn = False
+        try:
+            await self.messageEditor.editMessageReplyMarkup(reply_markup=None)
+        except:
+            pass
+        message = self.powerUp.power_up(self.Messages,self.powUp) #Calculate and message ppl of the result of power-up
+        await edit_message(self.messageEditor,message)
+        return
+
+
 class normalGame(Game):
     def __init__(self, bot, chatID, playerCount, messageEditor):
         super().__init__(bot, chatID, playerCount, messageEditor)
@@ -408,6 +438,8 @@ class normalGame(Game):
     async def end_game(self):
         #First send game stats to individual
         await self.send_stats()
+        #Update group stats
+        await Globals.QUEUE.put(Globals.GRPID[self.chatID],'gamesCompleted',Globals.GRPID[self.chatID]['gamesCompleted']+1)
         
         #Announce who was in which team, at the same time, remove them from Globals.DBP
         #Start with team DERP
@@ -459,6 +491,15 @@ class normalGame(Game):
     async def update_stats(self,win):
         #PYRO: -1, draw = 0, DERP = 1
         #First, update generic stats
+        if win == -1: #Update global stats
+            await Globals.QUEUE.put((Globals.GLOBAL_STATS,'pyroWins',Globals.GLOBAL_STATS['pyroWins']+1))
+
+        elif win == 1:
+            await Globals.QUEUE.put((Globals.GLOBAL_STATS,'derpWins',Globals.GLOBAL_STATS['derpWins']+1))
+
+        elif win == 0:
+            await Globals.QUEUE.put((Globals.GLOBAL_STATS,'drawsNormal',Globals.GLOBAL_STATS['drawsNormal']+1))
+            
         for agent in list(self.agents.values()):
             stats = Globals.LOCALID[agent.userID]
             stats['normalGamesPlayed'] += 1
@@ -474,17 +515,19 @@ class normalGame(Game):
             #PYRO wins, update global stats accordingly
             if win == -1 and (agent.team == 'PYRO' or agent.team == 'PYROVIP'):
                 stats['pyroNormalWins'] += 1
-                await Globals.QUEUE.put((Globals.GLOBAL_STATS,'pyroWins',Globals.GLOBAL_STATS['pyroWins']+1))
-                
+                stats['gold'] += 3
 
             #DERP wins, update global stats accordingly
             elif win == 1 and agent.team == 'DERP':
                 stats['derpNormalWins'] += 1
-                await Globals.QUEUE.put((Globals.GLOBAL_STATS,'derpWins',Globals.GLOBAL_STATS['derpWins']+1))
-
-            else: #update global stats accordingly
+                stats['gold'] += 3
+                
+            elif win == 0: #update global stats accordingly
                 stats['drawsNormal'] += 1
-                await Globals.QUEUE.put((Globals.GLOBAL_STATS,'drawsNormal',Globals.GLOBAL_STATS['drawsNormal']+1))
+                stats['gold'] += 2
+                
+            else: #Agent lost
+                stats['gold'] += 1
                 
             #Update in database
             await Globals.QUEUE.put((Globals.LOCALID,agent.userID,stats))
@@ -495,7 +538,7 @@ class normalGame(Game):
             await send_message(self.bot,agent.userID,
                                Globals.LANG[agent.userID]['stats']['normal'].format(
                                    d=agent.stats,
-                                   tup=(len(agent.stats['pplKilled']),len(agent.stats['pplHealed']))),
+                                   tup=(len(agent.stats['pplHealed']),len(agent.stats['pplKilled']))),
                                reply_markup=None)
         return
 

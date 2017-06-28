@@ -19,8 +19,8 @@ class Agent(object):
         self.editor = None #to be initialised if there's a callback query
         self.Messages = Messages #this is the language database for the group chat
         self.stats = {
-            "pplHealed":{}, #Unique ppl healed.
-            "pplKilled":{}, #Unique ppl killed.
+            "pplHealed":set(), #Unique ppl healed.
+            "pplKilled":set(), #Unique ppl killed.
             "healAmt":0,
             "dmg":0,
             }
@@ -245,9 +245,9 @@ class Agent(object):
     def add_stats_killed(self,enemy):
         if enemy is self:
             return
-        self.stats['pplKilled'][enemy.userID] = 1 #Value here doesnt matter
+        self.stats['pplKilled'].add(enemy.userID)
 
     def add_stats_healed(self,ally):
         if ally is self:
             return
-        self.stats['pplHealed'][ally.userID] = 1 #Value here doesnt matter
+        self.stats['pplHealed'].add(ally.userID)

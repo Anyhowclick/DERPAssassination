@@ -113,7 +113,7 @@ async def process_query(self,game,queryData,mode):
             elif 'ult' in queryData: #Need to send additional queries
                 #Data structure of form {|ult|num|targetAgentID|date|}
                 queryData = queryData.split('|')
-                num, target = int(queryData[2]), game.players[queryData[3]]
+                num, target = int(queryData[2]), game.agents[int(queryData[3])]
                 self.selected.append(target) #add target object to selected options
                 num += 1 #Increment no. of ppl selected by 1
                 if num <= mode[1]: #send another query to ask for next target
