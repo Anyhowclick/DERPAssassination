@@ -25,7 +25,7 @@ imported from Messages
 #Initialisation of variables
 MINPLAYERS = 2 #FOR TESTING
 #MINPLAYERS = 3 #FOR IMPLEMENTATION
-MAXPLAYERS = 20
+MAXPLAYERS = 19
 
 class gameHandler(telepot.aio.helper.ChatHandler):
     def __init__(self, *args, **kwargs):
@@ -76,6 +76,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                 Globals.LOCALID[userID]
             except KeyError:
                 await add_new_person(userID,msg)
+
+            self.chatTitle = msg['chat']['title']
 
 #########################
 #####  /normalgame  #####
@@ -133,7 +135,7 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                     return
 
                 elif not self.queued:  #If there's no waiting list, initialise one
-                    self.reset_waiting_list(chatID)
+                    self.reset_waiting_list()
 
                 try:
                     username = msg['from']['username']
@@ -182,7 +184,6 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 ##############################
     async def init_game(self,chatID,userID,msg):
         self.chatID = chatID
-        self.chatTitle = msg['chat']['title']
         Messages = Globals.LANG[chatID]
         firstName = msg['from']['first_name']
         
@@ -269,8 +270,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
                 if sent:
                     self.messageEditor = telepot.aio.helper.Editor(self.bot, telepot.message_identifier(sent)) #So that above message can be edited if the person leaves
                 # Generate countdown event
-                self.countdownEvent = self.scheduler.event_later(10, ('_countdown_game_start', {'seconds': 10})) #FOR TESTING
-                #self.countdownEvent = self.scheduler.event_later(30, ('_countdown_game_start', {'seconds': 40})) #FOR IMPLEMENTATION
+                #self.countdownEvent = self.scheduler.event_later(10, ('_countdown_game_start', {'seconds': 10})) #FOR TESTING
+                self.countdownEvent = self.scheduler.event_later(30, ('_countdown_game_start', {'seconds': 40})) #FOR IMPLEMENTATION
             return
 
         #############
@@ -344,8 +345,8 @@ class gameHandler(telepot.aio.helper.ChatHandler):
         #Schedule timer for Phase 2
         survivors = len(self.game.get_alive_all())
         if survivors == 2:
-            timer = 5 #FOR TESTING
-            #timer = 25 #FOR IMPLEMENTATION
+            #timer = 5 #FOR TESTING
+            timer = 25 #FOR IMPLEMENTATION
         elif survivors <= 6:
             timer = 40 
         else:
@@ -388,17 +389,12 @@ class gameHandler(telepot.aio.helper.ChatHandler):
 
         
         await edit_message(self.messageEditor,message + Globals.LANG[self.chatID]['countdownToPhase1']%(timer))
-        #self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
 
         ####################    
         ###POWER-UP EVENT###
         ####################
-        if survivors == 2:
-            timer = 0.5 * timer
-            #Schedule at halftime!
-            self.countdownEvent = self.scheduler.event_later(timer, ('_power_up', {'seconds': timer}))
-        else:
-            self.countdownEvent = self.scheduler.event_later(timer, ('_countdown_normal_discussion', {'seconds': timer}))
+        timer = 0.45 * timer #Schedule slightly earlier than halftime!
+        self.countdownEvent = self.scheduler.event_later(timer, ('_power_up', {'seconds': timer}))
         return
 
 #############################################

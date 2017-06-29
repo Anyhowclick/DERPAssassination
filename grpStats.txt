@@ -1,1 +1,1 @@
-{"-196371230": {"title": "Personal dev testing", "powerUps": true, "gamesPlayed": 0, "gamesCompleted": 0, "lang": "EN"}, "-198106155": {"title": "Beta Testing", "powerUps": true, "gamesPlayed": 1, "gamesCompleted": 0, "lang": "EN"}}
+{"-196371230": {"lang": "EN", "gamesCompleted": 1, "gamesPlayed": 1, "powerUps": true, "title": "Personal dev testing"}, "-1001117357538": {"lang": "EN", "gamesCompleted": 1, "gamesPlayed": 1, "powerUps": true, "title": "Fire and Ice"}}

@@ -44,7 +44,13 @@ class PowerUp(object):
         rate -= self.limit #Calculate if more or less than half of survivors ate the power up
         #More means most likely helpful, less means harmful.
         rate = int(rate)
-        if rate <= -2: #Few people eat power up, so more power amongst few
+
+        #Special handling for 2 players
+        if self.ppl == 2:
+            rate = [0.5,0.5] #Make it a gamble for 2 player games
+            self.amt = [2.4, 0.2]
+
+        elif rate <= -2: #Few people eat power up, so more power amongst few
             rate = [0.98,0.02] #Most likely will turn out well, but allow small probability for adverse event
             self.amt = [min((self.amt / len(chosen)), 2.4), 0.85] #Adverse case isn't that adverse
 
@@ -63,18 +69,13 @@ class PowerUp(object):
             rate = [0.88,0.12] #Probability of adverse event is slightly higher
             self.amt = [min((self.amt / len(chosen)), 2.1), 0.7]
             #Lower cap for power-up, adverse cap is slightly worse
-            
-        #Rate = 0 at this juncture. Means limit = no. of ppl who consume power-up
-        elif self.ppl == 2:
-            rate = [0.6,0.4] #Make it a sort of gamble for 2 player games
-            self.amt = [min((self.amt / len(chosen)), 2.1), 0.5]
 
         else: #Just nice half of ppl choose to eat power-up. Give flat rate.
             rate = [0.8,0.2]
             self.amt = [1.1,0.9]
 
         rate = np.random.choice(self.amt,p=rate)
-        rate = round(rate,2)
+        rate = round(rate,3)
         return rate
 
 
@@ -102,13 +103,14 @@ class DmgX(PowerUp):
         else:
             self.amt -= 1.1 # -0.1 rate penalty, then -1 because we calculate increase. Thus -1.1
             msg = self.power_agents(chosen)
-            return Messages['powerUp']['DmgX']['bad'].format(names=msg,percent=(self.amt*100))
+            return Messages['powerUp']['DmgX']['bad'].format(names=msg,percent=(np.abs(self.amt*100)))
     
     def power_agents(self,chosen):
         msg = ''
         for agent in chosen:
             agent.add_dmg(round(self.amt*agent.baseDmg))
-            msg += agent.get_idty()
+            msg += agent.get_idty() + ", "
+        msg = msg[:-2] #Remove comma
         return msg
 
 

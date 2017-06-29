@@ -14,7 +14,7 @@ setLang = 'Choose your preferred language:'
 EN = {
     'about':
         "<b>About the game</b>\n"\
-        "This game was inspired by Spyfall, Overwatch and Werewolf, combining elements from the 3.\n\n"\
+        "This game was inspired by Spyfall, Overwatch and Werewolf.\n\n"\
         "<b>About the developer</b>\n"\
         "You may contact me at @Anyhowclick!",
 
@@ -233,7 +233,7 @@ EN = {
         "\nEveryone now has <b>%d</b> seconds to discover who their allies are and formulate strategies!",
 
     'countdownToPhase2':
-        "Surviving agents are given <b>%d</b> seconds to carry our their actions!",
+        "Surviving agents are given <b>%d</b> seconds to carry out their actions!",
 
     'delay':
         "\nGame will start in 5s! Agents, prepare for battle!\n",
@@ -483,7 +483,7 @@ EN = {
                 "Best healing dealer:  <b>{d[mostHealAmt][name]}</b> <code>{d[mostHealAmt][rate]}</code> \U0001F489\n"\
                 "Best assassin \U0001F575\U0001F3FD: <b>{d[mostPplKilled][name]}</b> <code>{d[mostPplKilled][rate]}</code> agents\n"\
                 "Best medic \U0001F47C\U0001F3FB: <b>{d[mostPplHealed][name]}</b> <code>{d[mostPplHealed][rate]}</code> agents\n"\
-                "Last updated: <code>{d[lastUpdated]} GMT +8</code>\n",
+                "Last updated: <code>{d[lastUpdated]} GMT</code>\n",
             
             'local':
                 "Games played \U0001F579: <code>{d[normalGamesPlayed]}</code>\n"\

@@ -161,7 +161,7 @@ async def update_global_stats():
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostHealAmt",mostHealAmt))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostPplHealed",mostPplHealed))
     await Globals.QUEUE.put((Globals.GLOBAL_STATS,"mostPplKilled",mostPplKilled))
-    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"lastUpdated",time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())))
+    await Globals.QUEUE.put((Globals.GLOBAL_STATS,"lastUpdated",time.strftime("%a, %d-%m-%Y %H:%M:%S", time.gmtime())))
     return
 
 #To load the files

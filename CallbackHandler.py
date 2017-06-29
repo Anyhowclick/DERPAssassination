@@ -26,8 +26,6 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         
     async def on_callback_query(self, msg):
         queryID, ID, queryData = telepot.glance(msg, flavor='callback_query')
-        print(queryData)
-
         try:
             Messages = Globals.LANG[ID]
         except KeyError:
@@ -41,27 +39,33 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
         ##################################
         ##### GAME-RELATED CALLBACKS #####
         ##################################
-        if '~' in queryData:
+        if queryData in ('~POWUP~','~POWDOWN~'):
             try:
                 agent,game = Globals.DBP[ID]
                 Messages = game.Messages
                 if queryData == '~POWUP~':
-                    game.powUp.add(agent)
+                    if not game.powOn:
+                        self.close()
+                        return
                     await game.bot.answerCallbackQuery(queryID, text=Messages['powerUp']['yes'], show_alert=True)
+                    game.powUp.add(agent)
                     await edit_message(game.messageEditor,
                                        Messages['powerUp'][game.powerUp.name]['desc'].format(
                                            game.powerUp.limit,len(game.powUp)),
-                                       reply_markup=generate_powerUp_keyboard(Messages) if game.powOn else None)
+                                       reply_markup=generate_powerUp_keyboard(Messages))
                     self.close()
                     return
             
                 elif queryData == '~POWDOWN~':
-                    game.powUp.remove(agent)
+                    if not game.powOn:
+                        self.close()
+                        return
                     await game.bot.answerCallbackQuery(queryID, text=Messages['powerUp']['no'], show_alert=True)
+                    game.powUp.remove(agent)
                     await edit_message(game.messageEditor,
                                        Messages['powerUp'][game.powerUp.name]['desc'].format(
                                            game.powerUp.limit,len(game.powUp)),
-                                       reply_markup=generate_powerUp_keyboard(Messages) if game.powOn else None)
+                                       reply_markup=generate_powerUp_keyboard(Messages))
                     self.close()
                     return
 

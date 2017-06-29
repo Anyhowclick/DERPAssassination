@@ -1,5 +1,4 @@
 import asyncio
-import aiohttp
 import telepot
 import Globals
 Globals.init()

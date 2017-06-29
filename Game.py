@@ -160,6 +160,7 @@ class Game(object):
             pass
         message = self.powerUp.power_up(self.Messages,self.powUp) #Calculate and message ppl of the result of power-up
         await edit_message(self.messageEditor,message)
+        self.powUp = set() #RESET!!!
         return
 
 
@@ -439,7 +440,7 @@ class normalGame(Game):
         #First send game stats to individual
         await self.send_stats()
         #Update group stats
-        await Globals.QUEUE.put(Globals.GRPID[self.chatID],'gamesCompleted',Globals.GRPID[self.chatID]['gamesCompleted']+1)
+        await Globals.QUEUE.put((Globals.GRPID[self.chatID],'gamesCompleted',Globals.GRPID[self.chatID]['gamesCompleted']+1))
         
         #Announce who was in which team, at the same time, remove them from Globals.DBP
         #Start with team DERP

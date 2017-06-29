@@ -92,8 +92,8 @@ async def process_query(self,game,queryData,mode):
     elif '{HEAL}' == queryData: #Person chose to heal
         await self.send_query(game.bot,'heal',list(game.get_alive_all().values()),game.gameMode)
         return
-    
-    if mode == 'single':
+            
+    elif mode == 'single':
             if 'ULTYES' in queryData: #queryData is {|ULTYES|date|}, person chose to use ult. Single means has to choose 1 target
                 await self.send_query(game.bot,'ult',list(game.get_alive_all().values()),game.gameMode)
                 return
@@ -126,13 +126,17 @@ async def process_query(self,game,queryData,mode):
                 await Globals.QUEUE.put((Globals.DBG,game.chatID,('ult',self.userID,int(queryData[3]),int(queryData[4]))))
                 return
                 
-    else: #Default mode
-        if 'ULTYES' in queryData:
+    elif 'default' in mode: #Default mode
+        if 'ULTYES' in queryData: #queryData is {|ULTYES|date|}
+            #Store as a 4-value tuple: (option,agentID,targetAgentID,date)
+            queryData = queryData.split('|')
+            await Globals.QUEUE.put((Globals.DBG,game.chatID,('ult',self.userID,self.userID,int(queryData[2]))))
             if self.attackAfterUlt: #Need to send additional query asking who the player wants to attack (or heal)
                 if isinstance(self,Healer): #Hero is a healer, so ask if want to attack or heal
                     await self.send_query(game.bot,'healerOptionsAfterUlt',list(game.get_alive_all().values()),game.gameMode)
                 else:
                     await self.send_query(game.bot,'attack',list(game.get_alive_all().values()),game.gameMode)
+            return
                 
     #Finally, we store the query in the game object.
     #queryData is of the form {|option|targetAgentID|date|}
