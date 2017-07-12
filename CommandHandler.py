@@ -92,7 +92,7 @@ class CommandHandler(object):
                 #Check if basic group stats have been recorded, otherwise add them into database
                 try:
                     Globals.GRPID[msg['chat']['id']] 
-                    await Globals.QUEUE.put((Globals.GRPID,msg['chat']['id'],'title',msg['chat']['title'])) #Update group chat title
+                    await Globals.QUEUE.put((Globals.GRPID[msg['chat']['id']],'title',msg['chat']['title'])) #Update group chat title
                 except KeyError:
                     Messages = await add_new_group(msg['chat']['id'],msg)
 

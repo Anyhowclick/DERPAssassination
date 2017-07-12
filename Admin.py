@@ -8,12 +8,12 @@ import Globals
 
 PENALTY = {0:0,1:10,2:60,3:300,4:600,5:900,6:1800,7:3600,8:43200,9:86400,10:259200,11:999999999999} #Penalty time to ignore in seconds
 GRPS = [(-198106155,'<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'), #FOR TESTING
-        (-1001101622786,'<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">'),
         (-1001090679151,'<a href="https://t.me/joinchat/AAAAAEECcW8ICTmNpWQgVQ">'),
         (-1001117357538, '<a href="https://t.me/joinchat/AAAAAEKZheLEzw0_JFj81Q">'),
         (-1001103517150, '<a href="https://t.me/joinchat/AAAAAEHGVd5xynxQ-I3KbQ">'),
-        (-1001149281548, '<a href="https://t.me/derpassasinindo">')] #Groups for people to join
-GRPS_INFO = {} #Eventually will be a list, not dict, after auto_update is run (function below)
+        (-1001149281548, '<a href="https://t.me/derpassasinindo">'),
+        (-1001140278836, '<a href="https://t.me/joinchat/AjAIpUP3RjTM85BTxwLOPA">')] #Groups for people to join
+GRPS_INFO = {} #Eventually will be a list, not dict, after auto_update is run (function below).
 GRPS_TIME = 0 #The last time GRPS was updated. Will be done hourly.
 #Get threshold limit of spam
 def get_threshold(num):
@@ -74,6 +74,7 @@ async def check_spam(handler,msg):
 async def auto_update(bot):
     #Retrieve information of groups
     global GRPS, GRPS_INFO, GRPS_TIME
+    GRPS_INFO = {} #Reset GRPS_INFO to be a dict
     for chatID,link in GRPS:
         #Update group member count and group title
         #Stored in GRPS_INFO using chatID as the key: {chatID: {'title':GrpTitle,'link':link,'members':memberCount}}

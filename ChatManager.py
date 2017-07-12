@@ -62,7 +62,7 @@ class chatManager(telepot.aio.helper.ChatHandler):
         
         try:
             Globals.GRPID[ID]
-            await Globals.QUEUE.put(Globals.GRPID[ID],'title',msg['new_chat_title'])
+            await Globals.QUEUE.put((Globals.GRPID[ID],'title',msg['new_chat_title']))
         except KeyError:
             await add_new_group(ID,msg)
         self.close()

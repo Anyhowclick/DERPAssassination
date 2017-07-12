@@ -205,7 +205,7 @@ class Agent(object):
             if dmg > self.shield.amt:
                 msg +=  self.Messages['combat']['shieldBroken']%(self.get_idty(),enemy.get_idty())
                 dmg = (1-self.dmgReduction)*(dmg-self.shield.amt)
-                msg += self.drop_health(amt,enemy,msg)
+                msg += self.drop_health(dmg,enemy,msg)
                 enemy.add_stats_dmg(dmg)
                 self.reset_shield()
                 #message that shield was broken, damage taken

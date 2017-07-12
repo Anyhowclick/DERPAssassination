@@ -227,10 +227,10 @@ EN = {
         "using the /join@DERPAssassinBot command!",
 
     'countdownChoice':
-        "<b>%d</b> seconds left for all surviving agents to execute their plans!",
+        "<b>%d</b> seconds left for surviving agents to execute their plans!",
 
     'countdownToPhase1':
-        "\nEveryone now has <b>%d</b> seconds to discover who their allies are and formulate strategies!",
+        "\n<b>%d</b> seconds left for discussion!",
 
     'countdownToPhase2':
         "Surviving agents are given <b>%d</b> seconds to carry out their actions!",
@@ -240,9 +240,8 @@ EN = {
 
     'donate':
         "Thank you for supporting the development of this game. Below are the following ways you can donate.\n"\
-        "1. Paypal via this link: paypal.me/Anyhowclick \n"\
-        "2. Ethereum address: <code>0xb4c82ff1a2b63cd1585c7b849604ad40a6d3ab35</code> \n"\
-        "3. Litecoin address: <code>LcpU4jwZN5oLsC3p9EPekkcxyRYJpiBFUw</code> \n"\
+        "1. Ethereum address: <code>0xb4c82ff1a2b63cd1585c7b849604ad40a6d3ab35</code> \n"\
+        "2. Litecoin address: <code>LcpU4jwZN5oLsC3p9EPekkcxyRYJpiBFUw</code> \n"\
         "It's fine if you don't, just enjoy the game!",
 
     'existingGame':
@@ -260,6 +259,8 @@ EN = {
          'tooLongSummary': "Team DERP: <b>%d hp</b>\nTeam PYRO: <b>%d hp</b>\n",
         },
 
+    'error': "Something went wrong. You may contact @Anyhowclick if the error persists.",
+    
     'failStart':
         {'lackppl':"Not enough players, can't start the game!",},
 
@@ -292,7 +293,7 @@ EN = {
         "Initialising...",
 
     'invalidCommand':
-        "Sorry, I can't interpret the command you gave.",
+        "Invalid command.",
 
     'invalidText':
         "Sorry, I don't understand what you said.",
@@ -338,7 +339,7 @@ EN = {
          'groups':'\U0001F465 Groups',
          'info': '\U00002753 How to play',
          'lang':'\U0001F30D Language',
-         'modes': 'Game modes \U0001F3AE',
+         'modes': '\U0001F3AE Game modes',
          'personal': '\U0001F464 Personal',
          'rate': '\U00002B50 Rate',
          'rules': '\U0001F4C3 Rules',
@@ -479,8 +480,8 @@ EN = {
                 "Best \U0001F525 PYRO agent: <b>{d[pyroNormalWins][name]}</b> <code>{d[pyroNormalWins][rate]}</code> wins\n"\
                 "Best \U0001F530 DERP agent: <b>{d[derpNormalWins][name]}</b> <code>{d[derpNormalWins][rate]}</code> wins\n"\
                 "Best survivor: <b>{d[normalSurvivor][name]}</b> <code>{d[normalSurvivor][rate]}%</code>\n"\
-                "Highest damage dealer: <b>{d[mostDmgNormal][name]}</b> <code>{d[mostDmgNormal][rate]}</code> \U00002694\n"\
-                "Best healing dealer:  <b>{d[mostHealAmt][name]}</b> <code>{d[mostHealAmt][rate]}</code> \U0001F489\n"\
+                "Highest damage dealer: <b>{d[mostDmgNormal][name]}</b> <code>{d[mostDmgNormal][rate]}</code> \U00002694 in a game\n"\
+                "Best healing dealer:  <b>{d[mostHealAmt][name]}</b> <code>{d[mostHealAmt][rate]}</code> \U0001F489 in a game\n"\
                 "Best assassin \U0001F575\U0001F3FD: <b>{d[mostPplKilled][name]}</b> <code>{d[mostPplKilled][rate]}</code> agents\n"\
                 "Best medic \U0001F47C\U0001F3FB: <b>{d[mostPplHealed][name]}</b> <code>{d[mostPplHealed][rate]}</code> agents\n"\
                 "Last updated: <code>{d[lastUpdated]} GMT</code>\n",
@@ -490,9 +491,9 @@ EN = {
                 "Games won as \U0001F530 DERP: <code>{d[derpNormalWins]}</code> <code>({p[0]:.2f})%</code>\n"\
                 "Draws: <code>{d[drawsNormal]}</code> <code>({p[1]:.2f})%</code>\n"\
                 "Games won as \U0001F525 PYRO: <code>{d[pyroNormalWins]}</code> <code>({p[2]:.2f})%</code>\n"\
-                "Games survived : <code>{d[normalGamesSurvived]}</code> <code>({p[3]:.2f})%</code>\n"\
-                "People killed \U0001F480: <code>{d[mostPplKilled]}</code>\n"\
-                "People healed \U0001F47C\U0001F3FB: <code>{d[mostPplHealed]}</code>\n"\
+                "Games survived: <code>{d[normalGamesSurvived]}</code> <code>({p[3]:.2f})%</code>\n"\
+                "Total agents killed \U0001F480: <code>{d[mostPplKilled]}</code>\n"\
+                "Total agents healed \U0001F47C\U0001F3FB: <code>{d[mostPplHealed]}</code>\n"\
                 "Highest damage \U00002694: <code>{d[mostDmgNormal]}</code>\n"\
                 "Highest heal amount \U0001F48A: <code>{d[mostHealAmt]}</code>\n",
 

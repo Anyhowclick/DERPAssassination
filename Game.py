@@ -468,11 +468,10 @@ class normalGame(Game):
 
     #In case of error, kill the game
     async def kill_game(self):
-        agents = self.get_all()
         #No agents, then just return
-        if not agents:
+        if not self.agents:
             return
-        for agent in list(agents.values()):
+        for agent in list(self.agents.values()):
             await Globals.QUEUE.put((Globals.DBP,agent.userID,None))
             print(str(agent.userID) + ' cleared!')
             try:
@@ -503,6 +502,9 @@ class normalGame(Game):
             
         for agent in list(self.agents.values()):
             stats = Globals.LOCALID[agent.userID]
+            #Update firstName and username
+            stats['firstName'] = agent.firstName
+            stats['username'] = agent.username
             stats['normalGamesPlayed'] += 1
             stats['mostPplHealed'] += len(agent.stats['pplHealed'])
             stats['mostPplKilled'] += len(agent.stats['pplKilled'])

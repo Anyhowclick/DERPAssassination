@@ -9,7 +9,14 @@ Used to store and update stats
 
 async def update_dict():
     while True:
-        dicty,key,value = await Globals.QUEUE.get()
+        try:
+            dicty,key,value = await Globals.QUEUE.get()
+        except ValueError:
+            item = await Globals.QUEUE.get()
+            for thing in item:
+                print('ITEM: '+str(thing))
+            return
+        
         if dicty is Globals.DBG:
             try:
                 lst = dicty[key]
@@ -58,8 +65,8 @@ async def add_new_person(ID,msg):
         }
     
     await Globals.QUEUE.put((Globals.LOCALID,ID,toStore))
-    Messages = await save_lang(ID,'EN') #Set default to English
-    return Messages
+    Globals.LANG[ID] = EN #Set default to English
+    return EN
 
 #Initialise stats for new group
 async def add_new_group(ID,msg):
@@ -68,12 +75,16 @@ async def add_new_group(ID,msg):
         "powerUps":True,
         "gamesPlayed":0,
         "gamesCompleted":0,
+        "waiting":{
+            "username":'',
+            "noUsername":[],
+            },
         "lang":"EN",
         }
     
     await Globals.QUEUE.put((Globals.GRPID,ID,toStore))
-    Messages = await save_lang(ID,'EN')
-    return Messages
+    Globals.LANG[ID] = EN #Set default to English
+    return EN 
 
 #Save statistics and update global stats every 10 mins
 async def auto_save_update():
@@ -120,10 +131,10 @@ async def update_global_stats():
             winRatio = 0
         survivalRate = round(survivalRate,3)
         winRatio = round(winRatio,3)
-        if survivalRate > normalSurvivor['rate']:
+        if survivalRate > normalSurvivor['rate'] and (person['normalGamesPlayed'] > 9):
             normalSurvivor = {'name':person['firstName'],'rate':survivalRate}
 
-        if winRatio >  bestNormalAgent['rate']:
+        if winRatio >  bestNormalAgent['rate'] and (person['normalGamesPlayed'] > 9):
             bestNormalAgent = {'name':person['firstName'],'rate':winRatio}
             
         #Compute / update FFAKing (most no. of FFA Wins) 
@@ -178,6 +189,8 @@ def load_database():
     for person in list(Globals.LOCALID.keys()):
         #This doesn't require use of global queue, because it only runs after bot is restarted
         Globals.LANG[person] = langs[Globals.LOCALID[person]['lang']]
+    for group in list(Globals.GRPID.keys()):
+        Globals.LANG[group] = langs[Globals.GRPID[group]['lang']]
     print('Database loaded!')
     return
 
@@ -197,7 +210,7 @@ async def save_lang(ID,choice):
     langs = {'ZH':ZH,'IN':IN,'EN':EN}
     #Not using global queue, because... it caused problems (KeyErrors, due to CallbackHandlers?)
     Globals.LANG[ID] = langs[choice]
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(2)
     #To save lang codes in resp IDs
     if ID < 0:
         await Globals.QUEUE.put((Globals.GRPID[ID],'lang',choice))

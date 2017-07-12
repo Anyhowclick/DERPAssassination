@@ -23,7 +23,7 @@ This is the main file that initialises the bot, and the script to run
 to start the bot.
 
 '''
-TOKEN = '440752289:AAF6oh8hxK4tIoRSffyI_BdfuSUL-1TFOjE'
+TOKEN = '442071087:AAERIPN4vPFcxQVf_H8NK4igur413PCQ-uQ'
 
 DERPAssBot = telepot.aio.DelegatorBot(TOKEN, [
     pave_event_space()(per_chat_id(), create_open, chatManager, timeout=197),

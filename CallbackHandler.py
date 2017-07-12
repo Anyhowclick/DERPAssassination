@@ -32,8 +32,8 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
             Messages = EN #Set default to English
             
         #First check maintenance status
-        if get_maintenance():
-            await edit_message(self.editor,Messages['maintenance']['status'],reply_markup=None,parse_mode='HTML')
+        if get_maintenance() and (ID != 28173774):
+            await edit_message(self.editor,Messages['maintenance']['shutdown'],reply_markup=None,parse_mode='HTML')
             return
         
         ##################################
@@ -44,7 +44,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 agent,game = Globals.DBP[ID]
                 Messages = game.Messages
                 if queryData == '~POWUP~':
-                    if not game.powOn:
+                    if not game.powOn or (not agent.alive):
                         self.close()
                         return
                     await game.bot.answerCallbackQuery(queryID, text=Messages['powerUp']['yes'], show_alert=True)
@@ -57,7 +57,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                     return
             
                 elif queryData == '~POWDOWN~':
-                    if not game.powOn:
+                    if not game.powOn or (not agent.alive):
                         self.close()
                         return
                     await game.bot.answerCallbackQuery(queryID, text=Messages['powerUp']['no'], show_alert=True)
@@ -74,8 +74,11 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 return
             
         elif '{' in queryData:
-            #Retreive stored hero and game object in userID from DB
-            agent,game = Globals.DBP[ID]
+            try:
+                #Retreive stored hero and game object in userID from DB
+                agent,game = Globals.DBP[ID]
+            except KeyError: #Error retreiving objects. Maybe they dont exist
+                await edit_message(self.editor,Messages['error'],reply_markup=None)
             #Time given in message is the time the message was sent, which is more or less the same for all
             #so have to use own time
             date = int(time.time())
@@ -213,7 +216,7 @@ class CallbackHandler(telepot.aio.helper.CallbackQueryOriginHandler):
                 if totalGames == 0:
                     p = (0,0,0,0)
                 else:
-                    p = (totalGames,d['derpWins']/totalGames*100,d['pyroWins']/totalGames*100,d['drawsNormal']/totalGames*100)
+                    p = (totalGames,d['derpWins']/totalGames*100,d['drawsNormal']/totalGames*100,d['pyroWins']/totalGames*100)
                 message += Messages['stats']['global'].format(d=d,p=p)
                 await edit_message(self.editor,message,reply_markup=markup,parse_mode='HTML')
                 self.close()

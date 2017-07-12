@@ -161,7 +161,7 @@ class Novah(Offense):
             self.reset_ult_avail()
             self.reset_ult_CD()
             self.add_dmg(10)
-            return self.drop_health(5, self.Messages['combat']['ult']['NovahOK']%(self.get_idty()))
+            return self.drop_health(5, self, self.Messages['combat']['ult']['NovahOK']%(self.get_idty()))
 
         
 #####################
@@ -507,7 +507,7 @@ class Ralpha(Healer):
         target.reset_health()
         #Reset to 70% of base health if self
         if self == target:
-            self.drop_health(0.3*self.health)
+            self.drop_health(0.3*self.health,self)
             #Target's health increased compared to last time
             if self.health >= beforeHealth:
                 self.add_stats_heal(self.health - beforeHealth)
@@ -519,7 +519,7 @@ class Ralpha(Healer):
 
         #Otherwise reset to 80% of base health
         else:
-            target.drop_health(0.2*self.health)
+            target.drop_health(0.2*self.health,target)
             #Target's health increased compared to last time
             if target.health >= beforeHealth:
                 self.add_stats_heal(target.health - beforeHealth)

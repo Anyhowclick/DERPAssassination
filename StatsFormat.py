@@ -9,7 +9,7 @@ GLOBAL_STATS = {
     
     #name is firstName
     "bestNormalAgent":{ #Best win ratio for normal games
-        "name":"name",
+        "name":"Unknown",
         "rate":0},
     
     "derpNormalWins":{ #Most no. of Derp wins
@@ -17,11 +17,11 @@ GLOBAL_STATS = {
         "rate":0},
 
     "pyroNormalWins":{ #Most no. of Pyro wins
-        "name":"name",
+        "name":"Unknown",
         "rate":0},
     
     "normalSurvivor":{
-        "name":"name",
+        "name":"Unknown",
         "rate":0}, #Best survival rate in normal mode
     
     "ffaKing":{
@@ -54,8 +54,13 @@ GLOBAL_STATS = {
 GRPID = {
     "grpID": {
       "title":"a",
-      "minPlayers":3,
-      "maxPlayers":20,
+      "powerUps":True,
+      "gamesPlayed":0,
+      "gamesCompleted":0,
+      "waiting":{
+            "username":'',
+            "noUsername":[],
+            },
       "lang":"EN",
   }
 }
