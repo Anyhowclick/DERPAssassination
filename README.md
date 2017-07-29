@@ -1,17 +1,43 @@
-# DERP:Assassination
+## Python code for the game DERP:Assassination on Telegram.
 
-## Changelog 28/4/17 1006 hrs
-- Grim has been nerfed.
-  - Cooldown increase from 2 to 3 turns
-  - Base damage from 25 to 22
-  - Ability damage from 30 to 25
-- Prevent duplicate queries using Python's set() function
-- Reordered some parts with regards to /newgame and /join commands in GameHandler.py
-- Increased no. of DERP agents for a hopefully more balanced game
-- 4 player game: DERP is highly outnumbered, so knowledge of VIP wont be made known, as is the case for 3 players
-- Minor text fix for Saitami's ability
-- Groups now shown in decreasing no. of members
-- New hero: Jordan!
+This game was first conceptualised in October 2016. It has been a solo project up till now. After half a year of development, I considered switching to Node.js / Golang, but decided to stick to Python still. For now, the code that I've written may not be pretty, so I'm planning to rewrite a fair chunk of it, this time taking into consideration future expansions.
+
+ For now, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
+
+- Admin.py
+  - Basic spam detection, and contains the function to check whether someone is an admin of a group
+- Agent.py
+  - Contains common attributes shared by every agent character, such as health, damage, attack methods, reset_for_next_round() etc.
+- AgentClasses.py
+  - A subclass of agent, to differentiate between the 4 classes: Offense, Tank, Healer and Support. It also contains query handling methods, which honestly should be separated into another file.
+- CallbackHandler.py
+  - Handles all callback queries (/agents command) and queries from all games.
+- ChatManager.py
+  - Router to commandHandler.
+- CommandHandler.py
+  - Contains all non-game related commmands (/about, /support etc.)
+- Database.py
+  - To store variables accessible to other files. Most important is DB, because it stores game objects and agent objects.
+- Game.py
+  - Game object to facilitate the game.
+- GameHandler.py
+  - Handles game-related commands, namely /join, /killgame and /newgame
+- Heroes.py
+  - Subclass of AgentClasses. Each individual agent and ability is stored here. 'Heroes' is used because 'Agent' was used already xD
+- Main.py
+  - Run this file with a bot API token obtained from theBotFather.
+- Messages.py
+  - Contains all text messages to be sent by the bot. Will contain the translations as well.
+- README.md
+  - This document!
+- Shield.py
+  - Shield object for an agent. *Newest feature*
+
+## Changelog 28/4/17 ##
+- Decreased Harambe's health from 150hp to 130hp
+- Saitami's ability powered up by Anna = instant KO
+- New hero: Jigglet!
+- New /rules --> self-designed image =)
 
 ## Changelog 15/3/17 1806 hrs
 - Fixed HTML tag for "failed to join..." (just had to change method to send_message)
@@ -61,37 +87,3 @@ What's new:
 - Timer has been set to at least 90s for discussion time.
 - Added source code link in /support and main group link in /start commands
 - Minor text fixes.
-
-## Python code for the game DERP:Assassination on Telegram.
-
-This game was first conceptualised in October 2016. It has been a solo project up till this point (Jan 2017), so the code that I've written may not the best methods used. There's definitely room for improvement in terms of data structures and parsing / processing messages sent, so there'll be changes over time.
-Nevertheless, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
-
-- Admin.py
-  - Basic spam detection, and contains the function to check whether someone is an admin of a group
-- Agent.py
-  - Contains common attributes shared by every agent character, such as health, damage, attack methods, reset_for_next_round() etc.
-- AgentClasses.py
-  - A subclass of agent, to differentiate between the 4 classes: Offense, Tank, Healer and Support. It also contains query handling methods, which honestly should be separated into another file.
-- CallbackHandler.py
-  - Handles all callback queries (/agents command) and queries from all games.
-- ChatManager.py
-  - Router to commandHandler.
-- CommandHandler.py
-  - Contains all non-game related commmands (/about, /support etc.)
-- Database.py
-  - To store variables accessible to other files. Most important is DB, because it stores game objects and agent objects.
-- Game.py
-  - Game object to facilitate the game.
-- GameHandler.py
-  - Handles game-related commands, namely /join, /killgame and /newgame
-- Heroes.py
-  - Subclass of AgentClasses. Each individual agent and ability is stored here. 'Heroes' is used because 'Agent' was used already xD
-- Main.py
-  - Run this file with a bot API token obtained from theBotFather.
-- Messages.py
-  - Contains all text messages to be sent by the bot. Will contain the translations as well.
-- README.md
-  - This document!
-- Shield.py
-  - Shield object for an agent. *Newest feature*

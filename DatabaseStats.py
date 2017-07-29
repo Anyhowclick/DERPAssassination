@@ -1,4 +1,4 @@
-from Messages import ZH, IN, EN, send_message
+from Messages import EN, IT, BR, send_message
 import simplejson as json
 import time
 import asyncio
@@ -185,7 +185,7 @@ def load_database():
     Globals.GRPID = {int(k):v for k,v in Globals.GRPID.items()}
     Globals.GLOBAL_STATS = json.loads(open('globalStats.txt').read())
     #Codes are gotten from ISO standard
-    langs = {'ZH':ZH,'IN':IN,'EN':EN}
+    langs = {'BR':BR,'EN':EN,'IT':IT}
     for person in list(Globals.LOCALID.keys()):
         #This doesn't require use of global queue, because it only runs after bot is restarted
         Globals.LANG[person] = langs[Globals.LOCALID[person]['lang']]
@@ -207,7 +207,7 @@ def save_database():
 async def save_lang(ID,choice):
     ID = int(ID)
     #Save preference in Globals.LANG database
-    langs = {'ZH':ZH,'IN':IN,'EN':EN}
+    langs = {'BR':BR,'EN':EN,'IT':IT}
     #Not using global queue, because... it caused problems (KeyErrors, due to CallbackHandlers?)
     Globals.LANG[ID] = langs[choice]
     await asyncio.sleep(2)

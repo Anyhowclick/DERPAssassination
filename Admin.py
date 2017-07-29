@@ -12,7 +12,8 @@ GRPS = [(-198106155,'<a href = "https://t.me/joinchat/AAAAAEGpbgIRVICT8IRpHg">')
         (-1001117357538, '<a href="https://t.me/joinchat/AAAAAEKZheLEzw0_JFj81Q">'),
         (-1001103517150, '<a href="https://t.me/joinchat/AAAAAEHGVd5xynxQ-I3KbQ">'),
         (-1001149281548, '<a href="https://t.me/derpassasinindo">'),
-        (-1001140278836, '<a href="https://t.me/joinchat/AjAIpUP3RjTM85BTxwLOPA">')] #Groups for people to join
+        (-1001140278836, '<a href="https://t.me/joinchat/AjAIpUP3RjTM85BTxwLOPA">'),
+        (-1001123013081, '<a href="https://t.me/DerpBrasil">')] #Groups for people to join
 GRPS_INFO = {} #Eventually will be a list, not dict, after auto_update is run (function below).
 GRPS_TIME = 0 #The last time GRPS was updated. Will be done hourly.
 #Get threshold limit of spam
