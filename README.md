@@ -27,6 +27,8 @@ This game was first conceptualised in October 2016. It is a solo project thus fa
   - Subclass of AgentClasses. Each individual agent and ability is stored here. 'Heroes' is used because 'Agent' was used already xD
 - KeyboardQuery.py
   - Generation of different keyboards based on query received
+- Legend.pdf
+  - Information about the callback data codes used (with some examples).
 - Main.py
   - Run this file with a bot API token obtained from theBotFather.
 - Messages.py
