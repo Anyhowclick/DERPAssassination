@@ -1,9 +1,12 @@
 import asyncio
-import aiohttp
 import telepot
+import Globals
+Globals.init()
 from telepot.aio.delegate import *
+from Admin import toggle_maintenance
 from ChatManager import chatManager
 from CallbackHandler import CallbackHandler
+from DatabaseStats import load_database, update_dict, auto_save_update
 from GameHandler import gameHandler
 
 '''
@@ -20,31 +23,21 @@ This is the main file that initialises the bot, and the script to run
 to start the bot.
 
 '''
-TOKEN = '279291266:AAEQe3QXaPT36O51P0C4Z0KPT6ZQ_zWjwqM'
+TOKEN = '442071087:AAERIPN4vPFcxQVf_H8NK4igur413PCQ-uQ'
 
 DERPAssBot = telepot.aio.DelegatorBot(TOKEN, [
-    pave_event_space()(per_chat_id(), create_open, chatManager, timeout=300),
+    pave_event_space()(per_chat_id(), create_open, chatManager, timeout=197),
     pave_event_space()(
-        per_callback_query_origin(), create_open, CallbackHandler, timeout=300),
+        per_callback_query_origin(), create_open, CallbackHandler, timeout=239),
     pave_event_space()(
-        per_chat_id(types=['group','supergroup']), create_open, gameHandler,timeout=9999),
+        per_chat_id(types=['group','supergroup']), create_open, gameHandler,timeout=5419),
 ])
 
-
-##################################
-####### FOR PYTHONANYWHERE #######
-##################################
-#proxy_url = "http://proxy.server:3128"
-
-#telepot.aio.api._pools = {
-#    'default': aiohttp.ProxyConnector(proxy=proxy_url, limit=999)
-#}
-
-#telepot.aio.api._onetime_pool_spec = (aiohttp.ProxyConnector, dict(proxy=proxy_url, force_close=True))
-
-###################################
 loop = asyncio.get_event_loop()
 loop.create_task(DERPAssBot.message_loop())
+loop.create_task(update_dict())
+loop.create_task(auto_save_update())
+load_database()
+toggle_maintenance()
 print('LEGGO!!')
-
 loop.run_forever()

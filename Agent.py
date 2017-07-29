@@ -1,21 +1,30 @@
+import Globals
+
 #defining character class
 class Agent(object):
 
 #### Constructor #####
-    def __init__(self, agentName, userID, username, firstName, Messages,
+    def __init__(self, agentCode, userID, username, firstName, Messages,
                  baseHealth=None, baseDmg=None, baseUltCD=None,
                  alive=True,health=None, dmg=None,
                  ultCD=None, ultAvail=False, ultUsed=False, buffUlt=False, attackAfterUlt=True,
                  canBeHealed=True, canBeShielded=True,
                  asleep=False, invuln=False, controlled=False, shield=None, dmgReduction=None, protector=None,
                  ):
-        self.agentName = agentName 
+        self.agentName = Messages['agents'][agentCode][0]#Name of agent assigned, obtain from Messages.py Eg. Sonhae, Impilo
+        self.agentCode = agentCode #Special code to identify the agent in Messages.py Eg. #baa, #bab etc.
         self.userID = userID #telegram user ID
         self.username = username #telegram username
         self.firstName = firstName #telegram user first name
         self.editor = None #to be initialised if there's a callback query
         self.Messages = Messages #this is the language database for the group chat
-
+        self.stats = {
+            "pplHealed":set(), #Unique ppl healed.
+            "pplKilled":set(), #Unique ppl killed.
+            "healAmt":0,
+            "dmg":0,
+            }
+        
         #Base values for health = 100, damage = 15 and ulti cooldown = 3
         self.baseHealth = baseHealth if baseHealth else 100
         self.baseDmg = baseDmg if baseDmg else 20
@@ -45,7 +54,6 @@ class Agent(object):
         self.protector = protector #Protector object so that all damage can be deflected to him
         
 
-##### Accessors #####
         
 ## User info accessors ##
     def get_user_info(self):
@@ -119,9 +127,10 @@ class Agent(object):
         self.health = min(self.health+hp, self.baseHealth)
 
     
-    def drop_health(self,hp,msg=str('')):
+    def drop_health(self,hp,enemy,msg=str('')):
         self.health = max(self.health-hp, 0)
         if (not self.health):
+            enemy.add_stats_killed(self) #stats method found below
             return msg + self.die()
         return msg
         
@@ -172,42 +181,48 @@ class Agent(object):
         self.ultCD = cd
 
     ##### COMBAT #####
-
-    def attack(self,enemy,dmg=None,msg=''):
+    def attack(self,enemy,dmg=None,msg='',code=0):
+        #Refer to master code cheatsheet
+        #0 = default, 1 = exclude attk, 2 = exclude invuln....
         if self.asleep:
             #message indicating that player is asleep
             return msg + self.Messages['combat']['sleepAtt']%(self.get_idty())
         dmg = dmg if dmg else self.dmg
-        return enemy.attacked(self,dmg,msg)
+        return enemy.attacked(self,dmg,msg,code)
 
-    def attacked(self,enemy,dmg,msg=''):
+    def attacked(self,enemy,dmg,msg='',code=0):
         if self.invuln:
             #message indicating that player is invulnerable
-            return msg + self.Messages['combat']['invuln']%(self.get_idty())
+            return msg + self.Messages['combat']['invuln']%(self.get_idty(),enemy.get_idty())
 
         elif self.is_protected() and self.protector != self:
             protector = self.protector
             #message that damage is taken by protector
             msg = msg + self.Messages['combat']['protect']%(enemy.get_idty(),protector.get_idty())
-            return protector.attacked(enemy,dmg,msg)
+            return protector.attacked(enemy,dmg,msg,code)
         
         elif self.is_shielded():
             if dmg > self.shield.amt:
                 msg +=  self.Messages['combat']['shieldBroken']%(self.get_idty(),enemy.get_idty())
-                msg += self.drop_health((1-self.dmgReduction)*(dmg-self.shield.amt),msg)
+                dmg = (1-self.dmgReduction)*(dmg-self.shield.amt)
+                msg += self.drop_health(dmg,enemy,msg)
+                enemy.add_stats_dmg(dmg)
                 self.reset_shield()
                 #message that shield was broken, damage taken
                 return msg
             self.shield.drop_shield_amt(dmg)
+            enemy.add_stats_dmg(dmg)
             #message that shield remains intact
             return msg + self.Messages['combat']['shieldIntact']%(enemy.get_idty(),self.get_idty(),self.shield.amt)
         if self == enemy:
             #self-inflict msg
             msg += self.Messages['combat']['selfAtt']%(self.get_idty())
-            return self.drop_health((1-self.dmgReduction)*dmg,msg)
-        #hurt msg
-        msg += self.Messages['combat']['hurt']%(enemy.get_idty(), self.get_idty())
-        return self.drop_health((1-self.dmgReduction)*dmg,msg)
+            return self.drop_health((1-self.dmgReduction)*dmg,enemy,msg)
+        if code != 1:
+            msg += self.Messages['combat']['hurt']%(enemy.get_idty(), self.get_idty())
+        dmg = (1-self.dmgReduction)*dmg
+        enemy.add_stats_dmg(dmg)
+        return self.drop_health(dmg,enemy,msg)
 
     def ult(self):
         #return either a msg or nothing. No news is good news!
@@ -220,4 +235,19 @@ class Agent(object):
             self.reset_ult_CD()
             return None
 
-    
+##### STATS #####        
+    def add_stats_dmg(self,amt):
+        self.stats['dmg'] += amt
+
+    def add_stats_heal(self,amt):
+        self.stats['healAmt'] += amt
+
+    def add_stats_killed(self,enemy):
+        if enemy is self:
+            return
+        self.stats['pplKilled'].add(enemy.userID)
+
+    def add_stats_healed(self,ally):
+        if ally is self:
+            return
+        self.stats['pplHealed'].add(ally.userID)
