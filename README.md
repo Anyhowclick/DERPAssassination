@@ -1,37 +1,48 @@
 ## Python code for the game DERP:Assassination on Telegram.
 
-This game was first conceptualised in October 2016. It has been a solo project up till now. After half a year of development, I considered switching to Node.js / Golang, but decided to stick to Python still. For now, the code that I've written may not be pretty, so I'm planning to rewrite a fair chunk of it, this time taking into consideration future expansions.
-
- For now, I hope what's explained below will make my code easier to read, and if not, most of the codes have been commented to give a somewhat better understanding. 
+This game was first conceptualised in October 2016. It is a solo project thus far. Version 2 was recently released. Description of the files are listed below.
 
 - Admin.py
-  - Basic spam detection, and contains the function to check whether someone is an admin of a group
+  - Basic spam detection, updating of groups information, and toggling of maintenance status.
 - Agent.py
   - Contains common attributes shared by every agent character, such as health, damage, attack methods, reset_for_next_round() etc.
 - AgentClasses.py
-  - A subclass of agent, to differentiate between the 4 classes: Offense, Tank, Healer and Support. It also contains query handling methods, which honestly should be separated into another file.
+  - A subclass of agent, to differentiate between the 4 classes: Offense, Tank, Healer and Support.
 - CallbackHandler.py
-  - Handles all callback queries (/agents command) and queries from all games.
+  - Handles all callback queries from all games.
 - ChatManager.py
   - Router to commandHandler.
 - CommandHandler.py
-  - Contains all non-game related commmands (/about, /support etc.)
-- Database.py
-  - To store variables accessible to other files. Most important is DB, because it stores game objects and agent objects.
+  - Contains all non-game related commmands
+- DatabaseStats.py
+  - Getting and adding of a new person's / group's information, retrieving from Globals.QUEUE, autosave of database every 10 mins, updating of global stats, saving / loading of database and saving of languauge.
 - Game.py
   - Game object to facilitate the game.
 - GameHandler.py
   - Handles game-related commands, namely /join, /killgame and /newgame
+- Globals.py
+  - Contains global variables to be accessed by other python files, such as DBP, DBG and QUEUE.
 - Heroes.py
   - Subclass of AgentClasses. Each individual agent and ability is stored here. 'Heroes' is used because 'Agent' was used already xD
+- KeyboardQuery.py
+  - Generation of different keyboards based on query received
 - Main.py
   - Run this file with a bot API token obtained from theBotFather.
 - Messages.py
   - Contains all text messages to be sent by the bot. Will contain the translations as well.
+- PowerUp.py
+  - Contains power-up attributes.
 - README.md
   - This document!
 - Shield.py
-  - Shield object for an agent. *Newest feature*
+  - Shield object for an agent.
+- StatsFormat.py
+  - Sample JSON format of information stored for globalStats, localStats and grpStats.
+
+## Changelog 29/7/17 DERP:Assassination V2 release on 3/7/17 ##
+- Menu to replace most /commands
+- Power-up event!
+- Storing and displaying statistics
 
 ## Changelog 28/4/17 ##
 - Decreased Harambe's health from 150hp to 130hp
