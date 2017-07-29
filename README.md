@@ -1,3 +1,4 @@
+
 ## Python code for the game DERP:Assassination on Telegram.
 
 This game was first conceptualised in October 2016. It is a solo project thus far. Version 2 was recently released. Description of the files are listed below.
@@ -43,6 +44,7 @@ This game was first conceptualised in October 2016. It is a solo project thus fa
 - Menu to replace most /commands
 - Power-up event!
 - Storing and displaying statistics
+- Italian and Portugese (Brazilian) languages
 
 ## Changelog 28/4/17 ##
 - Decreased Harambe's health from 150hp to 130hp
